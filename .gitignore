@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+misc
+ds/robust04/index-robust04-20191213/
+ds/
+qs/cair/data/fasttext/crawl-300d-2M-subword.vec
+qs/cair/data/
+pre/

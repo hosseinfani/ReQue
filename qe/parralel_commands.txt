@@ -1,0 +1,105 @@
+python -u main.py robust04 0 > logs/robust04.abstractqueryexpansion.log 2>&1 &
+python -u main.py robust04 2 > logs/robust04.wordnet.topn3.log 2>&1 &
+python -u main.py robust04 3 > logs/robust04.word2vec.topn3.log 2>&1 &
+python -u main.py robust04 4 > logs/robust04.glove.topn3.log 2>&1 &
+python -u main.py robust04 9 > logs/robust04.word2vec.topn3.replace.log 2>&1 &
+python -u main.py robust04 10 > logs/robust04.glove.topn3.replace.log 2>&1 &
+python -u main.py robust04 13 > logs/robust04.stem.krovetz.log 2>&1 &
+python -u main.py robust04 14 > logs/robust04.stem.lovins.log 2>&1 &
+python -u main.py robust04 15 > logs/robust04.stem.paicehusk.log 2>&1 &
+python -u main.py robust04 16 > logs/robust04.stem.porter.log 2>&1 &
+python -u main.py robust04 17 > logs/robust04.stem.porter2.log 2>&1 &
+python -u main.py robust04 18 > logs/robust04.stem.sstemmer.log 2>&1 &
+python -u main.py robust04 19 > logs/robust04.stem.trunc4.log 2>&1 &
+python -u main.py robust04 20 > logs/robust04.stem.trunc5.log 2>&1 &
+python -u main.py robust04 5 > logs/robust04.sensedisambiguation.log 2>&1 &
+python -u main.py robust04 11 > logs/robust04.sensedisambiguation.replace.log 2>&1 &
+python -u main.py robust04 8 > logs/robust04.wordnet.topn3.replace.log 2>&1 &
+
+python -u main.py gov2 0 > logs/gov2.abstractqueryexpansion.log 2>&1 &
+python -u main.py gov2 2 > logs/gov2.wordnet.topn3.log 2>&1 &
+python -u main.py gov2 3 > logs/gov2.word2vec.topn3.log 2>&1 &
+python -u main.py gov2 4 > logs/gov2.glove.topn3.log 2>&1 &
+python -u main.py gov2 5 > logs/gov2.sensedisambiguation.log 2>&1 &
+python -u main.py gov2 8 > logs/gov2.wordnet.topn3.replace.log 2>&1 &
+python -u main.py gov2 9 > logs/gov2.word2vec.topn3.replace.log 2>&1 &
+python -u main.py gov2 10 > logs/gov2.glove.topn3.replace.log 2>&1 &
+python -u main.py gov2 11 > logs/gov2.sensedisambiguation.replace.log 2>&1 &
+python -u main.py gov2 13 > logs/gov2.stem.krovetz.log 2>&1 &
+python -u main.py gov2 14 > logs/gov2.stem.lovins.log 2>&1 &
+python -u main.py gov2 15 > logs/gov2.stem.paicehusk.log 2>&1 &
+python -u main.py gov2 16 > logs/gov2.stem.porter.log 2>&1 &
+python -u main.py gov2 17 > logs/gov2.stem.porter2.log 2>&1 &
+python -u main.py gov2 18 > logs/gov2.stem.sstemmer.log 2>&1 &
+python -u main.py gov2 19 > logs/gov2.stem.trunc4.log 2>&1 &
+python -u main.py gov2 20 > logs/gov2.stem.trunc5.log 2>&1 &
+
+python -u main.py clueweb09b 0 > logs/clueweb09b.abstractqueryexpansion.log 2>&1 &
+python -u main.py clueweb09b 2 > logs/clueweb09b.wordnet.topn3.log 2>&1 &
+python -u main.py clueweb09b 3 > logs/clueweb09b.word2vec.topn3.log 2>&1 &
+python -u main.py clueweb09b 4 > logs/clueweb09b.glove.topn3.log 2>&1 &
+python -u main.py clueweb09b 5 > logs/clueweb09b.sensedisambiguation.log 2>&1 &
+python -u main.py clueweb09b 8 > logs/clueweb09b.wordnet.topn3.replace.log 2>&1 &
+python -u main.py clueweb09b 9 > logs/clueweb09b.word2vec.topn3.replace.log 2>&1 &
+python -u main.py clueweb09b 10 > logs/clueweb09b.glove.topn3.replace.log 2>&1 &
+python -u main.py clueweb09b 11 > logs/clueweb09b.sensedisambiguation.replace.log 2>&1 &
+python -u main.py clueweb09b 13 > logs/clueweb09b.stem.krovetz.log 2>&1 &
+python -u main.py clueweb09b 14 > logs/clueweb09b.stem.lovins.log 2>&1 &
+python -u main.py clueweb09b 15 > logs/clueweb09b.stem.paicehusk.log 2>&1 &
+python -u main.py clueweb09b 16 > logs/clueweb09b.stem.porter.log 2>&1 &
+python -u main.py clueweb09b 17 > logs/clueweb09b.stem.porter2.log 2>&1 &
+python -u main.py clueweb09b 18 > logs/clueweb09b.stem.sstemmer.log 2>&1 &
+python -u main.py clueweb09b 19 > logs/clueweb09b.stem.trunc4.log 2>&1 &
+python -u main.py clueweb09b 20 > logs/clueweb09b.stem.trunc5.log 2>&1 &
+
+python -u main.py clueweb12b13 0 > logs/clueweb12b13.abstractqueryexpansion.log 2>&1 &
+python -u main.py clueweb12b13 2 > logs/clueweb12b13.wordnet.topn3.log 2>&1 &
+python -u main.py clueweb12b13 3 > logs/clueweb12b13.word2vec.topn3.log 2>&1 &
+python -u main.py clueweb12b13 4 > logs/clueweb12b13.glove.topn3.log 2>&1 &
+python -u main.py clueweb12b13 5 > logs/clueweb12b13.sensedisambiguation.log 2>&1 &
+python -u main.py clueweb12b13 8 > logs/clueweb12b13.wordnet.topn3.replace.log 2>&1 &
+python -u main.py clueweb12b13 9 > logs/clueweb12b13.word2vec.topn3.replace.log 2>&1 &
+python -u main.py clueweb12b13 10 > logs/clueweb12b13.glove.topn3.replace.log 2>&1 &
+python -u main.py clueweb12b13 11 > logs/clueweb12b13.sensedisambiguation.replace.log 2>&1 &
+python -u main.py clueweb12b13 13 > logs/clueweb12b13.stem.krovetz.log 2>&1 &
+python -u main.py clueweb12b13 14 > logs/clueweb12b13.stem.lovins.log 2>&1 &
+python -u main.py clueweb12b13 15 > logs/clueweb12b13.stem.paicehusk.log 2>&1 &
+python -u main.py clueweb12b13 16 > logs/clueweb12b13.stem.porter.log 2>&1 &
+python -u main.py clueweb12b13 17 > logs/clueweb12b13.stem.porter2.log 2>&1 &
+python -u main.py clueweb12b13 18 > logs/clueweb12b13.stem.sstemmer.log 2>&1 &
+python -u main.py clueweb12b13 19 > logs/clueweb12b13.stem.trunc4.log 2>&1 &
+python -u main.py clueweb12b13 20 > logs/clueweb12b13.stem.trunc5.log 2>&1 &
+
+python -u main.py robust04 21 > logs/robust04.relevancefeedback.log 2>&1 &
+python -u main.py gov2 21 > logs/gov2.relevancefeedback.log 2>&1 &
+python -u main.py clueweb09b 21 > logs/clueweb09b.relevancefeedback.log 2>&1 &
+python -u main.py clueweb12b13 21 > logs/clueweb12b13.relevancefeedback.log 2>&1 &
+
+python -u main.py robust04 21 > logs/robust04.docluster.log 2>&1 &
+python -u main.py gov2 21 > logs/gov2.docluster.log 2>&1 &
+python -u main.py clueweb09b 21 > logs/clueweb09b.docluster.log 2>&1 &
+python -u main.py clueweb12b13 21 > logs/clueweb12b13.docluster.log 2>&1 &
+
+python -u main.py robust04 21 > logs/robust04.termluster.log 2>&1 &
+python -u main.py gov2 21 > logs/gov2.termluster.log 2>&1 &
+python -u main.py clueweb09b 21 > logs/clueweb09b.termluster.log 2>&1 &
+python -u main.py clueweb12b13 21 > logs/clueweb12b13.termluster.log 2>&1 &
+
+
+python -u main.py robust04 1 > logs/robust04.thesaurus.topn3.log 2>&1 &
+python -u main.py robust04 6 > logs/robust04.conceptnet.topn3.log 2>&1 &
+python -u main.py robust04 7 > logs/robust04.thesaurus.topn3.replace.log 2>&1 &
+python -u main.py robust04 12 > logs/robust04.conceptnet.topn3.replace.log 2>&1 &
+python -u main.py gov2 1 > logs/gov2.thesaurus.topn3.log 2>&1 &
+python -u main.py gov2 6 > logs/gov2.conceptnet.topn3.log 2>&1 &
+python -u main.py gov2 7 > logs/gov2.thesaurus.topn3.replace.log 2>&1 &
+python -u main.py gov2 12 > logs/gov2.conceptnet.topn3.replace.log 2>&1 &
+python -u main.py clueweb09b 1 > logs/clueweb09b.thesaurus.topn3.log 2>&1 &
+python -u main.py clueweb09b 6 > logs/clueweb09b.conceptnet.topn3.log 2>&1 &
+python -u main.py clueweb09b 7 > logs/clueweb09b.thesaurus.topn3.replace.log 2>&1 &
+python -u main.py clueweb09b 12 > logs/clueweb09b.conceptnet.topn3.replace.log 2>&1 &
+python -u main.py clueweb12b13 1 > logs/clueweb12b13.thesaurus.topn3.log 2>&1 &
+python -u main.py clueweb12b13 6 > logs/clueweb12b13.conceptnet.topn3.log 2>&1 &
+python -u main.py clueweb12b13 7 > logs/clueweb12b13.thesaurus.topn3.replace.log 2>&1 &
+python -u main.py clueweb12b13 12 > logs/clueweb12b13.conceptnet.topn3.replace.log 2>&1 &
+
