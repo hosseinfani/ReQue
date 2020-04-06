@@ -3,6 +3,8 @@ import os, enum, os.path
 from os import path
 import pandas as pd
 
+import sys
+sys.path.extend(['../qe'])
 from cmn import expander_factory
 
 class AnalysisLevel(enum.Enum):
@@ -152,7 +154,7 @@ class ResultAnalyzer:
 
 def main():
     input_path = "../ds/qe"
-    output_path = "../ds/qe/stat"
+    output_path = "../ds/qe/eval"
     analyzer = ResultAnalyzer(input_path, output_path)
     analyzer.collect_query_expander_names()
     for level in AnalysisLevel:
