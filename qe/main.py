@@ -31,6 +31,7 @@ import pandas as pd
 #Q_: set of expanded queries(Q')
 
 from cmn import expander_factory
+from expanders.abstractqexpander import AbstractQExpander
 
 def generate(Qfilename, expanders, output):
     df = pd.DataFrame()
@@ -271,15 +272,9 @@ if __name__ == "__main__":
     ## op: determines the steps in the pipleline. op=['generate', 'search', 'evaluate', 'build']
 
     ##per topic database building
-    # Run(dbs=dbs, rankers=rankers, metrics=metrics, anserini=anserini, expanders=expanders, include_rf=True, op=None)
+    Run(dbs=dbs, rankers=rankers, metrics=metrics, anserini=anserini, expanders=expanders, include_rf=True, op=['build'])
 
     # #per topic-ranker-metric database building. The only diffrence in build operation
-    # for ranker in rankers:
-    #     for metric in metrics:
-    #         Run(dbs=dbs, rankers=[ranker], metrics=[metric], anserini=anserini, expanders=expanders, include_rf=True, op=None)
-
-    # For new tagme and wiki expanders only
-    expanders = [Wiki('../pre/temp_model_Wiki'), Wiki('../pre/temp_model_Wiki', replace=True),
-                 Tagmee(), Tagmee(replace=True)]
-
-    Run(dbs=dbs, rankers=rankers, metrics=metrics, anserini=anserini, expanders=expanders, include_rf=False, op=['generate', 'search', 'evaluate'])
+    for ranker in rankers:
+        for metric in metrics:
+            Run(dbs=dbs, rankers=[ranker], metrics=[metric], anserini=anserini, expanders=expanders, include_rf=True, op=['build'])
