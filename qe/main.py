@@ -1,5 +1,6 @@
 #TODO: list all library requirements such as stemmers, tagme, ...
 import os, traceback, operator, sys, math
+from os import path
 import pandas as pd
 
 #build anserini (maven) for doing A) indexing, B) information retrieval, and C) evaluation
@@ -160,12 +161,13 @@ def build(input, expanders, rankers, metrics, output):
     ds_df.to_csv(filename, index=False)
     return filename
 
-def Run(dbs, rankers, metrics, anserini, expanders, include_rf=True, op=None):
+def Run(dbs, rankers, metrics, anserini, include_rf=True, op=None):
 
     if 'robust04' in dbs:
         output = '../ds/qe/robust04/topics.robust04'
         index = '/data/anserini/lucene-index.robust04.pos+docvectors+rawdocs'
 
+        expanders = expander_factory.get_nrf_expanders()
         if include_rf:
             expanders += expander_factory.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
@@ -184,6 +186,7 @@ def Run(dbs, rankers, metrics, anserini, expanders, include_rf=True, op=None):
         for r in ['4.701-750', '5.751-800', '6.801-850']:
             output = '../ds/qe/gov2/topics.terabyte0{}'.format(r)
 
+            expanders = expander_factory.get_nrf_expanders()
             if include_rf:
                 expanders += expander_factory.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
@@ -210,6 +213,7 @@ def Run(dbs, rankers, metrics, anserini, expanders, include_rf=True, op=None):
         for r in ['1-50', '51-100', '101-150', '151-200']:
             output = '../ds/qe/clueweb09b/topics.web.{}'.format(r)
 
+            expanders = expander_factory.get_nrf_expanders()
             if include_rf:
                 expanders += expander_factory.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
@@ -235,11 +239,12 @@ def Run(dbs, rankers, metrics, anserini, expanders, include_rf=True, op=None):
         for r in ['201-250', '251-300']:
             output = '../ds/qe/clueweb12b13/{}.web.{}'.format('topics', r)
 
+            expanders = expander_factory.get_nrf_expanders()
             if include_rf:
                 expanders += expander_factory.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb12b13/topics.web.{}.txt'.format(r), expanders=expanders, output=output)
-            if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output)
+            if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output)
             if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/clueweb12b13/qrels.web.{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=anserini, output=output)
             if 'build' in op:
                 result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output)
@@ -266,15 +271,14 @@ if __name__ == "__main__":
     rankers = ['-bm25', '-bm25 -rm3', '-qld', '-qld -rm3']
     metrics = ['map']
     anserini = '/data/anserini/'
-    expanders = expander_factory.get_nrf_expanders()
 
     ## include_rf: whether to include relevance feedback expanders or not
     ## op: determines the steps in the pipleline. op=['generate', 'search', 'evaluate', 'build']
 
     ##per topic database building
-    Run(dbs=dbs, rankers=rankers, metrics=metrics, anserini=anserini, expanders=expanders, include_rf=True, op=['build'])
+    Run(dbs=dbs, rankers=rankers, metrics=metrics, anserini=anserini, include_rf=True, op=['search', 'evaluate', 'build'])
 
-    # #per topic-ranker-metric database building. The only diffrence in build operation
+    ##per topic-ranker-metric database building. The only diffrence in build operation
     for ranker in rankers:
         for metric in metrics:
-            Run(dbs=dbs, rankers=[ranker], metrics=[metric], anserini=anserini, expanders=expanders, include_rf=True, op=['build'])
+            Run(dbs=dbs, rankers=[ranker], metrics=[metric], anserini=anserini, include_rf=True, op=['search', 'evaluate', 'build'])

@@ -3,6 +3,7 @@ import pandas as pd
 import sys
 sys.path.extend(['../qe'])
 
+from cmn import utils
 class AbstractQExpander:
     def __init__(self, replace=False, topn=None):
         self.replace = replace
@@ -35,14 +36,14 @@ class AbstractQExpander:
 
                         try:
                             q_ = self.get_expanded_query(q, [qid])
-                            print('{}:{}'.format(qid, q))
+                            q_ = utils.clean(q_)
                         except:
                             print('WARNING: MAIN: {}: Expanding query [{}:{}] failed!'.format(self.get_model_name(), qid, q))
                             print(traceback.format_exc())
                             q_ = q
 
                         Q_ = Q_.append({model_name: q_}, ignore_index=True)
-                        print('INFO: MAIN: {}: {} -> {}'.format(self.get_model_name(), q, q_))
+                        print('INFO: MAIN: {}: {}: {} -> {}'.format(self.get_model_name(), qid, q, q_))
                         Q_file.write('<title> ' + q_ + '\n')
 
                     elif '<topic' in line:
@@ -54,14 +55,14 @@ class AbstractQExpander:
                             q = line[9:-9]
                             try:
                                 q_ = self.get_expanded_query(q, [qid])
-                                print('{}:{}'.format(qid, q))
+                                q_ = utils.clean(q_)
                             except:
                                 print('WARNING: MAIN: {}: Expanding query [{}:{}] failed!'.format(self.get_model_name(), qid, q))
                                 print(traceback.format_exc())
                                 q_ = q
 
                             Q_ = Q_.append({model_name: q_}, ignore_index=True)
-                            print('INFO: MAIN: {}: {} -> {}'.format(self.get_model_name(), q, q_))
+                            print('INFO: MAIN: {}: {}: {} -> {}'.format(self.get_model_name(), qid, q, q_))
                             Q_file.write('  <query>' + q_ + '</query>' + '\n')
                     else:
                         Q_file.write(line)
@@ -77,20 +78,18 @@ class AbstractQExpander:
                 if '<num>' in line:
                     qid = int(line[line.index(':') + 1:])
                 elif line[:7] == '<title>':#for robust & gov2
-                    q_ = line[8:].strip()
+                    q_ = line[8:].strip() + ' '
                 elif '<topic' in line:
                     s = line.index('\"') + 1
                     e = line.index('\"', s + 1)
                     qid = int(line[s:e])
                 elif line[2:9] == '<query>':  # for clueweb09b & clueweb12b13
-                    q_ = line[9:-9]
+                    q_ = line[9:-9] + ' '
                 else:
                     continue
                 if q_:
                     Q_ = Q_.append({'qid': qid, model_name: q_}, ignore_index=True)
         return Q_.astype({'qid': 'int32'})
-
-
 
 if __name__ == "__main__":
     qe = AbstractQExpander()
@@ -128,7 +127,7 @@ if __name__ == "__main__":
     #              SenseDisambiguation(),
     #              Conceptnet(),
     #              Thesaurus(replace=True),
-    #              Wordnet(replace=True),
+                  #Wordnet(replace=True),
     #              Word2Vec('../pre/wiki-news-300d-1M.vec', topn=3, replace=True),
     #              Glove('../pre/glove.6B.300d', topn=3, replace=True),
     #              SenseDisambiguation(replace=True),
@@ -145,8 +144,8 @@ if __name__ == "__main__":
     #              Docluster(ranker='bm25', prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',anserini='../anserini/', index='../ds/robust04/index-robust04-20191213'),
     #              Termluster(ranker='bm25', prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',anserini='../anserini/', index='../ds/robust04/index-robust04-20191213'),
     #              Conceptluster(ranker='bm25', prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt', anserini='../anserini/', index='../ds/robust04/index-robust04-20191213'),
-                 Anchor(anchorfile='../pre/anchor_text_en_sample.ttl', vectorfile='../pre/wiki-anchor-text-en-ttl-300d-sample.vec', topn=3),
-                 Anchor(anchorfile='../pre/anchor_text_en_sample.ttl', vectorfile='../pre/wiki-anchor-text-en-ttl-300d-sample.vec', topn=3, replace=True)
+                #Anchor(anchorfile='../pre/anchor_text_en_sample.ttl', vectorfile='../pre/wiki-anchor-text-en-ttl-300d-sample.vec', topn=3),
+                 #Anchor(anchorfile='../pre/anchor_text_en_sample.ttl', vectorfile='../pre/wiki-anchor-text-en-ttl-300d-sample.vec', topn=3, replace=True)
                  ]
     for expander in expanders:
         expander.write_expanded_queries('../ds/robust04/topics.robust04.txt', 'dummy.txt')

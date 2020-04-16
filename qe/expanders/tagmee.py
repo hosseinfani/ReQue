@@ -39,5 +39,5 @@ if __name__ == "__main__":
 
     qe = Tagmee(replace=True)
     print(qe.get_model_name())
-    print(qe.get_expanded_query('HosseinFani International Crime Organization'))
+    print(qe.get_expanded_query('Magnetic Levitation-Maglev'))
 

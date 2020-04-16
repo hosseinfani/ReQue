@@ -22,6 +22,15 @@ def valid(word):
         return True
     return False
 
+def clean(str):
+    result = [0] * len(str)
+    for i in range(len(str)):
+        ch = str[i]
+        if ch.isalpha():
+            result[i] = ch
+        else:
+            result[i] = ' '
+    return ''.join(result)
 
 def insert_row(df, idx, row):
     import pandas as pd

@@ -6,3 +6,4 @@ ds/
 qs/cair/data/fasttext/crawl-300d-2M-subword.vec
 qs/cair/data/
 pre/
+.idea/
