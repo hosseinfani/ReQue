@@ -13,11 +13,22 @@ class AnalysisLevel(enum.Enum):
     OVERALL = 3
 
 
+class QueryExpanderCategory(enum.Enum):
+    Stemming_Analysis = 1
+    Semantic_Analysis = 2
+    Term_Clustering = 3
+    Concept_clustering = 4
+    Anchor_text = 5
+    Wikipedia = 6
+    Top_Documents = 7
+    Document_Summaries = 8
+
+
 class ResultAnalyzer:
     rankers = ["bm25", "bm25.rm3", "qld", "qld.rm3"]
     metrics = ["map"]
     dataset_names = ["robust04",
-                     "gov2",
+                     #"gov2",
                      "clueweb12b13",
                      "clueweb09b"
                      ]
@@ -28,12 +39,15 @@ class ResultAnalyzer:
         self.input_path = input_path
         self.output_path = output_path
         self.query_expander_contributions = {}
+        # the number of times a technique has generated the best expanded query
+        self.query_expander_contributions_best = {}
+
         self.reset()
 
     def get_indices_for_dataset(self, dataset):
         indices = dict({
             "robust04": [""],
-            "gov2": [".701-850"],
+            #"gov2": [".701-850"],
             "clueweb12b13": [".201-300"],
             "clueweb09b": [".1-200"]
         })
@@ -47,9 +61,12 @@ class ResultAnalyzer:
         if len(self.query_expander_contributions):
             for key in self.query_expander_contributions:
                 self.query_expander_contributions[key] = 0
+        if len(self.query_expander_contributions_best):
+            for key in self.query_expander_contributions_best:
+                self.query_expander_contributions_best[key] = 0
 
     def collect_query_expander_names(self):
-        names = expander_factory.get_expanders_names(['-' + r.replace('.',' -') for r in self.rankers])
+        names = expander_factory.get_expnaders_names(['-bm25', '-bm25 -rm3', '-qld', '-qld -rm3'])
         for name in names:
             self.add_to_query_expander_names(name)
 
@@ -57,6 +74,9 @@ class ResultAnalyzer:
         current_value = self.query_expander_contributions.get(query_expander_name, None)
         if current_value is None:
             self.query_expander_contributions[query_expander_name] = 0
+        current_value = self.query_expander_contributions_best.get(query_expander_name, None)
+        if current_value is None:
+            self.query_expander_contributions_best[query_expander_name] = 0
 
     def analyze_level(self, level):
         self.level = level
@@ -115,19 +135,134 @@ class ResultAnalyzer:
         if self.number_of_queries == 0:
             print("No result available")
         else:
-            self.output.write("AVG_QE_PER_Q, AVG_QE_IMPROVEMENT")
-
-            for key in self.query_expander_contributions:
+            sorted_map = sorted(self.query_expander_contributions.keys())
+            for key in sorted_map:
                 self.output.write(",{}".format(key))
+            self.output.write("\n")
+            self.output.write("contributionToAll")
+            for key in sorted_map:
+                self.output.write(",{}".format(self.query_expander_contributions[key]))
+
+            self.output.write("\n")
+            self.output.write("contributionToBest")
+            sorted_map = sorted(self.query_expander_contributions_best.keys())
+            for key in sorted_map:
+                self.output.write(",{}".format(self.query_expander_contributions_best[key]))
+
+            self.output.write("\n\n ")
+            self.output.write("AVG_QE_PER_Q, AVG_QE_IMPROVEMENT")
             self.output.write("\n")
             average = self.number_of_improvements * 1.0 / self.number_of_queries
             improvement_average = self.improvement_sum * 1.0 / self.improvement_count
             self.output.write("{},{}".format(round(average, 2), round(improvement_average, 2)))
-            for key in self.query_expander_contributions:
-                self.output.write(",{}".format(self.query_expander_contributions[key]))
+
+            self.output.write("\n\n")
+            for category in QueryExpanderCategory:
+                self.output.write(",{}".format(str(category).replace("QueryExpanderCategory.", "")))
+            self.output.write("\n")
+            self.output.write("contributionToAll")
+            for category in QueryExpanderCategory:
+                sum = 0
+                for key in sorted_map:
+                    if self.belongs(key, category):
+                        sum += self.query_expander_contributions[key]
+                self.output.write(",{}".format(sum))
+
+            self.output.write("\n")
+            self.output.write("contributionToBest")
+            total = 0
+            for category in QueryExpanderCategory:
+                sum = 0
+                for key in sorted_map:
+                    if self.belongs(key, category):
+                        sum += self.query_expander_contributions_best[key]
+                total += sum
+                self.output.write(",{}".format(sum))
+
+            self.output.write("\n")
+            self.output.write("contributionToBest(Percentage)")
+            for category in QueryExpanderCategory:
+                sum = 0
+                for key in sorted_map:
+                    if self.belongs(key, category):
+                        sum += self.query_expander_contributions_best[key]
+                ratio = round(sum * 1.0 / total * 100, 2)
+                self.output.write(",{}".format(ratio))
+
+    def belongs(self, query_expander_method, query_expander_category):
+        return self.get_category(query_expander_method) == query_expander_category
+
+    def get_category(self, query_expander_method):
+        stemming_methods = ["stem.krovetz",
+                            "stem.lovins",
+                            "stem.paicehusk",
+                            "stem.porter",
+                            "stem.porter2",
+                            "stem.sstemmer",
+                            "stem.trunc4",
+                            "stem.trunc5",
+                            ]
+        semantic_methods = ["conceptnet.topn3",
+                            "conceptnet.topn3.replace",
+                            "glove.topn3",
+                            "glove.topn3.replace",
+                            "sensedisambiguation",
+                            "sensedisambiguation.replace",
+                            "thesaurus.topn3",
+                            "thesaurus.topn3.replace",
+                            "word2vec.topn3",
+                            "word2vec.topn3.replace",
+                            "wordnet.topn3",
+                            "wordnet.topn3.replace"
+                            ]
+        term_clustering_methods = ["termluster.topn5.3.bm25",
+                                   "termluster.topn5.3.bm25.rm3",
+                                   "termluster.topn5.3.qld",
+                                   "termluster.topn5.3.qld.rm3",
+                                   ]
+        concept_clustering_methods = ["conceptluster.topn5.3.bm25",
+                                      "conceptluster.topn5.3.bm25.rm3",
+                                      "conceptluster.topn5.3.qld",
+                                      "conceptluster.topn5.3.qld.rm3",
+                                      ]
+        anchor_text_methods = ["anchor.topn3",
+                               "anchor.topn3.replace",
+                               ]
+        wikipedia_methods = ["wiki.topn3",
+                             "wiki.topn3.replace",
+                             "tagmee.topn3",
+                             "tagmee.topn3.replace",
+                             ]
+        top_documents_methods = ["relevancefeedback.topn10.bm25",
+                                 "relevancefeedback.topn10.bm25.rm3",
+                                 "relevancefeedback.topn10.qld",
+                                 "relevancefeedback.topn10.qld.rm3",
+                                 ]
+        document_summaries_methods = ["docluster.topn10.3.bm25",
+                                      "docluster.topn10.3.bm25.rm3",
+                                      "docluster.topn10.3.qld",
+                                      "docluster.topn10.3.qld.rm3",
+                                      ]
+        if query_expander_method in semantic_methods:
+            return QueryExpanderCategory.Semantic_Analysis
+        elif query_expander_method in stemming_methods:
+            return QueryExpanderCategory.Stemming_Analysis
+        elif query_expander_method in term_clustering_methods:
+            return QueryExpanderCategory.Term_Clustering
+        elif query_expander_method in concept_clustering_methods:
+            return QueryExpanderCategory.Concept_clustering
+        elif query_expander_method in anchor_text_methods:
+            return QueryExpanderCategory.Anchor_text
+        elif query_expander_method in wikipedia_methods:
+            return QueryExpanderCategory.Wikipedia
+        elif query_expander_method in top_documents_methods:
+            return QueryExpanderCategory.Top_Documents
+        elif query_expander_method in document_summaries_methods:
+            return QueryExpanderCategory.Document_Summaries
 
     def analyze_file(self, csv_file):
         print("processing file {}".format(csv_file))
+
         if not path.exists(csv_file):
             print("File not found: {}".format(csv_file))
         data_frame = pd.read_csv(csv_file)
@@ -145,11 +280,18 @@ class ResultAnalyzer:
                         self.improvement_count += 1
                     improved_method_name = row[5 + i * 3 - 1]
                     self.update_map(improved_method_name)
+                    if i == 0:
+                        self.update_map2(improved_method_name)
 
     def update_map(self, name):
         current_value = self.query_expander_contributions.get(name, None)
         current_value = int(current_value)
         self.query_expander_contributions[name] = current_value + 1
+
+    def update_map2(self, name):
+        current_value = self.query_expander_contributions_best.get(name, None)
+        current_value = int(current_value)
+        self.query_expander_contributions_best[name] = current_value + 1
 
 
 def main():
@@ -163,3 +305,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

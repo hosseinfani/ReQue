@@ -275,10 +275,10 @@ if __name__ == "__main__":
     ## include_rf: whether to include relevance feedback expanders or not
     ## op: determines the steps in the pipleline. op=['generate', 'search', 'evaluate', 'build']
 
-    ##per topic database building
-    Run(dbs=dbs, rankers=rankers, metrics=metrics, anserini=anserini, include_rf=True, op=['search', 'evaluate', 'build'])
-
     ##per topic-ranker-metric database building. The only diffrence in build operation
     for ranker in rankers:
         for metric in metrics:
             Run(dbs=dbs, rankers=[ranker], metrics=[metric], anserini=anserini, include_rf=True, op=['search', 'evaluate', 'build'])
+	
+    ##per topic database building
+    Run(dbs=dbs, rankers=rankers, metrics=metrics, anserini=anserini, include_rf=True, op=['search', 'evaluate', 'build'])
