@@ -28,7 +28,7 @@ class ResultAnalyzer:
     rankers = ["bm25", "bm25.rm3", "qld", "qld.rm3"]
     metrics = ["map"]
     dataset_names = ["robust04",
-                     #"gov2",
+                     "gov2",
                      "clueweb12b13",
                      "clueweb09b"
                      ]
@@ -47,7 +47,7 @@ class ResultAnalyzer:
     def get_indices_for_dataset(self, dataset):
         indices = dict({
             "robust04": [""],
-            #"gov2": [".701-850"],
+            "gov2": [".701-850"],
             "clueweb12b13": [".201-300"],
             "clueweb09b": [".1-200"]
         })

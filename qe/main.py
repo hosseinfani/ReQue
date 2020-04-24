@@ -161,7 +161,7 @@ def build(input, expanders, rankers, metrics, output):
     ds_df.to_csv(filename, index=False)
     return filename
 
-def Run(dbs, rankers, metrics, anserini, include_rf=True, op=None):
+def run(dbs, rankers, metrics, anserini, include_rf=True, op=None):
 
     if 'robust04' in dbs:
         output = '../ds/qe/robust04/topics.robust04'
@@ -278,7 +278,7 @@ if __name__ == "__main__":
     ##per topic-ranker-metric database building. The only diffrence in build operation
     for ranker in rankers:
         for metric in metrics:
-            Run(dbs=dbs, rankers=[ranker], metrics=[metric], anserini=anserini, include_rf=True, op=['search', 'evaluate', 'build'])
+            run(dbs=dbs, rankers=[ranker], metrics=[metric], anserini=anserini, include_rf=True, op=['search', 'evaluate', 'build'])
 	
     ##per topic database building
-    Run(dbs=dbs, rankers=rankers, metrics=metrics, anserini=anserini, include_rf=True, op=['search', 'evaluate', 'build'])
+    run(dbs=dbs, rankers=rankers, metrics=metrics, anserini=anserini, include_rf=True, op=['search', 'evaluate', 'build'])
