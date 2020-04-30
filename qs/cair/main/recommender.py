@@ -9,6 +9,8 @@ import os
 import json
 import torch
 torch.multiprocessing.set_sharing_strategy('file_system')
+torch.manual_seed(7881)#Hossein
+
 import logging
 import subprocess
 import argparse
@@ -300,6 +302,9 @@ def validate_official(args, data_loader, model, global_stats=None):
     result['rouge'] = rouge
     result['bleu'] = sum(bleu) / len(bleu) \
         if isinstance(bleu, list) else bleu
+    #Hossein
+    result['bleu_list'] = bleu if isinstance(bleu, list) else []
+
     result['em'] = exact_match
     result['f1'] = f1
 
@@ -548,11 +553,11 @@ def main(args):
         drop_last=args.parallel
     )
     args.pred_file = os.path.join(args.model_dir, args.model_name + '_test.json')
-    validate_official(args, test_loader, model)
+    return validate_official(args, test_loader, model)
 
 
 # if __name__ == '__main__':
-def run(sysargs):#Hossein: to be able to be called by qa/main.py
+def run(sysargs):#Hossein: to be able to be called by qs/main.py
     sys.argv = sysargs
     # Parse cmdline args and setup environment
     parser = argparse.ArgumentParser(
@@ -591,6 +596,7 @@ def run(sysargs):#Hossein: to be able to be called by qa/main.py
     logger.info('COMMAND: %s' % ' '.join(sys.argv))
 
     # Run!
-    main(args)
+    test_eval_results = main(args)
     logger.removeHandler(console)
     logger.removeHandler(logfile)
+    return test_eval_results
