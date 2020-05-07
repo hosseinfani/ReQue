@@ -9,7 +9,7 @@ numpy.random.seed(7881)
 def generate_random_string(n=12):
     return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(n))
 
-def csv2json(df, output):
+def csv2json(df, output, topn=1):
     if not os.path.isdir(output):
         os.makedirs(output, exist_ok=True)
 
@@ -24,7 +24,6 @@ def csv2json(df, output):
         for idx, row in df.iterrows():
             if pd.isna(row.abstractqueryexpansion):
                 continue
-            session_queries = []
             qObj = OrderedDict([
                 ('id', generate_random_string(12)),
                 ('text', row.abstractqueryexpansion),
@@ -32,32 +31,36 @@ def csv2json(df, output):
                 ('type', ''),
                 ('candidates', [])
             ])
-            session_queries.append(qObj)
-            # set the expanded query to its original form when there is no best expansion => do not expand the query please! It's good enough :))
-            if pd.isna(row['query.1']):
-                row['query.1'] = row.abstractqueryexpansion
-            q_Obj = OrderedDict([
-                ('id', generate_random_string(12)),
-                ('text', row['query.1']),
-                ('tokens', row['query.1'].split()),
-                ('type', ''),
-                ('candidates', [])
-            ])
-            session_queries.append(q_Obj)
+            for i in range(1, topn + 1):
+                session_queries = []
+                session_queries.append(qObj)
+                qcol = 'query.' + str(i)
+                if pd.isna(row[qcol]):
+                    break
+                q_Obj = OrderedDict([
+                    ('id', generate_random_string(12)),
+                    ('text', row[qcol]),
+                    ('tokens', row[qcol].split()),
+                    ('type', ''),
+                    ('candidates', [])
+                ])
+                session_queries.append(q_Obj)
 
-            obj = OrderedDict([
-                ('session_id', generate_random_string()),
-                ('query', session_queries)
-            ])
-            fds.write(json.dumps(obj) + '\n')
+                obj = OrderedDict([
+                    ('session_id', generate_random_string()),
+                    ('query', session_queries)
+                ])
+                print(qObj['text'] + '--' + str(i)+ '--> ' + q_Obj['text']);
 
-            choice = numpy.random.choice(3, 1, p=[0.7, 0.15, 0.15])[0]
-            if choice == 0:
-                ftrain.write(json.dumps(obj) + '\n')
-            elif choice == 1:
-                fdev.write(json.dumps(obj) + '\n')
-            else:
-                ftest.write(json.dumps(obj) + '\n')
+                fds.write(json.dumps(obj) + '\n')
+
+                choice = numpy.random.choice(3, 1, p=[0.7, 0.15, 0.15])[0]
+                if choice == 0:
+                    ftrain.write(json.dumps(obj) + '\n')
+                elif choice == 1:
+                    fdev.write(json.dumps(obj) + '\n')
+                else:
+                    ftest.write(json.dumps(obj) + '\n')
 
 def call_cair_run(data_dir):
     dataset_name = 'msmarco'#it is hard code in the library. Do not touch! :))
@@ -102,26 +105,34 @@ def call_cair_run(data_dir):
 if __name__=='__main__':
     rankers = ['-bm25', '-bm25 -rm3', '-qld', '-qld -rm3']
     metrics = ['map']
-    dbs = ['robust04', 'gov2', 'clueweb09b', 'clueweb12b13']
+    dbs = ['robust04', 'gov2', 'clueweb09b', 'clueweb12b13', 'all']
+    topn = 5
     for db in dbs:
         for ranker in rankers:
             ranker = ranker.replace('-', '').replace(' ', '.')
             for metric in metrics:
                 # create the test, develop, and train splits
-                df = pd.DataFrame()
                 if db == 'robust04':
-                    df = pd.read_csv('../ds/qe/{}/topics.robust04.{}.{}.dataset.csv'.format(db, ranker, metric), header=0, usecols=['abstractqueryexpansion', 'query.1'])
-                    csv2json(df, '../ds/qs/{}/topics.robust04.{}.{}/'.format(db, ranker, metric))
+                    df = pd.read_csv('../ds/qe/{}/topics.{}.{}.{}.dataset.csv'.format(db, db, ranker, metric), header=0)
+                    csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
                 if db == 'gov2':
-                    df = pd.read_csv('../ds/qe/{}/topics.gov2.701-850.{}.{}.dataset.csv'.format(db, ranker, metric), header=0, usecols=['abstractqueryexpansion', 'query.1'])
-                    csv2json(df, '../ds/qs/{}/topics.gov2.{}.{}/'.format(db, ranker, metric))
+                    df = pd.read_csv('../ds/qe/{}/topics.{}.701-850.{}.{}.dataset.csv'.format(db, db, ranker, metric), header=0)
+                    csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
                 if db == 'clueweb09b':
-                    df = pd.read_csv('../ds/qe/{}/topics.clueweb09b.1-200.{}.{}.dataset.csv'.format(db, ranker, metric), header=0, usecols=['abstractqueryexpansion', 'query.1'])
-                    csv2json(df, '../ds/qs/{}/topics.clueweb09b.{}.{}/'.format(db, ranker, metric))
+                    df = pd.read_csv('../ds/qe/{}/topics.{}.1-200.{}.{}.dataset.csv'.format(db, db, ranker, metric), header=0)
+                    csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
                 if db == 'clueweb12b13':
-                    df = pd.read_csv('../ds/qe/{}/topics.clueweb12b13.201-300.{}.{}.dataset.csv'.format(db, ranker, metric), header=0, usecols=['abstractqueryexpansion', 'query.1'])
-                    csv2json(df, '../ds/qs/{}/topics.clueweb12b13.{}.{}/'.format(db, ranker, metric))
+                    df = pd.read_csv('../ds/qe/{}/topics.{}.201-300.{}.{}.dataset.csv'.format(db, db, ranker, metric), header=0)
+                    csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
+
+                if db == 'all':
+                    df1 = pd.read_csv('../ds/qe/robust04/topics.robust04.{}.{}.dataset.csv'.format(ranker, metric), header=0)
+                    df2 = pd.read_csv('../ds/qe/gov2/topics.gov2.701-850.{}.{}.dataset.csv'.format(ranker, metric), header=0)
+                    df3 = pd.read_csv('../ds/qe/clueweb09b/topics.clueweb09b.1-200.{}.{}.dataset.csv'.format(ranker, metric), header=0)
+                    df4 = pd.read_csv('../ds/qe/clueweb12b13/topics.clueweb12b13.201-300.{}.{}.dataset.csv'.format(ranker, metric), header=0)
+                    df5 = pd.concat([df1, df2, df3, df4], ignore_index=True)
+                    csv2json(df5, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
 
                 data_dir = '../ds/qs/{}/topics.{}.{}.{}/'.format(db, db, ranker, metric)
                 print('INFO: MAIN: Calling cair for {}'.format(data_dir))
-                call_cair_run(data_dir)
+                #call_cair_run(data_dir)
