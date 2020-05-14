@@ -62,7 +62,7 @@ def csv2json(df, output, topn=1):
                 else:
                     ftest.write(json.dumps(obj) + '\n')
 
-def call_cair_run(data_dir):
+def call_cair_run(data_dir, epochs):
     dataset_name = 'msmarco'#it is hard code in the library. Do not touch! :))
     baseline_path = 'cair/'
 
@@ -86,7 +86,7 @@ def call_cair_run(data_dir):
     #only hredqs can be unidirectional! all other models are in bidirectional mode
     df = pd.DataFrame(columns=['model', 'epoch', 'rouge', 'bleu', 'bleu_list', 'exact_match', 'f1', 'elapsed_time'])
     for baseline in ['seq2seq', 'acg', 'hredqs']:
-        for epoch in [e for e in range(1, 10)] + [e * 10 for e in range(1, 21)]:
+        for epoch in epochs:
             print(epoch)
             start_time = time.time()
             test_resutls = run((cli_cmd + '--model_dir {}/{} --model_name {}.e{} --model_type {} --num_epochs {}'.format(data_dir, baseline, baseline, epoch, baseline, epoch)).split())
@@ -102,11 +102,30 @@ def call_cair_run(data_dir):
                            ignore_index=True)
             df.to_csv('{}/results.csv'.format(data_dir, baseline), index=False)
 
+# # python -u main.py {topn=[1,2,...]} {topics=[robust04, gov2, clueweb09b, clueweb12b13, all]} 2>&1 | tee log &
+
+# # python -u main.py 1 robust04 2>&1 | tee robust04.topn1.log &
+# # python -u main.py 1 gov2 2>&1 | tee gov2.topn1.log &
+# # python -u main.py 1 clueweb09b 2>&1 | tee clueweb09b.topn1.log &
+# # python -u main.py 1 clueweb12b13 2>&1 | tee clueweb12b13.topn1.log &
+# # python -u main.py 5 robust04 2>&1 | tee robust04.topn5.log &
+# # python -u main.py 5 gov2 2>&1 | tee gov2.topn5.log &
+# # python -u main.py 5 clueweb09b 2>&1 | tee clueweb09b.topn5.log &
+# # python -u main.py 5 clueweb12b13 2>&1 | tee clueweb12b13.topn5.log &
+# # python -u main.py 1 all 2>&1 | tee all.topn1.log &
+# # python -u main.py 5 all 2>&1 | tee all.topn5.log &
+
 if __name__=='__main__':
+    topn = int(sys.argv[1])
+    dbs = sys.argv[2:]
+    if not dbs:
+        dbs = ['robust04', 'gov2', 'clueweb09b', 'clueweb12b13', 'all']
+    if not topn:
+        topn = 1
+
     rankers = ['-bm25', '-bm25 -rm3', '-qld', '-qld -rm3']
     metrics = ['map']
-    dbs = ['robust04', 'gov2', 'clueweb09b', 'clueweb12b13', 'all']
-    topn = 5
+
     for db in dbs:
         for ranker in rankers:
             ranker = ranker.replace('-', '').replace(' ', '.')
@@ -133,6 +152,7 @@ if __name__=='__main__':
                     df5 = pd.concat([df1, df2, df3, df4], ignore_index=True)
                     csv2json(df5, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
 
-                data_dir = '../ds/qs/{}/topics.{}.{}.{}/'.format(db, db, ranker, metric)
+                data_dir = '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric)
                 print('INFO: MAIN: Calling cair for {}'.format(data_dir))
-                #call_cair_run(data_dir)
+                #call_cair_run(data_dir, epochs=[e for e in range(1, 10)] + [e * 10 for e in range(1, 21)])
+                call_cair_run(data_dir, epochs=[100])
