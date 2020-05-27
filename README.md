@@ -5,7 +5,7 @@
 ### Overview
 ```qe/```: codebase for the query expansion methods (expanders).
 
-```qs/```: codebase for the query suggestion methods (suggesters), including [seq2seq with Attention](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418), [hred-qs](https://arxiv.org/abs/1507.02221).
+```qs/```: codebase for the query suggestion methods (suggesters), including [seq2seq with attention](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418), [hred-qs](https://arxiv.org/abs/1507.02221).
 
 ```pre/```: source folder for pre-trained models and/or embeddings, including [fasttext](https://fasttext.cc/docs/en/english-vectors.html) and [GloVe](https://nlp.stanford.edu/projects/glove/).
 
@@ -15,16 +15,15 @@
 
 ```ds/qs```: target folder for suggesters' outputs.
 
-```anserini/```: source folder for [Anserini](https://github.com/castorini/anserini) library and output indices for the corpuses.
+```anserini/```: source folder for [Anserini](https://github.com/castorini/anserini) and output indices for the corpuses.
 
 
 ### Prerequisites
 
-**Library**
+- [Anserini](https://github.com/castorini/anserini)
 
-```
-python 3.7
-```
+- Python 3.7 & the following libraries:
+
 ```
 pandas, scipy, numpy, collections, requests, urllib, subprocess
 ```
@@ -34,13 +33,10 @@ networkx, community
 ```
 gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 ```
-```
-anserini
-```
 
 **Pre-trained Model/Embedding**
 
-- [fasttext](https://fasttext.cc/docs/en/english-vectors.html)
+- [Fasttext](https://fasttext.cc/docs/en/english-vectors.html)
 - [GloVe](https://nlp.stanford.edu/projects/glove/)
 - [Joint Embedding of Hierarchical Categories and Entities for Concept Categorization and Dataless Classification](https://www.aclweb.org/anthology/C16-1252/)
 
@@ -52,9 +48,9 @@ anserini
 - ClueWeb12 [corpus, topics, qrels]
 - [Wikipedia Anchor Text](http://downloads.dbpedia.org/2016-10/core-i18n/en/anchor_text_en.ttl.bz2)
 
-### Installing
+## Installing
 
-- [Anserini](https://github.com/castorini/anserini) must be installed for indexing, information retrieval, and evaluation in the ```anserini/``` folder. The documents in the corpuses must be indexed by the following commands.
+- [Anserini](https://github.com/castorini/anserini) must be installed  in the ```anserini/``` for indexing, information retrieval, and evaluation on the corpuses. The documents in the corpuses must be indexed by the following commands.
 
 *Robust04* (already available at [here](https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-robust04-20191213.tar.gz))
 ```
@@ -88,12 +84,18 @@ $> python -u qe/main.py clueweb12b13 2>&1 | tee clueweb12b13.log &
 ```
 
 ### Query Suggestion (qs)
-The ```qs/main.py``` accept top-k; k is an positive integer, for considering the top-k golden expanded queries and the name of the corpus. Following commands are for top-5. It benchmark the golden expanded queries for [seq2seq with Attention](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418), [hred-qs](https://arxiv.org/abs/1507.02221) by using the codebase provided by [Ahmad et al.](https://github.com/wasiahmad/context_attentive_ir).
+The ```qs/main.py``` accepts a positive integer (k), for considering the top-k golden expanded queries and the name of the corpus. It benchmarks the golden expanded queries for [seq2seq with attention](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418), [hred-qs](https://arxiv.org/abs/1507.02221) by using the codebase provided by [Ahmad et al.](https://github.com/wasiahmad/context_attentive_ir).
+
+Following commands are for top-5:
 ```
 $> python -u qs/main.py 5 robust04 2>&1 | tee robust04.topn5.log &
 $> python -u qs/main.py 5 gov2 2>&1 | tee gov2.topn5.log &
 $> python -u qs/main.py 5 clueweb09b 2>&1 | tee clueweb09b.topn5.log &
 $> python -u qs/main.py 5 clueweb12b13 2>&1 | tee clueweb12b13.topn5.log &
+```
+
+By passing ```all``` as the name of the corpus, it is also possible to merge all the corpuses and do the benchmark:
+```
 $> python -u qs/main.py 5 all 2>&1 | tee all.topn5.log &
 ```
 
