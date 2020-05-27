@@ -4,27 +4,27 @@
 
 ### Overview
 
-- Codebases
+**Codebases**
 
 ```qe/```: codebase for the query expansion methods (**unsupervised query refinement methods**).
 
 ```qs/```: codebase for the query suggestion methods (**supervised query refinement method**), including [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221).
 
-- Source Folders [empty]
+**Source Folders [empty]**
 
-The followings source folders are supposed to be populated by corpus, datasets, or pre-trained models/embeddings.
+The followings source folders are supposed to be populated by input query datasets and/or pre-trained models/embeddings.
 
 ```pre/```: source folder for pre-trained models and/or embeddings, including [fasttext](https://fasttext.cc/docs/en/english-vectors.html) and [GloVe](https://nlp.stanford.edu/projects/glove/).
 
-```anserini/```: source folder for [Anserini](https://github.com/castorini/anserini) and output indices for the corpuses.
+```anserini/```: source folder for [Anserini](https://github.com/castorini/anserini) and output indices for the input query datasets.
 
-```ds/```: source folder for corpuses, including Robust04, Gov2, ClueWeb09, and ClueWeb12.
+```ds/```: source folder for input query datasets, including Robust04, Gov2, ClueWeb09, and ClueWeb12.
 
-- Target Folders
+**Target Folders**
 
 The target folders are the output repo for the query expansion methods (unsupervised query refinement methods) and query suggestion methods (unsupervised query refinement methods).
 
-```ds/qe/```: target folder for expanders' outputs. ***This folder contains the golden expanded queries.***
+```ds/qe/```: target folder for expanders' outputs. ***This folder contains the Gold standard dataset.***
 
 ```ds/qs```: target folder for suggesters' outputs. This folder contains the benchmark results only and the trained models are ignored due to their sizes.
 
@@ -50,7 +50,7 @@ gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 - [GloVe](https://nlp.stanford.edu/projects/glove/)
 - [Joint Embedding of Hierarchical Categories and Entities for Concept Categorization and Dataless Classification](https://www.aclweb.org/anthology/C16-1252/)
 
-**Corpus/Dataset**
+**Input Query Dataset**
 
 - Robust04 [corpus, topics, qrels]
 - Gov2 [corpus, topics, qrels]
@@ -60,7 +60,7 @@ gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 
 ## Installing
 
-- [Anserini](https://github.com/castorini/anserini) must be installed  in the ```anserini/``` for indexing, information retrieval, and evaluation on the corpuses. The documents in the corpuses must be indexed by the following commands.
+- [Anserini](https://github.com/castorini/anserini) must be installed  in the ```anserini/``` for indexing, information retrieval, and evaluation on the input query datasets. The documents in the corpuses must be indexed by the following commands.
 
 *Robust04* (already available at [here](https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-robust04-20191213.tar.gz))
 ```
@@ -85,7 +85,7 @@ $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collect
 
 ## Running
 ### Query Expansion (Unsupervised Query Refinement Method)
-The ```qe/main.py``` accept the corpus name whose queries are to be expanded and evaluated.
+The ```qe/main.py``` accept the name of the input query dataset whose queries are to be expanded and evaluated.
 ```
 $> python -u qe/main.py robust04 2>&1 | tee robust04.log &
 $> python -u qe/main.py gov2 2>&1 | tee gov2.log &
@@ -93,17 +93,17 @@ $> python -u qe/main.py clueweb09b 2>&1 | tee clueweb09b.log &
 $> python -u qe/main.py clueweb12b13 2>&1 | tee clueweb12b13.log &
 ```
 
-### Golden Expanded Queries
+### Gold Standard Dataset
 
 **Path**
 
-The golden expanded queries for each corpus is generated in ```ds/qe/{corpus name}/*.{retrieval method}.{metric}.dataset.csv```.
+The Gold standard dataset for each input query dataset is generated in ```ds/qe/{input query dataset name}/*.{retrieval method}.{metric}.dataset.csv```.
 
 **File Structure**
 
 The columns are:
 
-- ```qid```: the original query id in the corpus;
+- ```qid```: the original query id in the input query dataset;
 
 - ```abstractqueryexpansion```: the original query;
 
@@ -134,7 +134,7 @@ Another instance is:
 that is no expansion method (expander) is able to improve the query# ```306``` using ```bm25``` retrieval method in terms of ```map```.
 
 ### [Benchmark] Query Suggestion (Supervised Query Refinement Method)
-The ```qs/main.py``` accepts a positive integer (k), for considering the top-k golden expanded queries and the name of the corpus. It benchmarks the golden expanded queries for [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221) by using the codebase provided by [Ahmad et al.](https://github.com/wasiahmad/context_attentive_ir).
+The ```qs/main.py``` accepts a positive integer (k), for considering the top-k golden expanded queries and the name of the input query dataset. It benchmarks the golden expanded queries for [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221) by using the codebase provided by [Ahmad et al.](https://github.com/wasiahmad/context_attentive_ir).
 
 Following commands are for top-5:
 ```
@@ -144,7 +144,7 @@ $> python -u qs/main.py 5 clueweb09b 2>&1 | tee clueweb09b.topn5.log &
 $> python -u qs/main.py 5 clueweb12b13 2>&1 | tee clueweb12b13.topn5.log &
 ```
 
-By passing ```all``` as the name of the corpus, it is also possible to merge all the corpuses and do the benchmark:
+By passing ```all``` as the name of the input query dataset, it is also possible to merge all the input query datasets and do the benchmark:
 ```
 $> python -u qs/main.py 5 all 2>&1 | tee all.topn5.log &
 ```
