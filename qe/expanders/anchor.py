@@ -10,6 +10,9 @@ import sys, os
 sys.path.extend(['../qe'])
 
 from expanders.word2vec import Word2Vec
+# The anchor texts dataset:
+# https://wiki.dbpedia.org/downloads-2016-10
+# http://downloads.dbpedia.org/2016-10/core-i18n/en/anchor_text_en.ttl.bz2
 
 class Anchor(Word2Vec):
     def __init__(self, anchorfile, vectorfile, topn=3, replace=False):
