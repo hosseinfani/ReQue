@@ -32,7 +32,7 @@ ds/qe/clueweb12b13/*
 !ds/qe/clueweb12b13/topics.clueweb12b13.201-300.qld.map.dataset.csv
 !ds/qe/clueweb12b13/topics.clueweb12b13.201-300.qld.rm3.map.dataset.csv
 
-ds/qs/
+#ds/qs/
 
 qs/cair/data/fasttext/crawl-300d-2M-subword.vec
 qs/cair/data/

@@ -3,20 +3,30 @@
 ## Getting Started
 
 ### Overview
+
+- Codebases
+
 ```qe/```: codebase for the query expansion methods (expanders).
 
 ```qs/```: codebase for the query suggestion methods (suggesters), including [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418), [hred-qs](https://arxiv.org/abs/1507.02221).
 
+- Source Folders
+
+The followings source folders are initially empty. They are supposed to be populated by corpus, datasets, or pre-trained models/embeddings.
+
 ```pre/```: source folder for pre-trained models and/or embeddings, including [fasttext](https://fasttext.cc/docs/en/english-vectors.html) and [GloVe](https://nlp.stanford.edu/projects/glove/).
-
-```ds/```: source folder for corpuses, including Robust04, Gov2, ClueWeb09, and ClueWeb12.
-
-```ds/qe/```: target folder for expanders' outputs.
-
-```ds/qs```: target folder for suggesters' outputs.
 
 ```anserini/```: source folder for [Anserini](https://github.com/castorini/anserini) and output indices for the corpuses.
 
+```ds/```: source folder for corpuses, including Robust04, Gov2, ClueWeb09, and ClueWeb12.
+
+- Target Folders
+
+The target folders are the output repo for the query expansion methods (qe) and query suggestion methods (qs).
+
+```ds/qe/```: target folder for expanders' outputs. ***This folder contains the golden expanded queries.***
+
+```ds/qs```: target folder for suggesters' outputs. ***This folder contains the benchmark results only. The trained models are ignored due to the models' size.*** 
 
 ### Prerequisites
 
@@ -115,13 +125,13 @@ The golden dataset for ```Robust04``` using the retrieval method ```bm25``` and 
 
 ```311,Industrial Espionage,0.4382,1,relevancefeedback.topn10.bm25,0.489,industrial espionage compani bnd mr foreign intellig samsung vw mossad```
 
-which means that there is only ```1``` golden expanded query for the query# 311, the original query ```Industrial Espionage``` is expanded to ```industrial espionage compani bnd mr foreign intellig samsung vw mossad``` by ```conceptluster```, and the ```map``` is increased from ```0.4382``` (original map) to ```0.489```.
+which means that there is only ```1``` golden expanded query for the query# ```311```, the original query ```Industrial Espionage``` is expanded to ```industrial espionage compani bnd mr foreign intellig samsung vw mossad``` by ```conceptluster```, and the ```map``` is improved from ```0.4382``` (original map) to ```0.489```.
 
 Another instance is:
 
 ```306,African Civilian Deaths,0.1196,0```
 
-that is no expansion methods (expanders) is able to improve the query# ```306``` using ```bm25``` retrieval method in terms of ```map```.
+that is no expansion method (expander) is able to improve the query# ```306``` using ```bm25``` retrieval method in terms of ```map```.
 
 ### [Benchmark] Query Suggestion (qs)
 The ```qs/main.py``` accepts a positive integer (k), for considering the top-k golden expanded queries and the name of the corpus. It benchmarks the golden expanded queries for [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418), [hred-qs](https://arxiv.org/abs/1507.02221) by using the codebase provided by [Ahmad et al.](https://github.com/wasiahmad/context_attentive_ir).
