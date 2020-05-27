@@ -6,13 +6,13 @@
 
 - Codebases
 
-```qe/```: codebase for the query expansion methods (expanders).
+```qe/```: codebase for the query expansion methods (unsupervised query refinement methods).
 
-```qs/```: codebase for the query suggestion methods (suggesters), including [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418), [hred-qs](https://arxiv.org/abs/1507.02221).
+```qs/```: codebase for the query suggestion methods (supervised query refinement method), including [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221).
 
-- Source Folders
+- Source Folders [empty]
 
-The followings source folders are initially empty. They are supposed to be populated by corpus, datasets, or pre-trained models/embeddings.
+The followings source folders are supposed to be populated by corpus, datasets, or pre-trained models/embeddings.
 
 ```pre/```: source folder for pre-trained models and/or embeddings, including [fasttext](https://fasttext.cc/docs/en/english-vectors.html) and [GloVe](https://nlp.stanford.edu/projects/glove/).
 
@@ -22,11 +22,11 @@ The followings source folders are initially empty. They are supposed to be popul
 
 - Target Folders
 
-The target folders are the output repo for the query expansion methods (qe) and query suggestion methods (qs).
+The target folders are the output repo for the query expansion methods (unsupervised query refinement methods) and query suggestion methods (unsupervised query refinement methods).
 
 ```ds/qe/```: target folder for expanders' outputs. ***This folder contains the golden expanded queries.***
 
-```ds/qs```: target folder for suggesters' outputs. ***This folder contains the benchmark results only. The trained models are ignored due to the models' size.*** 
+```ds/qs```: target folder for suggesters' outputs. This folder contains the benchmark results only and the trained models are ignored due to their sizes.
 
 ### Prerequisites
 
@@ -84,7 +84,7 @@ $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collect
 ```
 
 ## Running
-### Query Expansion (qe)
+### Query Expansion (Unsupervised Query Refinement Method)
 The ```qe/main.py``` accept the corpus name whose queries are to be expanded and evaluated.
 ```
 $> python -u qe/main.py robust04 2>&1 | tee robust04.log &
@@ -133,8 +133,8 @@ Another instance is:
 
 that is no expansion method (expander) is able to improve the query# ```306``` using ```bm25``` retrieval method in terms of ```map```.
 
-### [Benchmark] Query Suggestion (qs)
-The ```qs/main.py``` accepts a positive integer (k), for considering the top-k golden expanded queries and the name of the corpus. It benchmarks the golden expanded queries for [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418), [hred-qs](https://arxiv.org/abs/1507.02221) by using the codebase provided by [Ahmad et al.](https://github.com/wasiahmad/context_attentive_ir).
+### [Benchmark] Query Suggestion (Supervised Query Refinement Method)
+The ```qs/main.py``` accepts a positive integer (k), for considering the top-k golden expanded queries and the name of the corpus. It benchmarks the golden expanded queries for [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221) by using the codebase provided by [Ahmad et al.](https://github.com/wasiahmad/context_attentive_ir).
 
 Following commands are for top-5:
 ```
