@@ -35,7 +35,7 @@ def csv2json(df, output, topn=1):
                 session_queries = []
                 session_queries.append(qObj)
                 qcol = 'query.' + str(i)
-                if pd.isna(row[qcol]):
+                if (qcol not in df.columns) or pd.isna(row[qcol]):
                     break
                 q_Obj = OrderedDict([
                     ('id', generate_random_string(12)),
@@ -108,12 +108,17 @@ def call_cair_run(data_dir, epochs):
 # # python -u main.py 1 gov2 2>&1 | tee gov2.topn1.log &
 # # python -u main.py 1 clueweb09b 2>&1 | tee clueweb09b.topn1.log &
 # # python -u main.py 1 clueweb12b13 2>&1 | tee clueweb12b13.topn1.log &
+# # python -u main.py 1 all 2>&1 | tee all.topn1.log &
 # # python -u main.py 5 robust04 2>&1 | tee robust04.topn5.log &
 # # python -u main.py 5 gov2 2>&1 | tee gov2.topn5.log &
 # # python -u main.py 5 clueweb09b 2>&1 | tee clueweb09b.topn5.log &
 # # python -u main.py 5 clueweb12b13 2>&1 | tee clueweb12b13.topn5.log &
-# # python -u main.py 1 all 2>&1 | tee all.topn1.log &
 # # python -u main.py 5 all 2>&1 | tee all.topn5.log &
+# # python -u main.py 100 robust04 2>&1 | tee robust04.topn100.log &
+# # python -u main.py 100 gov2 2>&1 | tee gov2.topn100.log &
+# # python -u main.py 100 clueweb09b 2>&1 | tee clueweb09b.topn100.log &
+# # python -u main.py 100 clueweb12b13 2>&1 | tee clueweb12b13.topn100.log &
+# # python -u main.py 100 all 2>&1 | tee all.topn100.log &
 
 if __name__=='__main__':
     topn = int(sys.argv[1])
