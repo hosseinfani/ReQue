@@ -4,11 +4,17 @@
 
 ### Overview
 ```qe/```: codebase for the query expansion methods (expanders).
+
 ```qs/```: codebase for the query suggestion methods (suggesters), including [seq2seq with Attention](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418), [hred-qs](https://arxiv.org/abs/1507.02221).
+
 ```pre/```: source folder for pre-trained models and/or embeddings, including [fasttext](https://fasttext.cc/docs/en/english-vectors.html) and [GloVe](https://nlp.stanford.edu/projects/glove/).
+
 ```ds/```: source folder for corpuses, including Robust04, Gov2, ClueWeb09, and ClueWeb12.
+
 ```ds/qe/```: target folder for expanders' outputs.
+
 ```ds/qs```: target folder for suggesters' outputs.
+
 ```anserini/```: source folder for [Anserini](https://github.com/castorini/anserini) library and output indices for the corpuses.
 
 
