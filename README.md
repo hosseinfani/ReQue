@@ -86,9 +86,11 @@ $> python -u qe/main.py clueweb12b13 2>&1 | tee clueweb12b13.log &
 ### Golden Expanded Queries
 
 **Path**
+
 The golden expanded queries for each corpus is generated in ```ds/qe/{corpus name}/*.{retrieval method}.{metric}.dataset.csv```.
 
 **File Structure**
+
 The columns are:
 
 - ```qid```: the original query id in the corpus;
@@ -108,11 +110,14 @@ The columns are:
 and ```0 <= i <= {star_model_count}```.
 
 **Example**
+
 The golden dataset for ```Robust04``` using the retrieval method ```bm25``` and based on the evaluation metric ```map``` (mean average precision) is ```topics.robust04.bm25.map.dataset.csv``` and includes:
 
 ```311,Industrial Espionage,0.4382,1,relevancefeedback.topn10.bm25,0.489,industrial espionage compani bnd mr foreign intellig samsung vw mossad```
 
 which means that there is only ```1``` golden expanded query for the query# 311, the original query ```Industrial Espionage``` is expanded to ```industrial espionage compani bnd mr foreign intellig samsung vw mossad``` by ```conceptluster```, and the ```map``` is increased from ```0.4382``` (original map) to ```0.489```.
+
+Another instance is:
 
 ```306,African Civilian Deaths,0.1196,0```
 
