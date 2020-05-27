@@ -22,7 +22,7 @@
 
 - [Anserini](https://github.com/castorini/anserini)
 
-- Python 3.7 & the following libraries:
+- Python 3.7 & the following packages:
 
 ```
 pandas, scipy, numpy, collections, requests, urllib, subprocess
@@ -83,7 +83,42 @@ $> python -u qe/main.py clueweb09b 2>&1 | tee clueweb09b.log &
 $> python -u qe/main.py clueweb12b13 2>&1 | tee clueweb12b13.log &
 ```
 
-### Query Suggestion (qs)
+### Golden Expanded Queries
+
+**Path**
+The golden expanded queries for each corpus is generated in ```ds/qe/{corpus name}/*.{retrieval method}.{metric}.dataset.csv```.
+
+**File Structure**
+The columns are:
+
+- ```qid```: the original query id in the corpus;
+
+- ```abstractqueryexpansion```: the original query;
+
+- ```abstractqueryexpansion.{retrieval method}.{metric}```: the original evaluation value for the {retrieval method} in terms of {metric};
+
+- ```star_model_count```: number of expansions that improve the original evaluation value. Eq. number of golden expanded queries for the original query;
+
+- ```method.{i}```: the name of the i-th expansion method (expander) that improve the original evaluation value;
+
+- ```metric.{i}```: the evaluation value of the i-th golden expanded query;
+
+- ```query.{i}```: the actual i-th golden expanded query;
+
+and ```0 <= i <= {star_model_count}```.
+
+**Example**
+The golden dataset for ```Robust04``` using the retrieval method ```bm25``` and based on the evaluation metric ```map``` (mean average precision) is ```topics.robust04.bm25.map.dataset.csv``` and includes:
+
+```311,Industrial Espionage,0.4382,1,relevancefeedback.topn10.bm25,0.489,industrial espionage compani bnd mr foreign intellig samsung vw mossad```
+
+which means that there is only ```1``` golden expanded query for the query# 311, the original query ```Industrial Espionage``` is expanded to ```industrial espionage compani bnd mr foreign intellig samsung vw mossad``` by ```conceptluster```, and the ```map``` is increased from ```0.4382``` (original map) to ```0.489```.
+
+```306,African Civilian Deaths,0.1196,0```
+
+that is no expansion methods (expanders) is able to improve the query# ```306``` using ```bm25``` retrieval method in terms of ```map```.
+
+### [Benchmark] Query Suggestion (qs)
 The ```qs/main.py``` accepts a positive integer (k), for considering the top-k golden expanded queries and the name of the corpus. It benchmarks the golden expanded queries for [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418), [hred-qs](https://arxiv.org/abs/1507.02221) by using the codebase provided by [Ahmad et al.](https://github.com/wasiahmad/context_attentive_ir).
 
 Following commands are for top-5:
