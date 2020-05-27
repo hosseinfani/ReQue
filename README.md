@@ -1,17 +1,13 @@
 # ReQue: A Benchmark Workflow and Dataset Collection for Query Refinement
 
-## Getting Started
-
-### Overview
-
-**Codebases**
+## Overview
+### Codebases
 
 ```qe/```: codebase for the query expansion methods (**unsupervised query refinement methods**).
 
 ```qs/```: codebase for the query suggestion methods (**supervised query refinement method**), including [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221).
 
-**Source Folders [empty]**
-
+### Source Folders [empty]
 The followings source folders are supposed to be populated by input query datasets and/or pre-trained models/embeddings.
 
 ```pre/```: source folder for pre-trained models and/or embeddings, including [fasttext](https://fasttext.cc/docs/en/english-vectors.html) and [GloVe](https://nlp.stanford.edu/projects/glove/).
@@ -20,38 +16,26 @@ The followings source folders are supposed to be populated by input query datase
 
 ```ds/```: source folder for input query datasets, including Robust04, Gov2, ClueWeb09, and ClueWeb12.
 
-**Target Folders**
-
+### Target Folders
 The target folders are the output repo for the query expansion methods (unsupervised query refinement methods) and query suggestion methods (unsupervised query refinement methods).
 
-```ds/qe/```: target folder for expanders' outputs. ***This folder contains the Gold standard dataset.***
+```ds/qe/```: target folder for expanders' outputs. ***This folder contains the gold standard dataset.***
 
 ```ds/qs```: target folder for suggesters' outputs. This folder contains the benchmark results only and the trained models are ignored due to their sizes.
 
-### Prerequisites
+## Prerequisites
+### [Anserini](https://github.com/castorini/anserini)
+### Python 3.7 & the following packages:
+- ```pandas, scipy, numpy, collections, requests, urllib, subprocess```
+- ```networkx, community```
+- ```gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]```
 
-- [Anserini](https://github.com/castorini/anserini)
-
-- Python 3.7 & the following packages:
-
-```
-pandas, scipy, numpy, collections, requests, urllib, subprocess
-```
-```
-networkx, community
-```
-```
-gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
-```
-
-**Pre-trained Model/Embedding**
-
+### Pre-trained Model/Embedding
 - [Fasttext](https://fasttext.cc/docs/en/english-vectors.html)
 - [GloVe](https://nlp.stanford.edu/projects/glove/)
 - [Joint Embedding of Hierarchical Categories and Entities for Concept Categorization and Dataless Classification](https://www.aclweb.org/anthology/C16-1252/)
 
-**Input Query Dataset**
-
+### Input Query Dataset
 - Robust04 [corpus, topics, qrels]
 - Gov2 [corpus, topics, qrels]
 - ClueWeb09 [corpus, topics, qrels]
@@ -59,29 +43,19 @@ gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 - [Wikipedia Anchor Text](http://downloads.dbpedia.org/2016-10/core-i18n/en/anchor_text_en.ttl.bz2)
 
 ## Installing
+[Anserini](https://github.com/castorini/anserini) must be installed  in the ```anserini/``` for indexing, information retrieval, and evaluation on the input query datasets. The documents in the corpuses must be indexed by the following commands.
 
-- [Anserini](https://github.com/castorini/anserini) must be installed  in the ```anserini/``` for indexing, information retrieval, and evaluation on the input query datasets. The documents in the corpuses must be indexed by the following commands.
+### Robust04 (already available at [here](https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-robust04-20191213.tar.gz))
+```$> anserini/target/appassembler/bin/IndexCollection -collection TrecCollection -input Robust04-Corpus -index lucene-index.robust04.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.robust04.pos+docvectors+rawdocs &```
 
-*Robust04* (already available at [here](https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-robust04-20191213.tar.gz))
-```
-$> anserini/target/appassembler/bin/IndexCollection -collection TrecCollection -input Robust04-Corpus -index lucene-index.robust04.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.robust04.pos+docvectors+rawdocs &
-```
+### Gov2
+```$> anserini/target/appassembler/bin/IndexCollection -collection TrecwebCollection -input Gov2-Corpus -index lucene-index.gov2.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.gov2.pos+docvectors+rawdocs &```
 
+### ClueWeb09-B-Corpus
+```$> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb09Collection -input ClueWeb09-B-Corpus -index lucene-index.cw09b.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw09b.pos+docvectors+rawdocs &```
 
-*Gov2*
-```
-$> anserini/target/appassembler/bin/IndexCollection -collection TrecwebCollection -input Gov2-Corpus -index lucene-index.gov2.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.gov2.pos+docvectors+rawdocs &
-```
-
-*ClueWeb09-B-Corpus*
-```
-$> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb09Collection -input ClueWeb09-B-Corpus -index lucene-index.cw09b.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw09b.pos+docvectors+rawdocs &
-```
-
-*ClueWeb12-B-Corpus*
-```
-$> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collection -input ClueWeb12-B-Corpus -index lucene-index.cw12b13.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw12b13.pos+docvectors+rawdocs &
-```
+### ClueWeb12-B-Corpus
+```$> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collection -input ClueWeb12-B-Corpus -index lucene-index.cw12b13.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw12b13.pos+docvectors+rawdocs &```
 
 ## Running
 ### Query Expansion (Unsupervised Query Refinement Method)
@@ -93,14 +67,12 @@ $> python -u qe/main.py clueweb09b 2>&1 | tee clueweb09b.log &
 $> python -u qe/main.py clueweb12b13 2>&1 | tee clueweb12b13.log &
 ```
 
-### Gold Standard Dataset
-
-**Path**
+## Gold Standard Dataset
+### Path
 
 The Gold standard dataset for each input query dataset is generated in ```ds/qe/{input query dataset name}/*.{retrieval method}.{metric}.dataset.csv```.
 
-**File Structure**
-
+### File Structure
 The columns are:
 
 - ```qid```: the original query id in the input query dataset;
@@ -119,8 +91,7 @@ The columns are:
 
 and ```0 <= i <= {star_model_count}```.
 
-**Example**
-
+### Example
 The golden dataset for ```Robust04``` using the retrieval method ```bm25``` and based on the evaluation metric ```map``` (mean average precision) is ```topics.robust04.bm25.map.dataset.csv``` and includes:
 
 ```311,Industrial Espionage,0.4382,1,relevancefeedback.topn10.bm25,0.489,industrial espionage compani bnd mr foreign intellig samsung vw mossad```
@@ -133,7 +104,7 @@ Another instance is:
 
 that is no expansion method (expander) is able to improve the query# ```306``` using ```bm25``` retrieval method in terms of ```map```.
 
-### [Benchmark] Query Suggestion (Supervised Query Refinement Method)
+## [Benchmark] Query Suggestion (Supervised Query Refinement Method)
 The ```qs/main.py``` accepts a positive integer (k), for considering the top-k golden expanded queries and the name of the input query dataset. It benchmarks the golden expanded queries for [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221) by using the codebase provided by [Ahmad et al.](https://github.com/wasiahmad/context_attentive_ir).
 
 Following commands are for top-5:
@@ -150,7 +121,5 @@ $> python -u qs/main.py 5 all 2>&1 | tee all.topn5.log &
 ```
 
 ## Authors
-
 ## License
-
 ## Acknowledgments
