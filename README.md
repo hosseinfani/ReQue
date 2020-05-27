@@ -26,9 +26,11 @@ The target folders are the output repo for the query expansion methods (unsuperv
 ## Prerequisites
 ### [Anserini](https://github.com/castorini/anserini)
 ### Python 3.7 & the following packages:
-- ```pandas, scipy, numpy, collections, requests, urllib, subprocess```
-- ```networkx, community```
-- ```gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]```
+```
+pandas, scipy, numpy, collections, requests, urllib, subprocess
+networkx, community
+gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
+```
 
 ### Pre-trained Model/Embedding
 - [Fasttext](https://fasttext.cc/docs/en/english-vectors.html)
@@ -46,16 +48,24 @@ The target folders are the output repo for the query expansion methods (unsuperv
 [Anserini](https://github.com/castorini/anserini) must be installed  in the ```anserini/``` for indexing, information retrieval, and evaluation on the input query datasets. The documents in the corpuses must be indexed by the following commands.
 
 ### Robust04 (already available at [here](https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-robust04-20191213.tar.gz))
-```$> anserini/target/appassembler/bin/IndexCollection -collection TrecCollection -input Robust04-Corpus -index lucene-index.robust04.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.robust04.pos+docvectors+rawdocs &```
+```
+$> anserini/target/appassembler/bin/IndexCollection -collection TrecCollection -input Robust04-Corpus -index lucene-index.robust04.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.robust04.pos+docvectors+rawdocs &
+```
 
 ### Gov2
-```$> anserini/target/appassembler/bin/IndexCollection -collection TrecwebCollection -input Gov2-Corpus -index lucene-index.gov2.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.gov2.pos+docvectors+rawdocs &```
+```
+$> anserini/target/appassembler/bin/IndexCollection -collection TrecwebCollection -input Gov2-Corpus -index lucene-index.gov2.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.gov2.pos+docvectors+rawdocs &
+```
 
 ### ClueWeb09-B-Corpus
-```$> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb09Collection -input ClueWeb09-B-Corpus -index lucene-index.cw09b.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw09b.pos+docvectors+rawdocs &```
+```
+$> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb09Collection -input ClueWeb09-B-Corpus -index lucene-index.cw09b.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw09b.pos+docvectors+rawdocs &
+```
 
 ### ClueWeb12-B-Corpus
-```$> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collection -input ClueWeb12-B-Corpus -index lucene-index.cw12b13.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw12b13.pos+docvectors+rawdocs &```
+```
+$> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collection -input ClueWeb12-B-Corpus -index lucene-index.cw12b13.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw12b13.pos+docvectors+rawdocs &
+```
 
 ## Running
 ### Query Expansion (Unsupervised Query Refinement Method)
