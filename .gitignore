@@ -4,7 +4,7 @@ misc
 ds/robust04/index-robust04-20191213/
 ds/
 ds/qe/robust04/*
-!ds/qe/robust04/*.dataset.csv
+!ds/qe/robust04/topics.robust04.qld.rm3.map.dataset.csv
 qs/cair/data/fasttext/crawl-300d-2M-subword.vec
 qs/cair/data/
 pre/
