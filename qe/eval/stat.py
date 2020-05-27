@@ -1,11 +1,13 @@
-#TODO: needs some refactor
+# TODO: needs some refactor
 import os, enum, os.path
 from os import path
 import pandas as pd
 
 import sys
+
 sys.path.extend(['../qe'])
 from cmn import expander_factory
+
 
 class AnalysisLevel(enum.Enum):
     PER_FILE = 1
@@ -17,8 +19,8 @@ class QueryExpanderCategory(enum.Enum):
     Stemming_Analysis = 1
     Semantic_Analysis = 2
     Term_Clustering = 3
-    Concept_clustering = 4
-    Anchor_text = 5
+    Concept_Clustering = 4
+    Anchor_Text = 5
     Wikipedia = 6
     Top_Documents = 7
     Document_Summaries = 8
@@ -44,7 +46,7 @@ class ResultAnalyzer:
 
         self.reset()
 
-    def get_indices_for_dataset(self, dataset):
+    def get_range_for_dataset(self, dataset):
         indices = dict({
             "robust04": [""],
             "gov2": [".701-850"],
@@ -58,6 +60,8 @@ class ResultAnalyzer:
         self.number_of_queries = 0
         self.improvement_count = 0
         self.improvement_sum = 0.0
+        self.category_improvement_count = [0] * len(QueryExpanderCategory)
+        self.category_improvement_sum = [0] * len(QueryExpanderCategory)
         if len(self.query_expander_contributions):
             for key in self.query_expander_contributions:
                 self.query_expander_contributions[key] = 0
@@ -99,7 +103,7 @@ class ResultAnalyzer:
                     csv_file_name = csv_file_name.replace("{original_dataset_name}", self.current_dataset)
                     csv_file_name = csv_file_name.replace("{ranker}", self.current_ranker)
                     csv_file_name = csv_file_name.replace("{metric}", self.current_metric)
-                    indices = self.get_indices_for_dataset(self.current_dataset)
+                    indices = self.get_range_for_dataset(self.current_dataset)
 
                     for index in indices:
                         temp = csv_file_name.replace(".{topic_first_index-topic_last_index}", index)
@@ -131,68 +135,98 @@ class ResultAnalyzer:
         self.output.close()
         self.reset()
 
+    def print_query_expander_contributions(self, sorted_map):
+        for key in sorted_map:
+            self.output.write(",{}".format(key))
+        self.output.write("\n")
+        self.output.write("contributionToAll")
+        for key in sorted_map:
+            self.output.write(",{}".format(self.query_expander_contributions[key]))
+
+    def print_query_expander_contributions_to_best(self, sorted_map):
+        self.output.write("\n")
+        self.output.write("contributionToBest")
+        sorted_map = sorted(self.query_expander_contributions_best.keys())
+        for key in sorted_map:
+            self.output.write(",{}".format(self.query_expander_contributions_best[key]))
+
+    def print_metrics(self):
+        self.output.write("\n\n ")
+        self.output.write("AVG_QE_PER_Q, AVG_QE_IMPROVEMENT")
+        self.output.write("\n")
+        average = self.number_of_improvements * 1.0 / self.number_of_queries
+        improvement_average = 0
+        if self.improvement_count > 0:
+            improvement_average = self.improvement_sum * 1.0 / self.improvement_count
+        self.output.write("{},{}".format(round(average, 2), round(improvement_average, 2)))
+
+        self.output.write("\n\n")
+        for category in QueryExpanderCategory:
+            self.output.write(",{}".format(str(category).replace("QueryExpanderCategory.", "")))
+
+        self.output.write("\n")
+        self.output.write(" AVG_QE_IMPROVEMENT_PER_CATEGORY")
+        category_improvement_average = [0] * len(QueryExpanderCategory)
+        for i in range(len(QueryExpanderCategory)):
+            if self.category_improvement_count[i] > 0:
+                category_improvement_average[i] = self.category_improvement_sum[i] * 1.0 / \
+                                                  self.category_improvement_count[i]
+            self.output.write(",{}".format(round(category_improvement_average[i], 2)))
+
+    def print_category_contributions(self, sorted_map):
+        self.output.write("\n\n")
+        for category in QueryExpanderCategory:
+            self.output.write(",{}".format(str(category).replace("QueryExpanderCategory.", "")))
+        self.output.write("\n")
+        self.output.write("contributionToAll")
+        for category in QueryExpanderCategory:
+            sum = 0
+            for key in sorted_map:
+                if self.belongs_to_category(key, category):
+                    sum += self.query_expander_contributions[key]
+            self.output.write(",{}".format(sum))
+
+    def print_category_contributions_to_best(self, sorted_map):
+        self.output.write("\n")
+        self.output.write("contributionToBest")
+        total = 0
+        for category in QueryExpanderCategory:
+            sum = 0
+            for key in sorted_map:
+                if self.belongs_to_category(key, category):
+                    sum += self.query_expander_contributions_best[key]
+            total += sum
+            self.output.write(",{}".format(sum))
+        return total
+
+    def print_category_contributions_to_best_by_percentage(self, sorted_map, total):
+        self.output.write("\n")
+        self.output.write("contributionToBest(Percentage)")
+        for category in QueryExpanderCategory:
+            sum = 0
+            for key in sorted_map:
+                if self.belongs_to_category(key, category):
+                    sum += self.query_expander_contributions_best[key]
+            ratio = round(sum * 1.0 / total * 100, 2)
+            self.output.write(",{}".format(ratio))
+
     def print_results(self):
         if self.number_of_queries == 0:
             print("No result available")
         else:
             sorted_map = sorted(self.query_expander_contributions.keys())
-            for key in sorted_map:
-                self.output.write(",{}".format(key))
-            self.output.write("\n")
-            self.output.write("contributionToAll")
-            for key in sorted_map:
-                self.output.write(",{}".format(self.query_expander_contributions[key]))
-
-            self.output.write("\n")
-            self.output.write("contributionToBest")
+            self.print_query_expander_contributions(sorted_map)
             sorted_map = sorted(self.query_expander_contributions_best.keys())
-            for key in sorted_map:
-                self.output.write(",{}".format(self.query_expander_contributions_best[key]))
+            self.print_query_expander_contributions_to_best(sorted_map)
+            self.print_metrics()
+            self.print_category_contributions(sorted_map)
+            total = self.print_category_contributions_to_best(sorted_map)
+            self.print_category_contributions_to_best_by_percentage(sorted_map, total)
 
-            self.output.write("\n\n ")
-            self.output.write("AVG_QE_PER_Q, AVG_QE_IMPROVEMENT")
-            self.output.write("\n")
-            average = self.number_of_improvements * 1.0 / self.number_of_queries
-            improvement_average = self.improvement_sum * 1.0 / self.improvement_count
-            self.output.write("{},{}".format(round(average, 2), round(improvement_average, 2)))
-
-            self.output.write("\n\n")
-            for category in QueryExpanderCategory:
-                self.output.write(",{}".format(str(category).replace("QueryExpanderCategory.", "")))
-            self.output.write("\n")
-            self.output.write("contributionToAll")
-            for category in QueryExpanderCategory:
-                sum = 0
-                for key in sorted_map:
-                    if self.belongs(key, category):
-                        sum += self.query_expander_contributions[key]
-                self.output.write(",{}".format(sum))
-
-            self.output.write("\n")
-            self.output.write("contributionToBest")
-            total = 0
-            for category in QueryExpanderCategory:
-                sum = 0
-                for key in sorted_map:
-                    if self.belongs(key, category):
-                        sum += self.query_expander_contributions_best[key]
-                total += sum
-                self.output.write(",{}".format(sum))
-
-            self.output.write("\n")
-            self.output.write("contributionToBest(Percentage)")
-            for category in QueryExpanderCategory:
-                sum = 0
-                for key in sorted_map:
-                    if self.belongs(key, category):
-                        sum += self.query_expander_contributions_best[key]
-                ratio = round(sum * 1.0 / total * 100, 2)
-                self.output.write(",{}".format(ratio))
-
-    def belongs(self, query_expander_method, query_expander_category):
+    def belongs_to_category(self, query_expander_method, query_expander_category):
         return self.get_category(query_expander_method) == query_expander_category
 
-    def get_category(self, query_expander_method):
+    def get_category(self, query_expander_method, return_index=False):
         stemming_methods = ["stem.krovetz",
                             "stem.lovins",
                             "stem.paicehusk",
@@ -243,22 +277,22 @@ class ResultAnalyzer:
                                       "docluster.topn10.3.qld",
                                       "docluster.topn10.3.qld.rm3",
                                       ]
-        if query_expander_method in semantic_methods:
-            return QueryExpanderCategory.Semantic_Analysis
-        elif query_expander_method in stemming_methods:
-            return QueryExpanderCategory.Stemming_Analysis
+        if query_expander_method in stemming_methods:
+            return 0 if return_index else QueryExpanderCategory.Stemming_Analysis
+        elif query_expander_method in semantic_methods:
+            return 1 if return_index else QueryExpanderCategory.Semantic_Analysis
         elif query_expander_method in term_clustering_methods:
-            return QueryExpanderCategory.Term_Clustering
+            return 2 if return_index else QueryExpanderCategory.Term_Clustering
         elif query_expander_method in concept_clustering_methods:
-            return QueryExpanderCategory.Concept_clustering
+            return 3 if return_index else QueryExpanderCategory.Concept_Clustering
         elif query_expander_method in anchor_text_methods:
-            return QueryExpanderCategory.Anchor_text
+            return 4 if return_index else QueryExpanderCategory.Anchor_Text
         elif query_expander_method in wikipedia_methods:
-            return QueryExpanderCategory.Wikipedia
+            return 5 if return_index else QueryExpanderCategory.Wikipedia
         elif query_expander_method in top_documents_methods:
-            return QueryExpanderCategory.Top_Documents
+            return 6 if return_index else QueryExpanderCategory.Top_Documents
         elif query_expander_method in document_summaries_methods:
-            return QueryExpanderCategory.Document_Summaries
+            return 7 if return_index else QueryExpanderCategory.Document_Summaries
 
     def analyze_file(self, csv_file):
         print("processing file {}".format(csv_file))
@@ -274,11 +308,16 @@ class ResultAnalyzer:
             if number_of_improvements > 0:
                 for i in range(number_of_improvements):
                     improved_metric_value = float(row[5 + i * 3])
+                    improved_method_name = row[5 + i * 3 - 1]
                     if i == 0 and original_metric_value > 0.0:
                         improvement = (improved_metric_value - original_metric_value) * 100.0 / original_metric_value
                         self.improvement_sum += improvement
                         self.improvement_count += 1
-                    improved_method_name = row[5 + i * 3 - 1]
+                        # should this be done only for i=0, i.e for the best?
+                        category_index = self.get_category(improved_method_name, True)
+                        self.category_improvement_sum[category_index] += improvement
+                        self.category_improvement_count[category_index] += 1
+
                     self.update_map(improved_method_name)
                     if i == 0:
                         self.update_map2(improved_method_name)
@@ -305,4 +344,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
