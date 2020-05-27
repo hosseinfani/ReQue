@@ -1,6 +1,10 @@
 __pycache__/
 *.py[cod]
+.idea/
+
 misc
+pre/
+
 ds/robust04/index-robust04-20191213/
 
 ds/qe/robust04/*
@@ -28,8 +32,7 @@ ds/qe/clueweb12b13/*
 !ds/qe/clueweb12b13/topics.clueweb12b13.201-300.qld.rm3.map.dataset.csv
 
 ds/qs/
+
 qs/cair/data/fasttext/crawl-300d-2M-subword.vec
 qs/cair/data/
-pre/
-.idea/
-dummy.txt
+
