@@ -27,17 +27,17 @@ The target folders are the output repo for the query expansion methods (unsuperv
 ### [Anserini](https://github.com/castorini/anserini)
 ### [Cair](https://github.com/wasiahmad/context_attentive_ir) (optional, needed for benchmark)
 ### Python 3.7 and the following packages:
-`
+```
 pandas, scipy, numpy, collections, requests, urllib, subprocess
-`
+```
 
-`
+```
 networkx, community
-`
+```
 
-`
+```
 gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
-`
+```
 ### Pre-trained Model/Embedding
 - [Fasttext](https://fasttext.cc/docs/en/english-vectors.html)
 - [GloVe](https://nlp.stanford.edu/projects/glove/)
@@ -54,33 +54,33 @@ gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 [Anserini](https://github.com/castorini/anserini) must be installed  in [`anserini/`](./anserini/) for indexing, information retrieval, and evaluation on the input query datasets. The documents in the corpuses must be indexed by the following commands.
 
 ### Robust04 (already available at [here](https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-robust04-20191213.tar.gz))
-`
+```
 $> anserini/target/appassembler/bin/IndexCollection -collection TrecCollection -input Robust04-Corpus -index lucene-index.robust04.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.robust04.pos+docvectors+rawdocs &
-`
+```
 
 ### Gov2
-`
+```
 $> anserini/target/appassembler/bin/IndexCollection -collection TrecwebCollection -input Gov2-Corpus -index lucene-index.gov2.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.gov2.pos+docvectors+rawdocs &
-`
+```
 
 ### ClueWeb09-B
-`
+```
 $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb09Collection -input ClueWeb09-B-Corpus -index lucene-index.cw09b.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw09b.pos+docvectors+rawdocs &
-`
+```
 
 ### ClueWeb12-B13
-`
+```
 $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collection -input ClueWeb12-B-Corpus -index lucene-index.cw12b13.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw12b13.pos+docvectors+rawdocs &
-`
+```
 
 ## Query Expansion (Unsupervised Query Refinement Method): [`qe/`](./qe/)
 Query expansion is done by [`qe/main.py`](./qe/main.py) that accept the name of the input query dataset whose queries are to be expanded and evaluated.
-`
+```
 $> python -u qe/main.py robust04 2>&1 | tee robust04.log &
 $> python -u qe/main.py gov2 2>&1 | tee gov2.log &
 $> python -u qe/main.py clueweb09b 2>&1 | tee clueweb09b.log &
 $> python -u qe/main.py clueweb12b13 2>&1 | tee clueweb12b13.log &
-`
+```
 
 ## Gold Standard Dataset: [`ds/qe/`](./ds/qe/)
 ### Path
@@ -125,17 +125,17 @@ that is no expansion method (expander) is able to improve the query# `306` using
 The [`qs/main.py`](./qs/main.py) accepts a positive integer `n`, for considering the topn golden expanded queries and the name of the input query dataset.
 
 Following commands are for top-5:
-`
+```
 $> python -u qs/main.py 5 robust04 2>&1 | tee robust04.topn5.log &
 $> python -u qs/main.py 5 gov2 2>&1 | tee gov2.topn5.log &
 $> python -u qs/main.py 5 clueweb09b 2>&1 | tee clueweb09b.topn5.log &
 $> python -u qs/main.py 5 clueweb12b13 2>&1 | tee clueweb12b13.topn5.log &
-`
+```
 
 By passing `all` as the name of the input query dataset, it is also possible to merge all the input query datasets and do the benchmark:
-`
+```
 $> python -u qs/main.py 5 all 2>&1 | tee all.topn5.log &
-`
+```
 
 ## Authors
 ## License
