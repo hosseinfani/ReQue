@@ -29,13 +29,7 @@ The target folders are the output repo for the query expansion methods (unsuperv
 ### Python 3.7 and the following packages:
 ```
 pandas, scipy, numpy, collections, requests, urllib, subprocess
-```
-
-```
 networkx, community
-```
-
-```
 gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 ```
 ### Pre-trained Model/Embedding
