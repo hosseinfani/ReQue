@@ -30,9 +30,11 @@ The target folders are the output repo for the query expansion methods (unsuperv
 `
 pandas, scipy, numpy, collections, requests, urllib, subprocess
 `
+
 `
 networkx, community
 `
+
 `
 gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 `
