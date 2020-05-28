@@ -3,25 +3,25 @@
 ## Overview
 ### Codebases
 
-```qe/```: codebase for the query expansion methods (**unsupervised query refinement methods**).
+[```qe/```](./qe/): codebase for the query expansion methods (**unsupervised query refinement methods**).
 
-```qs/```: codebase for the query suggestion methods (**supervised query refinement method**), including [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221).
+[```qs/```](./qs/): codebase for the query suggestion methods (**supervised query refinement method**), including [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221).
 
 ### Source Folders [empty]
 The followings source folders are supposed to be populated by input query datasets and/or pre-trained models/embeddings.
 
-```pre/```: source folder for pre-trained models and/or embeddings, including [fasttext](https://fasttext.cc/docs/en/english-vectors.html) and [GloVe](https://nlp.stanford.edu/projects/glove/).
+[```pre/```](./pre/): source folder for pre-trained models and/or embeddings, including [fasttext](https://fasttext.cc/docs/en/english-vectors.html) and [GloVe](https://nlp.stanford.edu/projects/glove/).
 
-```anserini/```: source folder for [Anserini](https://github.com/castorini/anserini) and output indices for the input query datasets.
+[```anserini/```](./anserini/): source folder for [Anserini](https://github.com/castorini/anserini) and output indices for the input query datasets.
 
-```ds/```: source folder for input query datasets, including Robust04, Gov2, ClueWeb09, and ClueWeb12.
+[```ds/```](./ds/): source folder for input query datasets, including [Robust04](https://trec.nist.gov/data_disks.html), [Gov2](http://ir.dcs.gla.ac.uk/test_collections/gov2-summary.htm), [ClueWeb09-B](http://lemurproject.org/clueweb09.php/), and [ClueWeb12-B13](http://lemurproject.org/clueweb12/ClueWeb12-CreateB13.php).
 
 ### Target Folders
 The target folders are the output repo for the query expansion methods (unsupervised query refinement methods) and query suggestion methods (unsupervised query refinement methods).
 
-```ds/qe/```: target folder for expanders' outputs. ***This folder contains the gold standard dataset.***
+[```ds/qe/```](./ds/qe/): target folder for expanders' outputs. ***This folder contains the gold standard dataset.***
 
-```ds/qs```: target folder for suggesters' outputs. This folder contains the benchmark results only and the trained models are ignored due to their sizes.
+[```ds/qs```](./ds/qs/): target folder for suggesters' outputs. This folder contains the benchmark results only and the trained models are ignored due to their sizes.
 
 ## Prerequisites
 ### [Anserini](https://github.com/castorini/anserini)
@@ -38,14 +38,14 @@ gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 - [Joint Embedding of Hierarchical Categories and Entities for Concept Categorization and Dataless Classification](https://www.aclweb.org/anthology/C16-1252/)
 
 ### Input Query Dataset
-- Robust04 [corpus, topics, qrels]
-- Gov2 [corpus, topics, qrels]
-- ClueWeb09 [corpus, topics, qrels]
-- ClueWeb12 [corpus, topics, qrels]
+- [Robust04](https://trec.nist.gov/data_disks.html) [corpus, [topics](https://github.com/castorini/anserini/blob/master/src/main/resources/topics-and-qrels/topics.robust04.txt), [qrels](https://github.com/castorini/anserini/blob/master/src/main/resources/topics-and-qrels/qrels.robust04.txt)]
+- [Gov2](http://ir.dcs.gla.ac.uk/test_collections/gov2-summary.htm) [corpus, [topics](https://github.com/castorini/anserini/blob/master/docs/regressions-gov2.md#retrieval), [qrels](https://github.com/castorini/anserini/blob/master/docs/regressions-gov2.md#retrieval)]
+- [ClueWeb09-B](http://lemurproject.org/clueweb09.php/) [corpus, [topics](https://github.com/castorini/anserini/blob/master/docs/regressions-cw09b.md#retrieval), [qrels](https://github.com/castorini/anserini/blob/master/docs/regressions-cw09b.md#retrieval)]
+- [ClueWeb12-B13](http://lemurproject.org/clueweb12/ClueWeb12-CreateB13.php) [corpus, [topics](https://github.com/castorini/anserini/blob/master/docs/regressions-cw12b13.md#retrieval), [qrels](https://github.com/castorini/anserini/blob/master/docs/regressions-cw12b13.md#retrieval)]
 - [Wikipedia Anchor Text](http://downloads.dbpedia.org/2016-10/core-i18n/en/anchor_text_en.ttl.bz2)
 
 ## Installing
-[Anserini](https://github.com/castorini/anserini) must be installed  in the ```anserini/``` for indexing, information retrieval, and evaluation on the input query datasets. The documents in the corpuses must be indexed by the following commands.
+[Anserini](https://github.com/castorini/anserini) must be installed  in the [```anserini/```](./anserini/) for indexing, information retrieval, and evaluation on the input query datasets. The documents in the corpuses must be indexed by the following commands.
 
 ### Robust04 (already available at [here](https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-robust04-20191213.tar.gz))
 ```
@@ -57,18 +57,18 @@ $> anserini/target/appassembler/bin/IndexCollection -collection TrecCollection -
 $> anserini/target/appassembler/bin/IndexCollection -collection TrecwebCollection -input Gov2-Corpus -index lucene-index.gov2.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.gov2.pos+docvectors+rawdocs &
 ```
 
-### ClueWeb09-B-Corpus
+### ClueWeb09-B
 ```
 $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb09Collection -input ClueWeb09-B-Corpus -index lucene-index.cw09b.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw09b.pos+docvectors+rawdocs &
 ```
 
-### ClueWeb12-B-Corpus
+### ClueWeb12-B13
 ```
 $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collection -input ClueWeb12-B-Corpus -index lucene-index.cw12b13.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw12b13.pos+docvectors+rawdocs &
 ```
 
-## Query Expansion (Unsupervised Query Refinement Method): ```qe/```
-The ```qe/main.py``` accept the name of the input query dataset whose queries are to be expanded and evaluated.
+## Query Expansion (Unsupervised Query Refinement Method): [```qe/```](./qe/)
+The [```qe/main.py```](./qe/main.py) accept the name of the input query dataset whose queries are to be expanded and evaluated.
 ```
 $> python -u qe/main.py robust04 2>&1 | tee robust04.log &
 $> python -u qe/main.py gov2 2>&1 | tee gov2.log &
@@ -76,7 +76,7 @@ $> python -u qe/main.py clueweb09b 2>&1 | tee clueweb09b.log &
 $> python -u qe/main.py clueweb12b13 2>&1 | tee clueweb12b13.log &
 ```
 
-## Gold Standard Dataset: ```ds/qe/```
+## Gold Standard Dataset: [```ds/qe/```](./ds/qe/)
 ### Path
 
 The Gold standard dataset for each input query dataset is generated in ```ds/qe/{input query dataset name}/*.{retrieval method}.{metric}.dataset.csv```.
@@ -101,7 +101,7 @@ The columns are:
 and ```0 <= i <= {star_model_count}```.
 
 ### Example
-The golden dataset for ```Robust04``` using the retrieval method ```bm25``` and based on the evaluation metric ```map``` (mean average precision) is ```topics.robust04.bm25.map.dataset.csv``` and includes:
+The golden dataset for ```Robust04``` using the retrieval method ```bm25``` and based on the evaluation metric ```map``` (mean average precision) is [```ds/qe/robust04/topics.robust04.bm25.map.dataset.csv```](./ds/qe/robust04/topics.robust04.bm25.map.dataset.csv) and includes:
 
 ```311,Industrial Espionage,0.4382,1,relevancefeedback.topn10.bm25,0.489,industrial espionage compani bnd mr foreign intellig samsung vw mossad```
 
@@ -113,10 +113,10 @@ Another instance is:
 
 that is no expansion method (expander) is able to improve the query# ```306``` using ```bm25``` retrieval method in terms of ```map```.
 
-## Query Suggestion (Supervised Query Refinement Method): ```qs/```
+## Query Suggestion (Supervised Query Refinement Method): [```qs/```](./qs/)
 [Cair](https://github.com/wasiahmad/context_attentive_ir) by [Ahmad et al. sigir2019](https://dl.acm.org/doi/abs/10.1145/3331184.3331246) has been used to benchmark the golden expanded queries for [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221). 
 
-The ```qs/main.py``` accepts a positive integer (k), for considering the top-k golden expanded queries and the name of the input query dataset.
+The [```qs/main.py```](./qs/main.py) accepts a positive integer (k), for considering the top-k golden expanded queries and the name of the input query dataset.
 
 Following commands are for top-5:
 ```
