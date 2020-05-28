@@ -67,8 +67,7 @@ $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb09Collect
 $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collection -input ClueWeb12-B-Corpus -index lucene-index.cw12b13.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw12b13.pos+docvectors+rawdocs &
 ```
 
-## Running
-### Query Expansion (Unsupervised Query Refinement Method): ```qe/```
+## Query Expansion (Unsupervised Query Refinement Method): ```qe/```
 The ```qe/main.py``` accept the name of the input query dataset whose queries are to be expanded and evaluated.
 ```
 $> python -u qe/main.py robust04 2>&1 | tee robust04.log &
