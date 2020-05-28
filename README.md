@@ -3,7 +3,7 @@
 ## Overview
 ### Codebases
 
-[```qe/```](./qe/): codebase for the query expansion methods (**unsupervised query refinement methods**).
+[`qe/`](./qe/): codebase for the query expansion methods (**unsupervised query refinement methods**).
 
 [```qs/```](./qs/): codebase for the query suggestion methods (**supervised query refinement method**), including [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221).
 
