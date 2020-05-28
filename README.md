@@ -68,7 +68,7 @@ $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collect
 ```
 
 ## Running
-### Query Expansion (Unsupervised Query Refinement Method)
+### ```qe/```Query Expansion (Unsupervised Query Refinement Method)
 The ```qe/main.py``` accept the name of the input query dataset whose queries are to be expanded and evaluated.
 ```
 $> python -u qe/main.py robust04 2>&1 | tee robust04.log &
@@ -77,7 +77,7 @@ $> python -u qe/main.py clueweb09b 2>&1 | tee clueweb09b.log &
 $> python -u qe/main.py clueweb12b13 2>&1 | tee clueweb12b13.log &
 ```
 
-## Gold Standard Dataset
+## ```ds/qe/```Gold Standard Dataset
 ### Path
 
 The Gold standard dataset for each input query dataset is generated in ```ds/qe/{input query dataset name}/*.{retrieval method}.{metric}.dataset.csv```.
@@ -114,8 +114,10 @@ Another instance is:
 
 that is no expansion method (expander) is able to improve the query# ```306``` using ```bm25``` retrieval method in terms of ```map```.
 
-## [Benchmark] Query Suggestion (Supervised Query Refinement Method)
-The ```qs/main.py``` accepts a positive integer (k), for considering the top-k golden expanded queries and the name of the input query dataset. It benchmarks the golden expanded queries for [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221) by using the codebase provided by [Ahmad et al.](https://github.com/wasiahmad/context_attentive_ir).
+## ```qs/``` Query Suggestion (Supervised Query Refinement Method)
+[Cair](https://github.com/wasiahmad/context_attentive_ir) by [Ahmad et al. sigir2019, Context Attentive Document Ranking and Query Suggestion](https://dl.acm.org/doi/abs/10.1145/3331184.3331246) has been used to benchmark the golden expanded queries for [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221). 
+
+The ```qs/main.py``` accepts a positive integer (k), for considering the top-k golden expanded queries and the name of the input query dataset.
 
 Following commands are for top-5:
 ```
@@ -133,3 +135,4 @@ $> python -u qs/main.py 5 all 2>&1 | tee all.topn5.log &
 ## Authors
 ## License
 ## Acknowledgments
+We borrowed code from [cair](https://github.com/wasiahmad/context_attentive_ir) and [anserini](https://github.com/castorini/anserini). We would like to expresse our gratitdue for authors of these repositeries.
