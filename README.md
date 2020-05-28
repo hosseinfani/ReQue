@@ -21,7 +21,7 @@ The target folders are the output repo for the query expansion methods (unsuperv
 
 [```ds/qe/```](./ds/qe/): target folder for expanders' outputs. ***This folder contains the gold standard dataset.***
 
-[```ds/qs```](./ds/qs/): target folder for suggesters' outputs. This folder contains the benchmark results only and the trained models are ignored due to their sizes.
+[```ds/qs/```](./ds/qs/): target folder for suggesters' outputs. This folder contains the benchmark results only and the trained models are ignored due to their sizes.
 
 ## Prerequisites
 ### [Anserini](https://github.com/castorini/anserini)
@@ -45,7 +45,7 @@ gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 - [Wikipedia Anchor Text](http://downloads.dbpedia.org/2016-10/core-i18n/en/anchor_text_en.ttl.bz2)
 
 ## Installing
-[Anserini](https://github.com/castorini/anserini) must be installed  in the [```anserini/```](./anserini/) for indexing, information retrieval, and evaluation on the input query datasets. The documents in the corpuses must be indexed by the following commands.
+[Anserini](https://github.com/castorini/anserini) must be installed  in [```anserini/```](./anserini/) for indexing, information retrieval, and evaluation on the input query datasets. The documents in the corpuses must be indexed by the following commands.
 
 ### Robust04 (already available at [here](https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-robust04-20191213.tar.gz))
 ```
@@ -68,7 +68,7 @@ $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collect
 ```
 
 ## Query Expansion (Unsupervised Query Refinement Method): [```qe/```](./qe/)
-The [```qe/main.py```](./qe/main.py) accept the name of the input query dataset whose queries are to be expanded and evaluated.
+Query expansion is done by [```qe/main.py```](./qe/main.py) that accept the name of the input query dataset whose queries are to be expanded and evaluated.
 ```
 $> python -u qe/main.py robust04 2>&1 | tee robust04.log &
 $> python -u qe/main.py gov2 2>&1 | tee gov2.log &
