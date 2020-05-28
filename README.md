@@ -3,9 +3,9 @@
 ## Overview
 ### Codebases
 
-[`qe/`](./qe/): codebase for the query expansion methods (**unsupervised query refinement methods**).
+[`qe/`](./qe/): source code for the query expansion methods (**unsupervised query refinement methods**).
 
-[`qs/`](./qs/): codebase for the query suggestion methods (**supervised query refinement method**), including [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221).
+[`qs/`](./qs/): source code for the query suggestion methods (**supervised query refinement method**), including [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221).
 
 ### Source Folders [empty]
 The followings source folders are supposed to be populated by input query datasets and/or pre-trained models/embeddings.
@@ -19,19 +19,19 @@ The followings source folders are supposed to be populated by input query datase
 ### Target Folders
 The target folders are the output repo for the query expansion methods (unsupervised query refinement methods) and query suggestion methods (unsupervised query refinement methods).
 
-[`ds/qe/`](./ds/qe/): target folder for expanders' outputs. ***This folder contains the gold standard dataset.***
+[`ds/qe/`](./ds/qe/): target folder for expanders' outputs. **This folder contains the gold standard datasets.**
 
 [`ds/qs/`](./ds/qs/): target folder for suggesters' outputs. This folder contains the benchmark results only and the trained models are ignored due to their sizes.
 
 ## Prerequisites
 ### [Anserini](https://github.com/castorini/anserini)
-### Python 3.7 & the following packages:
+### [Cair](https://github.com/wasiahmad/context_attentive_ir) (optional, needed for benchmark)
+### Python 3.7 and the following packages:
 `
 pandas, scipy, numpy, collections, requests, urllib, subprocess
 networkx, community
 gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 `
-
 ### Pre-trained Model/Embedding
 - [Fasttext](https://fasttext.cc/docs/en/english-vectors.html)
 - [GloVe](https://nlp.stanford.edu/projects/glove/)
@@ -88,7 +88,7 @@ The columns are:
 
 - `abstractqueryexpansion`: the original query;
 
-- `abstractqueryexpansion.{retrieval method}.{metric}`: the original evaluation value for the {retrieval method} in terms of {metric};
+- `abstractqueryexpansion.{retrieval method}.{metric}`: the original evaluation value for the {retrieval method=[`bm25`, `bm25.rm3`, `qld`, `qld.rm3`]} in terms of an evaluation {metric=[`map`]};
 
 - `star_model_count`: number of expansions that improve the original evaluation value. Eq. number of golden expanded queries for the original query;
 
@@ -98,7 +98,7 @@ The columns are:
 
 - `query.{i}`: the actual i-th golden expanded query;
 
-and `0 <= i <= {star_model_count}`.
+and `0 <= i <= star_model_count`.
 
 ### Example
 The golden dataset for `Robust04` using the retrieval method `bm25` and based on the evaluation metric `map` (mean average precision) is [`ds/qe/robust04/topics.robust04.bm25.map.dataset.csv`](./ds/qe/robust04/topics.robust04.bm25.map.dataset.csv) and includes:
@@ -113,10 +113,10 @@ Another instance is:
 
 that is no expansion method (expander) is able to improve the query# `306` using `bm25` retrieval method in terms of `map`.
 
-## Query Suggestion (Supervised Query Refinement Method): [`qs/`](./qs/)
+## Benchmark Query Suggestion (Supervised Query Refinement Method): [`qs/`](./qs/)
 [Cair](https://github.com/wasiahmad/context_attentive_ir) by [Ahmad et al. sigir2019](https://dl.acm.org/doi/abs/10.1145/3331184.3331246) has been used to benchmark the golden expanded queries for [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221). 
 
-The [`qs/main.py`](./qs/main.py) accepts a positive integer (k), for considering the top-k golden expanded queries and the name of the input query dataset.
+The [`qs/main.py`](./qs/main.py) accepts a positive integer `n`, for considering the topn golden expanded queries and the name of the input query dataset.
 
 Following commands are for top-5:
 `
