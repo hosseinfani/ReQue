@@ -1,5 +1,5 @@
 # ReQue: A Benchmark Workflow and Dataset Collection for Query Refinement
-![Workflow](./workflow.png)
+<div style="text-align:center"><img src="./workflow.png" /></div>
 
 ## Overview
 ### Codebases
