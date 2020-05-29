@@ -88,11 +88,11 @@ The columns in the gold standard dataset are:
 
 - `abstractqueryexpansion.{retrieval method}.{metric}`: the original evaluation value for a retrieval method=[`bm25`, `bm25.rm3`, `qld`, `qld.rm3`] in terms of an evaluation metric=[`map`];
 
-- `star_model_count`: number of golden expansions (optimum refined queries) that improve the original evaluation value. Equivalently, the number of golden expanded queries for the original query;
+- `star_model_count`: number of golden expansions (optimal refined queries) that improve the original evaluation value. Equivalently, the number of golden expanded queries for the original query;
 
 - `method.{i}`: the name of the i-th expansion method (expander) that expanded (refined) the original query and improved the original evaluation value;
 
-- `metric.{i}`: the evaluation value of the i-th golden expanded query (optimum refined query);
+- `metric.{i}`: the evaluation value of the i-th golden expanded query (optimal refined query);
 
 - `query.{i}`: the i-th golden expanded query;
 
@@ -105,7 +105,7 @@ The golden standard dataset for `Robust04` using the retrieval method `bm25` and
 311,Industrial Espionage,0.4382,1,relevancefeedback.topn10.bm25,0.489,industrial espionage compani bnd mr foreign intellig samsung vw mossad
 ```
 
-where there is only `1` golden expanded query (optimum refined query) for the query# `311`. The original query `Industrial Espionage` is expanded (refined) to `industrial espionage compani bnd mr foreign intellig samsung vw mossad` by `relevancefeedback`, and the `map` is improved from `0.4382` (original map) to `0.489`.
+where there is only `1` golden expanded query (optimal refined query) for the query# `311`. The original query `Industrial Espionage` is expanded (refined) to `industrial espionage compani bnd mr foreign intellig samsung vw mossad` by `relevancefeedback`, and the `map` is improved from `0.4382` (original map) to `0.489`.
 
 Another instance is:
 
