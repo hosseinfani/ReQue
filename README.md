@@ -1,4 +1,5 @@
 # ReQue: A Benchmark Workflow and Dataset Collection for Query Refinement
+![Workflow](./workflow.png)
 
 ## Overview
 ### Codebases
