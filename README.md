@@ -1,6 +1,6 @@
 # ReQue: A Benchmark Workflow and Dataset Collection for Query Refinement
 <div align="center">
-    <img src="https://user-images.githubusercontent.com/8619934/83299889-06076a80-a1c5-11ea-816e-1898d5bdd179.png", width="500", alt="ReQue: Workflow Diagram">
+    <img src="https://user-images.githubusercontent.com/8619934/83300710-7cf13300-a1c6-11ea-8ea9-e9bdf4dcd1f6.png", width="500", alt="ReQue: Workflow Diagram">
 </div>
 
 
