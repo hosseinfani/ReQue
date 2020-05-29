@@ -1,6 +1,6 @@
 # ReQue: A Benchmark Workflow and Dataset Collection for Query Refinement
 <div align="center">
-    <img src="./workflow.png", width="500">
+    <img src="./workflow.png", width="500", alt="ReQue: Workflow Diagram">
 </div>
 
 ## Overview
