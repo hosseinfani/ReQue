@@ -88,11 +88,11 @@ The columns in the gold standard dataset are:
 
 - `abstractqueryexpansion.{retrieval method}.{metric}`: the original evaluation value for a retrieval method=[`bm25`, `bm25.rm3`, `qld`, `qld.rm3`] in terms of an evaluation metric=[`map`];
 
-- `star_model_count`: number of golden expansions (optimal refined queries) that improve the original evaluation value. Equivalently, the number of golden expanded queries for the original query;
+- `star_model_count`: number of golden expansions (optimal revised queries) that improve the original evaluation value. Equivalently, the number of golden expanded queries for the original query;
 
-- `method.{i}`: the name of the i-th expansion method (expander) that expanded (refined) the original query and improved the original evaluation value;
+- `method.{i}`: the name of the i-th expansion method (expander) that expanded (revised) the original query and improved the original evaluation value;
 
-- `metric.{i}`: the evaluation value of the i-th golden expanded query (optimal refined query);
+- `metric.{i}`: the evaluation value of the i-th golden expanded query (optimal revised query);
 
 - `query.{i}`: the i-th golden expanded query;
 
@@ -105,7 +105,7 @@ The golden standard dataset for `Robust04` using the retrieval method `bm25` and
 311,Industrial Espionage,0.4382,1,relevancefeedback.topn10.bm25,0.489,industrial espionage compani bnd mr foreign intellig samsung vw mossad
 ```
 
-where there is only `1` golden expanded query (optimal refined query) for the query# `311`. The original query `Industrial Espionage` is expanded (refined) to `industrial espionage compani bnd mr foreign intellig samsung vw mossad` by `relevancefeedback`, and the `map` is improved from `0.4382` (original map) to `0.489`.
+where there is only `1` golden expanded query (optimal revised query) for the query# `311`. The original query `Industrial Espionage` is expanded (revised) to `industrial espionage compani bnd mr foreign intellig samsung vw mossad` by `relevancefeedback`, and the `map` is improved from `0.4382` (original map) to `0.489`.
 
 Another instance is:
 
@@ -113,7 +113,7 @@ Another instance is:
 306,African Civilian Deaths,0.1196,0
 ```
 
-that is no expansion method (expander) is able to improve (refine) the query# `306` using `bm25` retrieval method in terms of `map`.
+that is no expansion method (expander) is able to improve (revise) the query# `306` using `bm25` retrieval method in terms of `map`.
 
 ## Benchmark Query Suggestion (Supervised Query Refinement Method): [`qs/`](./qs/)
 [Cair](https://github.com/wasiahmad/context_attentive_ir) by [Ahmad et al. sigir2019](https://dl.acm.org/doi/abs/10.1145/3331184.3331246) has been used to benchmark the golden expanded queries for [anmt](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf)(seq2seq), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221). 
