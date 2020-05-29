@@ -101,13 +101,17 @@ and `0 <= i <= star_model_count`.
 ### Example
 The golden standard dataset for `Robust04` using the retrieval method `bm25` and based on the evaluation metric `map` (mean average precision) is [`ds/qe/robust04/topics.robust04.bm25.map.dataset.csv`](./ds/qe/robust04/topics.robust04.bm25.map.dataset.csv) and, for instance, includes:
 
-`311,Industrial Espionage,0.4382,1,relevancefeedback.topn10.bm25,0.489,industrial espionage compani bnd mr foreign intellig samsung vw mossad`
+```
+311,Industrial Espionage,0.4382,1,relevancefeedback.topn10.bm25,0.489,industrial espionage compani bnd mr foreign intellig samsung vw mossad
+```
 
 where there is only `1` golden expanded query (optimum refined query) for the query# `311`. The original query `Industrial Espionage` is expanded (refined) to `industrial espionage compani bnd mr foreign intellig samsung vw mossad` by `relevancefeedback`, and the `map` is improved from `0.4382` (original map) to `0.489`.
 
 Another instance is:
 
-`306,African Civilian Deaths,0.1196,0`
+```
+306,African Civilian Deaths,0.1196,0
+```
 
 that is no expansion method (expander) is able to improve (refine) the query# `306` using `bm25` retrieval method in terms of `map`.
 
