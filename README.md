@@ -140,4 +140,4 @@ $> python -u qs/main.py 5 all 2>&1 | tee all.topn5.log &
 ## Authors
 ## License
 ## Acknowledgments
-We borrowed codebases from [cair](https://github.com/wasiahmad/context_attentive_ir) and [anserini](https://github.com/castorini/anserini). We would like to expresse our gratitdue for authors of these repositeries.
+We benefited from codebases of [cair](https://github.com/wasiahmad/context_attentive_ir) and [anserini](https://github.com/castorini/anserini). We would like to expresse our gratitdue for authors of these repositeries.
