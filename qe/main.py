@@ -31,7 +31,7 @@ import pandas as pd
 #q_: expanded query (q')
 #Q_: set of expanded queries(Q')
 
-from cmn import expander_factory
+from cmn import expander_factory as ef
 from expanders.abstractqexpander import AbstractQExpander
 
 def generate(Qfilename, expanders, output):
@@ -59,7 +59,7 @@ def search(expanders, rankers, topicreader, index, anserini, output):
         try:
             Q_filename = '{}.{}.txt'.format(output, model_name)
             for ranker in rankers:
-                Q_pred = '{}.{}.{}.txt'.format(output, model_name, expander_factory.get_ranker_name(ranker))
+                Q_pred = '{}.{}.{}.txt'.format(output, model_name, ef.get_ranker_name(ranker))
                 cli_cmd = '\"{}\" {} -threads 44 -topicreader {} -index {} -topics {} -output {}'.format(rank_cmd, ranker, topicreader, index, Q_filename, Q_pred)
                 print('{}\n'.format(cli_cmd))
                 stream = os.popen(cli_cmd)
@@ -79,9 +79,9 @@ def evaluate(expanders, Qrels, rankers, metrics, anserini, output):
         model_name = model.get_model_name()
         try:
             for ranker in rankers:
-                Q_pred = '{}.{}.{}.txt'.format(output, model_name, expander_factory.get_ranker_name(ranker))
+                Q_pred = '{}.{}.{}.txt'.format(output, model_name, ef.get_ranker_name(ranker))
                 for metric in metrics:
-                    Q_eval = '{}.{}.{}.{}.txt'.format(output, model_name, expander_factory.get_ranker_name(ranker), metric)
+                    Q_eval = '{}.{}.{}.{}.txt'.format(output, model_name, ef.get_ranker_name(ranker), metric)
                     cli_cmd = '\"{}\" -q -m {} {} {} > {}'.format(eval_cmd, metric, Qrels, Q_pred, Q_eval)
                     print('{}\n'.format(cli_cmd))
                     stream = os.popen(cli_cmd)
@@ -103,20 +103,20 @@ def aggregate(expanders, rankers, metrics, output):
         Q_ = model.read_expanded_queries(Q_filename)
         for ranker in rankers:
             for metric in metrics:
-                Q_eval = '{}.{}.{}.{}.txt'.format(output, model_name, expander_factory.get_ranker_name(ranker), metric)
+                Q_eval = '{}.{}.{}.{}.txt'.format(output, model_name, ef.get_ranker_name(ranker), metric)
                 #the last row is average over all. skipped by [:-1]
                 values = pd.read_csv(Q_eval, usecols=[1,2],names=['qid', 'value'], header=None,sep='\t')[:-1]
                 values.set_index('qid', inplace=True, verify_integrity=True)
 
                 for idx, r in Q_.iterrows():
-                    Q_.loc[idx, '{}.{}.{}'.format(model_name, expander_factory.get_ranker_name(ranker), metric)] = values.loc[str(r.qid), 'value'] if str(r.qid) in values.index else None
+                    Q_.loc[idx, '{}.{}.{}'.format(model_name, ef.get_ranker_name(ranker), metric)] = values.loc[str(r.qid), 'value'] if str(r.qid) in values.index else None
 
         # except:
         #     model_errs[model_name] = traceback.format_exc()
         #     continue
         df = pd.concat([df, Q_], axis=1)
 
-    filename = '{}.{}.{}.all.csv'.format(output, '.'.join([expander_factory.get_ranker_name(r) for r in rankers]), '.'.join(metrics))
+    filename = '{}.{}.{}.all.csv'.format(output, '.'.join([ef.get_ranker_name(r) for r in rankers]), '.'.join(metrics))
     df.to_csv(filename, index=False)
     # for model_err, msg in model_errs.items():
     #     print('INFO: MAIN: AGGREGATE: There has been error in {}!\n{}'.format(model_err, msg))
@@ -137,9 +137,9 @@ def build(input, expanders, rankers, metrics, output):
             sum = 0
             for ranker in rankers:
                 for metric in metrics:
-                    v = df.loc[idx, '{}.{}.{}'.format(model_name, expander_factory.get_ranker_name(ranker), metric)]
+                    v = df.loc[idx, '{}.{}.{}'.format(model_name, ef.get_ranker_name(ranker), metric)]
                     v = v if not pd.isna(v) else 0
-                    v0 = df.loc[idx, '{}.{}.{}'.format(base_model_name, expander_factory.get_ranker_name(ranker), metric)]
+                    v0 = df.loc[idx, '{}.{}.{}'.format(base_model_name, ef.get_ranker_name(ranker), metric)]
                     v0 = v0 if not pd.isna(v0) else 0
                     if v <= v0:
                         flag = False
@@ -157,19 +157,19 @@ def build(input, expanders, rankers, metrics, output):
                 ds_df.loc[idx, '{}.{}'.format('query', i + 1)] = df.loc[idx, '{}'.format(star_model.get_model_name())]
         else:
             ds_df.loc[idx, 'star_model_count'] = 0
-    filename = '{}.{}.{}.dataset.csv'.format(output, '.'.join([expander_factory.get_ranker_name(r) for r in rankers]), '.'.join(metrics))
+    filename = '{}.{}.{}.dataset.csv'.format(output, '.'.join([ef.get_ranker_name(r) for r in rankers]), '.'.join(metrics))
     ds_df.to_csv(filename, index=False)
     return filename
 
-def run(dbs, rankers, metrics, anserini, include_rf=True, op=None):
+def run(dbs, rankers, metrics, anserini, include_rf=True, op=[]):
 
     if 'robust04' in dbs:
         output = '../ds/qe/robust04/topics.robust04'
         index = '/data/anserini/lucene-index.robust04.pos+docvectors+rawdocs'
 
-        expanders = expander_factory.get_nrf_expanders()
+        expanders = ef.get_nrf_expanders()
         if include_rf:
-            expanders += expander_factory.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
+            expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
         if 'generate' in op:generate(Qfilename='../ds/robust04/topics.robust04.txt', expanders=expanders, output=output)
         if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader='Trec', index=index, anserini=anserini, output=output)
@@ -186,9 +186,9 @@ def run(dbs, rankers, metrics, anserini, include_rf=True, op=None):
         for r in ['4.701-750', '5.751-800', '6.801-850']:
             output = '../ds/qe/gov2/topics.terabyte0{}'.format(r)
 
-            expanders = expander_factory.get_nrf_expanders()
+            expanders = ef.get_nrf_expanders()
             if include_rf:
-                expanders += expander_factory.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
+                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
             if 'generate' in op:generate(Qfilename='../ds/gov2/{}.terabyte0{}.txt'.format('topics', r), expanders=expanders, output=output)
             if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output)
@@ -213,9 +213,9 @@ def run(dbs, rankers, metrics, anserini, include_rf=True, op=None):
         for r in ['1-50', '51-100', '101-150', '151-200']:
             output = '../ds/qe/clueweb09b/topics.web.{}'.format(r)
 
-            expanders = expander_factory.get_nrf_expanders()
+            expanders = ef.get_nrf_expanders()
             if include_rf:
-                expanders += expander_factory.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
+                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb09b/topics.web.{}.txt'.format(r), expanders=expanders, output=output)
             if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output)
@@ -239,9 +239,9 @@ def run(dbs, rankers, metrics, anserini, include_rf=True, op=None):
         for r in ['201-250', '251-300']:
             output = '../ds/qe/clueweb12b13/{}.web.{}'.format('topics', r)
 
-            expanders = expander_factory.get_nrf_expanders()
+            expanders = ef.get_nrf_expanders()
             if include_rf:
-                expanders += expander_factory.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
+                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb12b13/topics.web.{}.txt'.format(r), expanders=expanders, output=output)
             if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output)
@@ -273,12 +273,12 @@ if __name__ == "__main__":
     anserini = '/data/anserini/'
 
     ## include_rf: whether to include relevance feedback expanders or not
-    ## op: determines the steps in the pipleline. op=['generate', 'search', 'evaluate', 'build']
+    ## op: determines the steps in the pipeline. op=['generate', 'search', 'evaluate', 'build']
 
-    ##per topic-ranker-metric database building. The only diffrence in build operation
+    ##per topic-ranker-metric database building. The only difference is in build operation
     for ranker in rankers:
         for metric in metrics:
-            run(dbs=dbs, rankers=[ranker], metrics=[metric], anserini=anserini, include_rf=True, op=['search', 'evaluate', 'build'])
+            run(dbs=dbs, rankers=[ranker], metrics=[metric], anserini=anserini, include_rf=True, op=[])#['generate', 'search', 'evaluate', 'build'])
 	
     ##per topic database building
-    run(dbs=dbs, rankers=rankers, metrics=metrics, anserini=anserini, include_rf=True, op=['search', 'evaluate', 'build'])
+    #run(dbs=dbs, rankers=rankers, metrics=metrics, anserini=anserini, include_rf=True, op=[])#['generate', 'search', 'evaluate', 'build']
