@@ -14,10 +14,9 @@ class AbstractStemmer(object):
         self.vocab = set()
         self.basename = 'nostemmer'
 
-    #Hossein: This is a wrapper for our purpose. Original code is using files
-    def stem_query(self, query):
+    def stem_query(self, q):
         isword = re.compile('[a-z0-9]+')
-        curr_words = self.tokenizer.tokenize(query)
+        curr_words = self.tokenizer.tokenize(q)
         clean_words = [word.lower() for word in curr_words]
         processed_words = self.process(clean_words)
         self.vocab.update(processed_words)
