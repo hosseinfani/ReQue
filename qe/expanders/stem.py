@@ -2,9 +2,9 @@ import sys
 sys.path.extend(['../qe'])
 
 from expanders.abstractqexpander import AbstractQExpander
-
+from stemmers.abstractstemmer import AbstractStemmer
 class Stem(AbstractQExpander):
-    def __init__(self, stemmer):
+    def __init__(self, stemmer:AbstractStemmer):
         AbstractQExpander.__init__(self, replace=False)
         self.stemmer = stemmer
 

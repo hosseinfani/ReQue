@@ -30,6 +30,7 @@ from stemmers.trunc4 import Trunc4Stemmer
 from stemmers.trunc5 import Trunc5Stemmer
 from expanders.stem import Stem # Stem expander is the wrapper for all stemmers as an expnader :)
 
+#global analysis
 def get_nrf_expanders():
     expanders = [AbstractQExpander(),
                  Thesaurus(),
@@ -64,6 +65,7 @@ def get_nrf_expanders():
 
     return expanders
 
+#local analysis
 def get_rf_expanders(rankers, index, anserini, output):
     expanders = []
     for ranker in rankers:

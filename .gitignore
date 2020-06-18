@@ -5,8 +5,22 @@ desktop.ini
 
 misc
 pre/
+!pre/gitkeep
 
-ds/robust04/index-robust04-20191213/
+anserini/
+!anserini/gitkeep
+
+ds/clueweb09b/
+!ds/clueweb09b/gitkeep
+ds/clueweb12b13/
+!ds/clueweb12b13/gitkeep
+ds/gov2/
+!ds/gov2/gitkeep
+ds/robust04/
+!ds/robust04/gitkeep
+
+ds/qe/eval/
+!ds/qe/eval/gitkeep
 
 ds/qe/robust04/*
 !ds/qe/robust04/topics.robust04.bm25.map.dataset.csv
@@ -32,8 +46,18 @@ ds/qe/clueweb12b13/*
 !ds/qe/clueweb12b13/topics.clueweb12b13.201-300.qld.map.dataset.csv
 !ds/qe/clueweb12b13/topics.clueweb12b13.201-300.qld.rm3.map.dataset.csv
 
-#ds/qs/
+ds/qs/all.topn1
+ds/qs/all.topn100
+ds/qs/robust04.topn1
+ds/qs/robust04.topn100
+ds/qs/gov2.topn1
+ds/qs/gov2.topn100
+ds/qs/clueweb09b.topn1
+ds/qs/clueweb09b.topn100
+ds/qs/clueweb12b13.topn1
+ds/qs/clueweb12b13.topn100
 
 qs/cair/data/fasttext/crawl-300d-2M-subword.vec
 qs/cair/data/
+
 

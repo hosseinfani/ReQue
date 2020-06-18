@@ -148,7 +148,9 @@ if __name__ == "__main__":
                  #Anchor(anchorfile='../pre/anchor_text_en_sample.ttl', vectorfile='../pre/wiki-anchor-text-en-ttl-300d-sample.vec', topn=3, replace=True)
                  ]
     for expander in expanders:
-        expander.write_expanded_queries('../ds/robust04/topics.robust04.txt', 'dummy.txt')
+        expander.write_expanded_queries(
+            '../ds/robust04/topics.robust04.txt',
+            'dummy.txt')
         # expanders.write_expanded_queries('../ds/gov2/topics.terabyte05.751-800.txt', 'dummy')
         # expanders.write_expanded_queries('../ds/clueweb09b/topics.web.101-150.txt', 'dummy')
         # expanders.write_expanded_queries('../ds/clueweb12b13/topics.web.201-250.txt', 'dummy')
