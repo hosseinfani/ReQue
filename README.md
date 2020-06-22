@@ -139,7 +139,7 @@ $> python -u qs/main.py 5 all 2>&1 | tee all.topn5.log &
 ## Performance Evaluation
 ### Statistics on TREC collections
 |||average \|Rqrm\||average `map` improvement rate (%)|
-|---|---|---|---|	
+|---|---|---|---|---|---|	
 ||\|Q\||bm25|qld|bm25|qld|
 |robust04|250|4.25|4.06|411.83|301.26|
 |gov2|150|2.49|2.15|104.31|101.77|
