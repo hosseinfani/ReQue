@@ -136,6 +136,16 @@ By passing `all` as the name of the input query dataset, it is also possible to 
 ```
 $> python -u qs/main.py 5 all 2>&1 | tee all.topn5.log &
 ```
+## Performance Evaluation
+### Statistics on TREC collections
+|||average \|Rqrm\||average `map` improvement rate (%)	
+||\|Q\||bm25|qld|bm25|qld
+|robust04|250|4.25|4.06|411.83|301.26
+|gov2|150|2.49|2.15|104.31|101.77
+|clueweb09b|200|1.44|1.67|945.22|1,751.58
+|clueweb12b13|100|1.81|1.57|196.77|159.38
+
+### Benchmarks
 
 ## Authors
 ## License
