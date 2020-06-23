@@ -150,6 +150,7 @@ Statistics shows that for all the rankers, at least `1.44` refined queries exist
 
 ### Benchmarks
 |				|			|seq2seq	|			|acg		|		|hred-qs	|		|
+|---------------|-----------|-----------|-----------|-----------|-------|-----------|-------|
 |				|ranker		|rouge-l	|bleu		|rouge-l	|bleu	|rouge-l	|bleu 	|
 |robust04		|bm25		|25.678		|17.842		|37.464		|23.006	|43.251		|29.509|
 |				|qld		|25.186		|16.367		|37.254		|23.519	|36.584		|25.241|
