@@ -6,18 +6,18 @@
 
 ## Overview
 ### Codebases
-[`qe/`](./qe/): source code for the expanders `E={q}`.
+[`qe/`](./qe/): (**q**uery **e**xpander) source code for the expanders `E={q}`.
 
-[`qs/`](./qs/): source code for the supervised query refinement methods (suggesters), including [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221).
+[`qs/`](./qs/): (**q**uery **s**uggester) source code from [cair](https://github.com/wasiahmad/context_attentive_ir) for the supervised query refinement methods (suggesters), including [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221).
 
 ### Source Folders [empty]
 The following source folders are to be populated by the original query dataset `Q`, judment relevances `Jq`, and pre-trained models/embeddings.
 
-[`pre/`](./pre/): source folder for pre-trained models and/or embeddings, including [FastText](https://fasttext.cc/docs/en/english-vectors.html) and [GloVe](https://nlp.stanford.edu/projects/glove/).
+[`pre/`](./pre/): (**pre**-trained models) source folder for pre-trained models and/or embeddings, including [FastText](https://fasttext.cc/docs/en/english-vectors.html) and [GloVe](https://nlp.stanford.edu/projects/glove/).
 
 [`anserini/`](./anserini/): source folder for [anserini](https://github.com/castorini/anserini), indexes for the information corpuses, and [trec_eval](https://github.com/usnistgov/trec_eval).
 
-[`ds/`](./ds/): source folder for original query datasets, including [Robust04](https://trec.nist.gov/data_disks.html), [Gov2](http://ir.dcs.gla.ac.uk/test_collections/gov2-summary.htm), [ClueWeb09-B](http://lemurproject.org/clueweb09.php/), and [ClueWeb12-B13](http://lemurproject.org/clueweb12/ClueWeb12-CreateB13.php).
+[`ds/`](./ds/): (**d**ata**s**et) source folder for original query datasets, including [Robust04](https://trec.nist.gov/data_disks.html), [Gov2](http://ir.dcs.gla.ac.uk/test_collections/gov2-summary.htm), [ClueWeb09-B](http://lemurproject.org/clueweb09.php/), and [ClueWeb12-B13](http://lemurproject.org/clueweb12/ClueWeb12-CreateB13.php).
 
 ### Target Folders
 The target folders are the output repo for the expanders, gold standard datasets, and benchmarks.
@@ -50,7 +50,7 @@ gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 - [Wikipedia Anchor Text](http://downloads.dbpedia.org/2016-10/core-i18n/en/anchor_text_en.ttl.bz2)
 
 ## Installing
-[Anserini](https://github.com/castorini/anserini) must be installed in [`anserini/`](./anserini/) for indexing, information retrieval, and evaluation on the original query datasets. The documents in the corpus must be indexed, e.g., by the following commands for `Robust04` (already available at [here](https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-robust04-20191213.tar.gz)), `Gov2`, `ClueWeb09-B`, and `ClueWeb12-B13`:
+[Anserini](https://github.com/castorini/anserini) must be installed in [`anserini/`](./anserini/) for indexing, information retrieval and ranking, and evaluation on the original query datasets. The documents in the corpus must be indexed, e.g., by the following commands for `Robust04` (already available [here](https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-robust04-20191213.tar.gz)), `Gov2`, `ClueWeb09-B`, and `ClueWeb12-B13`:
 
 ```
 $> anserini/target/appassembler/bin/IndexCollection -collection TrecCollection -input Robust04-Corpus -index lucene-index.robust04.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.robust04.pos+docvectors+rawdocs &
@@ -106,7 +106,7 @@ Another instance is:
 306,African Civilian Deaths,0.1196,0
 ```
 
-that is no available expander was able to improve (revise) the query# `306` using `bm25` retrieval method in terms of `map`.
+that is no available expander was able to revise the query# `306` such that the revise query improve the performance of ranker `bm25` in terms of `map`.
 
 ## Benchmark Supervised Query Refinement Method: [`qs/`](./qs/)
 [Cair](https://github.com/wasiahmad/context_attentive_ir) by [Ahmad et al. sigir2019](https://dl.acm.org/doi/abs/10.1145/3331184.3331246) has been used to benchmark the gold standard datasets for [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221). 
