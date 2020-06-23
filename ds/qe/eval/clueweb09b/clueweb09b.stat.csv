@@ -1,0 +1,14 @@
+,abstractqueryexpansion,anchor.topn3,anchor.topn3.replace,conceptluster.topn5.3.bm25,conceptluster.topn5.3.bm25.rm3,conceptluster.topn5.3.qld,conceptluster.topn5.3.qld.rm3,conceptnet.topn3,conceptnet.topn3.replace,docluster.topn10.3.bm25,docluster.topn10.3.bm25.rm3,docluster.topn10.3.qld,docluster.topn10.3.qld.rm3,glove.topn3,glove.topn3.replace,relevancefeedback.topn10.bm25,relevancefeedback.topn10.bm25.rm3,relevancefeedback.topn10.qld,relevancefeedback.topn10.qld.rm3,sensedisambiguation,sensedisambiguation.replace,stem.krovetz,stem.lovins,stem.paicehusk,stem.porter,stem.porter2,stem.sstemmer,stem.trunc4,stem.trunc5,tagmee.topn3,tagmee.topn3.replace,termluster.topn5.3.bm25,termluster.topn5.3.bm25.rm3,termluster.topn5.3.qld,termluster.topn5.3.qld.rm3,thesaurus.topn3,thesaurus.topn3.replace,wiki.topn3,wiki.topn3.replace,word2vec.topn3,word2vec.topn3.replace,wordnet.topn3,wordnet.topn3.replace
+contributionToAll,0,30,9,37,38,36,29,66,13,31,28,20,21,52,12,23,22,28,24,90,29,2,10,6,4,5,0,6,11,140,75,25,20,23,18,53,18,103,75,64,28,68,21
+contributionToBest,0,12,0,0,1,0,1,19,0,14,8,5,6,21,0,12,12,9,9,50,11,0,2,1,0,2,0,4,3,56,23,12,10,10,8,27,3,52,14,26,2,19,3
+
+ AVG_QE_PER_Q, AVG_QE_IMPROVEMENT
+1.77,1325.38
+
+,Stemming_Analysis,Semantic_Analysis,Term_Clustering,Concept_Clustering,Anchor_Text,Wikipedia,Top_Documents,Document_Summaries
+ AVG_QE_IMPROVEMENT_PER_CATEGORY,40.74,923.14,153.35,985.17,364.1,3047.43,57.63,46.89
+
+,Stemming_Analysis,Semantic_Analysis,Term_Clustering,Concept_Clustering,Anchor_Text,Wikipedia,Top_Documents,Document_Summaries
+contributionToAll,44,514,86,140,39,393,97,100
+contributionToBest,12,181,40,2,12,145,42,33
+contributionToBest(Percentage),2.57,38.76,8.57,0.43,2.57,31.05,8.99,7.07

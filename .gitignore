@@ -19,8 +19,7 @@ ds/gov2/
 ds/robust04/
 !ds/robust04/gitkeep
 
-ds/qe/eval/
-!ds/qe/eval/gitkeep
+!ds/qe/eval/
 
 ds/qe/robust04/*
 !ds/qe/robust04/topics.robust04.bm25.map.dataset.csv
