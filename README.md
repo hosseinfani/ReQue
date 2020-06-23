@@ -140,16 +140,26 @@ $> python -u qs/main.py 5 all 2>&1 | tee all.topn5.log &
 ### Statistics on TREC collections
 Statistics shows that for all the rankers, at least `1.44` refined queries exists on average for an original query while the best performance is for `Robust04` over `bm25` with `4.24`. 
 
-|            |     |avg \|Rqrm\||        |average `map` improvement rate (%)|   |
-|------------|-----|------------|--------|----------------------------------|---|	
-|            |\|Q\||bm25        |qld     |bm25                              |qld|
-|robust04    |250  |4.25        |4.06    |411.83                            |301.26|
-|gov2        |150  |2.49        |2.15    |104.31                            |101.77|
-|clueweb09b  |200  |1.44        |1.67    |945.22                            |1,751.58|
-|clueweb12b13|100  |1.81        |1.57    |196.77                            |159.38|
+|            |     |avg \|Rqrm\||        |
+|------------|-----|------------|--------|	
+|            |\|Q\||bm25        |qld     |
+|robust04    |250  |4.25        |4.06    |
+|gov2        |150  |2.49        |2.15    |
+|clueweb09b  |200  |1.44        |1.67    |
+|clueweb12b13|100  |1.81        |1.57    |
+
+The average `map` improvement rate is also reported, given the best refined query for each original query.  As shown, the minimum value of `map` improvement is greater than `100%` for all the gold standard datasets which means that even in the worst case, the best refined query for an original query almost **doubled** the performance of the ranker in terms of `map` while the gold standard datasets for `clueweb09b` have improvement rate close or greater than `1000%`, meaning that, on average, the best refined query improved each original query by a factor of `10` in that datasets.
+
+|            |     |average `map` improvement rate (%)|   |
+|------------|-----|----------------------------------|---|	
+|            |\|Q\||bm25                              |qld|
+|robust04    |250  |411.83                            |301.26|
+|gov2        |150  |104.31                            |101.77|
+|clueweb09b  |200  |945.22                            |1,751.58|
+|clueweb12b13|100  |196.77                            |159.38|
 
 ### Benchmarks
-For each gold standard dataset belonging to ReQue, given the pairs `{(q, q') | q' ∈ Rqrm}`, the performance of three state-of-the-art supervised query refinement methods including [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221) after running the models for 100 epochs has been reported in terms of rouge-l and bleu.  As shown, in all the cases, [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.) and [hred-qs](https://arxiv.org/abs/1507.02221) outperform [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf) in terms of all the evaluation metric,  in most cases, [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.) that uses the attention mechanism outperform [hred-qs](https://arxiv.org/abs/1507.02221). The similar observation is also reported by [Ahmad et al. Context Attentive Document Ranking and Query Suggestion](https://github.com/wasiahmad/context_attentive_ir) and [Dehghani et al. Learning to Attend, Copy, and Generate for Session-Based Query Suggestion].
+For each gold standard dataset belonging to ReQue, given the pairs `{(q, q') | q' ∈ Rqrm}`, the performance of three state-of-the-art supervised query refinement methods including [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221) after running the models for 100 epochs has been reported in terms of rouge-l and bleu.  As shown, in all the cases, [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.) and [hred-qs](https://arxiv.org/abs/1507.02221) outperform [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf) in terms of all the evaluation metric,  in most cases, [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.) that uses the attention mechanism outperform [hred-qs](https://arxiv.org/abs/1507.02221). The similar observation is also reported by [Ahmad et al. Context Attentive Document Ranking and Query Suggestion](https://github.com/wasiahmad/context_attentive_ir) and [Dehghani et al. Learning to Attend, Copy, and Generate for Session-Based Query Suggestion](https://dl.acm.org/doi/pdf/10.1145/3132847.3133010).
 
 |				|			|seq2seq	|			|acg		|		|hred-qs	|		|
 |---------------|-----------|-----------|-----------|-----------|-------|-----------|-------|
