@@ -140,25 +140,25 @@ $> python -u qs/main.py 5 all 2>&1 | tee all.topn5.log &
 ### Statistics on TREC collections
 Statistics shows that for all the rankers, at least `1.44` refined queries exists on average for an original query while the best performance is for `Robust04` over `bm25` with `4.24`. 
 
-|            |     |avg `|Rqrm`||        |average `map` improvement rate (%)|   |
+|            |     |avg \|Rqrm\||        |average `map` improvement rate (%)|   |
 |------------|-----|------------|--------|----------------------------------|---|	
-|            |`|Q`||bm25        |qld     |bm25                              |qld|
+|            |\|Q\||bm25        |qld     |bm25                              |qld|
 |robust04    |250  |4.25        |4.06    |411.83                            |301.26|
 |gov2        |150  |2.49        |2.15    |104.31                            |101.77|
 |clueweb09b  |200  |1.44        |1.67    |945.22                            |1,751.58|
 |clueweb12b13|100  |1.81        |1.57    |196.77                            |159.38|
 
 ### Benchmarks
-		seq2seq		acg		hred-qs	
-		rouge-l	bleu	rouge-l	bleu	rouge-l	bleu
-robust04	bm25	25.678	17.842	37.464	23.006	43.251	29.509
-	qld	25.186	16.367	37.254	23.519	36.584	25.241
-gov2	bm25	16.837	12.007	42.461	28.243	37.68	25.595
-	qld	9.615	6.802	40.205	23.002	19.528	11.994
-clueweb09b	bm25	20.311	11.323	43.945	22.574	38.674	27.707
-	qld	28.04	17.394	43.17	23.727	34.543	21.472
-clueweb12b13	bm25	17.102	13.562	56.734	28.639	30.13	21.504
-	qld	10.439	6.986	59.534	29.982	13.057	8.159
+|				|			|seq2seq	|			|acg		|		|hred-qs	|		|
+|				|ranker		|rouge-l	|bleu		|rouge-l	|bleu	|rouge-l	|bleu 	|
+|robust04		|bm25		|25.678		|17.842		|37.464		|23.006	|43.251		|29.509|
+|				|qld		|25.186		|16.367		|37.254		|23.519	|36.584		|25.241|
+|gov2			|bm25		|16.837		|12.007		|42.461		|28.243	|37.68		|25.595|
+|				|qld		|9.615		|6.802		|40.205		|23.002	|19.528		|11.994|
+|clueweb09b		|bm25		|20.311		|11.323		|43.945		|22.574	|38.674		|27.707|
+|				|qld		|28.04		|17.394		|43.17		|23.727	|34.543		|21.472|
+|clueweb12b13	|bm25		|17.102		|13.562		|56.734		|28.639	|30.13		|21.504|
+|				|qld		|10.439		|6.986		|59.534		|29.982	|13.057		|8.159 |
 
 
 ## Authors
