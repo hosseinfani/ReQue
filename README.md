@@ -138,8 +138,8 @@ By passing `all` as the name of the original query dataset, it is also possible 
 ```
 $> python -u qs/main.py 5 all 2>&1 | tee all.topn5.log &
 ```
-## Performance Evaluation
-### Statistics on TREC collections: [`ds/qe/eval/`](./ds/qe/eval) 
+## Performance Evaluation on Generated Gold Standard Datasets for the TREC collections
+### Statistics: [`ds/qe/eval/`](./ds/qe/eval) 
 Statistics shows that for all the rankers, at least `1.44` refined queries exists on average for an original query while the best performance is for `Robust04` over `bm25` with `4.24`. 
 
 |            |     |avg \|Rqrm\||        |
