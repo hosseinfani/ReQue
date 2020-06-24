@@ -75,9 +75,9 @@ Refining queries is done by [`qe/main.py`](./qe/main.py) that accept the followi
 
 `--output`: The output path for the gold standard dataset, e.g., [`../ds/qe/robust04/`](./ds/qe/robust04/). Required; 
 
-`--ranker`: The ranker name which could be any of the available ranker models in [Anserini](https://github.com/castorini/anserini)([SearchCollection]https://github.com/matthew-z/Anserini/blob/master/src/main/java/io/anserini/search/SearchArgs.java). ReQue has been tested for {`bm25`,`qld`} (default: bm25);
+`--ranker`: The ranker name which could be any of the available ranker models in [Anserini](https://github.com/castorini/anserini)([SearchCollection](https://github.com/matthew-z/Anserini/blob/master/src/main/java/io/anserini/search/SearchArgs.java)). ReQue has been tested for {`bm25`,`qld`} (default: bm25);
 
-`--metric`: The evaluation metric name which could be any metric from [trec_eval](https://github.com/usnistgov/trec_eval). Currently, ReQue has been tested for mean average precision (MAP), (default: `map`);
+`--metric`: The evaluation metric name which could be any metric from [trec_eval](https://github.com/usnistgov/trec_eval). Currently, ReQue has been tested for mean average precision, (default: `map`);
 
 The sample running commands are:
 
