@@ -67,10 +67,10 @@ $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collect
 ## Refining Queries: [`qe/`](./qe/)
 Refining queries is done by [`qe/main.py`](./qe/main.py) that accept the name of the original query dataset whose queries are to be expanded and paired with the refined queries, if any.
 ```
-$> python -u qe/main.py robust04 2>&1 | tee robust04.log &
-$> python -u qe/main.py gov2 2>&1 | tee gov2.log &
-$> python -u qe/main.py clueweb09b 2>&1 | tee clueweb09b.log &
-$> python -u qe/main.py clueweb12b13 2>&1 | tee clueweb12b13.log &
+$> python -u main.py robust04 2>&1 | tee robust04.log &
+$> python -u main.py gov2 2>&1 | tee gov2.log &
+$> python -u main.py clueweb09b 2>&1 | tee clueweb09b.log &
+$> python -u main.py clueweb12b13 2>&1 | tee clueweb12b13.log &
 ```
 
 ## Gold Standard Dataset: [`ds/qe/`](./ds/qe/)
