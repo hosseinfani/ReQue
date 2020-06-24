@@ -5,7 +5,7 @@
     Workflow Diagram
     <img src="./classdiagram.png", width="1000", alt="ReQue: Class Diagram">
     <br>
-    Class Diagram for Query Expanders
+    Class Diagram for Query Expanders in <a href="./qe">qe/</a>. The expanders are initialized by the Expander Factory in <a href="./qe/cmn/expander_factory.py">qe/cmn/expander_factory.py</a>
 </p>
 
 
@@ -65,7 +65,7 @@ $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collect
 ```
 
 ## Refining Queries: [`qe/`](./qe/)
-Refining queries is done by [`qe/main.py`](./qe/main.py) that accept the following arguments:
+Refining queries is done using all [expanders](./qe/cmn/expander_factory.py) by [`qe/main.py`](./qe/main.py) that accept the following arguments:
 
 `--anserini`: The path to the anserini library (default: [`../anserini/`](./anserini));
 
