@@ -75,24 +75,24 @@ Refining queries is done by [`qe/main.py`](./qe/main.py) that accept the followi
 
 `--output`: The output path for the gold standard dataset, e.g., [`../ds/qe/robust04/`](./ds/qe/robust04/). Required; 
 
-`--ranker`: The ranker name which could be one of {`bm25`,`qld`} (default: bm25);
+`--ranker`: The ranker name which could be any of the available ranker models in [Anserini](https://github.com/castorini/anserini)([SearchCollection]https://github.com/matthew-z/Anserini/blob/master/src/main/java/io/anserini/search/SearchArgs.java). ReQue has been tested for {`bm25`,`qld`} (default: bm25);
 
-`--metric`: The evaluation metric name, (default: `map`);
+`--metric`: The evaluation metric name which could be any metric from [trec_eval](https://github.com/usnistgov/trec_eval). Currently, ReQue has been tested for mean average precision (MAP), (default: `map`);
 
 The sample running commands are:
 
 ```
-$> python -u main.py --anserini ../anserini --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker bm25 --metric map 2>&1 | tee robust04.log &
-$> python -u main.py --anserini ../anserini --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.log &
+$> python -u main.py --anserini ../anserini/ --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker bm25 --metric map 2>&1 | tee robust04.log &
+$> python -u main.py --anserini ../anserini/ --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.log &
  
-$> python -u main.py --anserini ../anserini --corpus gov2 --index ../ds/robust04/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker bm25 --metric map 2>&1 | tee gov2.log &
-$> python -u main.py --anserini ../anserini --corpus gov2 --index ../ds/robust04/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker qld --metric map 2>&1 | tee gov2.log &
+$> python -u main.py --anserini ../anserini/ --corpus gov2 --index ../ds/robust04/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker bm25 --metric map 2>&1 | tee gov2.log &
+$> python -u main.py --anserini ../anserini/ --corpus gov2 --index ../ds/robust04/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker qld --metric map 2>&1 | tee gov2.log &
 
-$> python -u main.py --anserini ../anserini --corpus clueweb09b --index ../ds/robust04/lucene-index.cw09b.pos+docvectors+rawdocs --output ../ds/qe/clueweb09b/ --ranker bm25 --metric map 2>&1 | tee clueweb09b.log &
-$> python -u main.py --anserini ../anserini --corpus clueweb09b --index ../ds/robust04/lucene-index.cw09b.pos+docvectors+rawdocs --output ../ds/qe/clueweb09b/ --ranker qld --metric map 2>&1 | tee clueweb09b.log &
+$> python -u main.py --anserini ../anserini/ --corpus clueweb09b --index ../ds/robust04/lucene-index.cw09b.pos+docvectors+rawdocs --output ../ds/qe/clueweb09b/ --ranker bm25 --metric map 2>&1 | tee clueweb09b.log &
+$> python -u main.py --anserini ../anserini/ --corpus clueweb09b --index ../ds/robust04/lucene-index.cw09b.pos+docvectors+rawdocs --output ../ds/qe/clueweb09b/ --ranker qld --metric map 2>&1 | tee clueweb09b.log &
 
-$> python -u main.py --anserini ../anserini --corpus clueweb12b13 --index ../ds/robust04/lucene-index.cw12b13.pos+docvectors+rawdocs --output ../ds/qe/clueweb12b13/ --ranker bm25 --metric map 2>&1 | tee clueweb12b13.log &
-$> python -u main.py --anserini ../anserini --corpus clueweb12b13 --index ../ds/robust04/lucene-index.cw12b13.pos+docvectors+rawdocs --output ../ds/qe/clueweb12b13/ --ranker qld --metric map 2>&1 | tee clueweb12b13.log &
+$> python -u main.py --anserini ../anserini/ --corpus clueweb12b13 --index ../ds/robust04/lucene-index.cw12b13.pos+docvectors+rawdocs --output ../ds/qe/clueweb12b13/ --ranker bm25 --metric map 2>&1 | tee clueweb12b13.log &
+$> python -u main.py --anserini ../anserini/ --corpus clueweb12b13 --index ../ds/robust04/lucene-index.cw12b13.pos+docvectors+rawdocs --output ../ds/qe/clueweb12b13/ --ranker qld --metric map 2>&1 | tee clueweb12b13.log &
 ```
 
 ## Gold Standard Dataset: [`ds/qe/`](./ds/qe/)
