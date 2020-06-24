@@ -68,10 +68,15 @@ $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collect
 Refining queries is done by [`qe/main.py`](./qe/main.py) that accept the following arguments:
 
 `--anserini`: The path to the anserini library (default: [`../anserini/`](./anserini));
+
 `--corpus`: The name of the original query dataset whose queries are to be expanded and paired with the refined queries, if any, which could be one of {`robust04`, `gov2`, `clueweb09b`, and `clueweb12b13`}. Required;
-`--index`: The corpus index, e.g. `[../ds/robust04/](./ds/robust04/)lucene-index.robust04.pos+docvectors+rawdocs`. Required;
+
+`--index`: The corpus index, e.g. [`../ds/robust04/`](./ds/robust04/)`lucene-index.robust04.pos+docvectors+rawdocs`. Required;
+
 `--output`: The output path for the gold standard dataset, e.g., [`../ds/qe/robust04/`](./ds/qe/robust04/). Required; 
+
 `--ranker`: The ranker name which could be one of {`bm25`,`qld`} (default: bm25);
+
 `--metric`: The evaluation metric name, (default: `map`);
 
 The sample running commands are:
