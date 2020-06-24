@@ -49,12 +49,13 @@ class Thesaurus(AbstractQExpander):
             soup = BeautifulSoup(html, 'lxml')
             counter=0
             result = []
-            for s in str(soup.findAll('ul',{'class':"css-1lc0dpe et6tpn80"})[0]).split('href'):
-                if counter < self.topn:
-                    counter+=1
-                    start_index=s.index('>')
-                    end_index=s.index('<', start_index + 1)
-                    result.append(s[start_index+1:end_index])
+            if len(soup.findAll('ul', {'class': "css-1lc0dpe et6tpn80"})) > 0:
+                for s in str(soup.findAll('ul',{'class':"css-1lc0dpe et6tpn80"})[0]).split('href'):
+                    if counter < self.topn:
+                        counter+=1
+                        start_index=s.index('>')
+                        end_index=s.index('<', start_index + 1)
+                        result.append(s[start_index+1:end_index])
             return result
         except urllib.error.HTTPError as err:
             if err.code == 404:
