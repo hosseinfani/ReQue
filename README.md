@@ -1,7 +1,12 @@
 # An Open-Source Python Framework for Generating Query Refinement Gold Standards
-<div align="center">
-    <img src="./workflow.png", width="500", alt="ReQue: Workflow Diagram">
-</div>
+<p align="center">
+    <img src="./workflow.png", width="400", alt="ReQue: Workflow Diagram">
+    <br>
+    Workflow Diagram
+    <img src="./classdiagram.png", width="1000", alt="ReQue: Class Diagram">
+    <br>
+    Class Diagram for Query Expanders
+</p>
 
 
 ## Overview
