@@ -64,7 +64,7 @@ $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb09Collect
 $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collection -input ClueWeb12-B-Corpus -index lucene-index.cw12b13.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw12b13.pos+docvectors+rawdocs &
 ```
 
-## Refining Queries: [`qe/`](./qe/)
+## ReQue: Refining Queries: [`qe/`](./qe/)
 Refining queries is done using all [expanders](./qe/cmn/expander_factory.py) by [`qe/main.py`](./qe/main.py) that accept the following arguments:
 
 `--anserini`: The path to the anserini library (default: [`../anserini/`](./anserini));
