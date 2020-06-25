@@ -162,14 +162,14 @@ def build(input, expanders, rankers, metrics, output):
     ds_df.to_csv(filename, index=False)
     return filename
 
-def run(db, rankers, metrics, anserini, index, output, include_rf=True, op=[]):
+def run(db, rankers, metrics, anserini, index, output, rf=True, op=[]):
 
     if db == 'robust04':
         output = '{}topics.robust04'.format(output)
         # index = '/data/anserini/lucene-index.robust04.pos+docvectors+rawdocs'
 
         expanders = ef.get_nrf_expanders()
-        if include_rf:
+        if rf:#local analysis
             expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
         if 'generate' in op:generate(Qfilename='../ds/robust04/topics.robust04.txt', expanders=expanders, output=output)
@@ -188,7 +188,7 @@ def run(db, rankers, metrics, anserini, index, output, include_rf=True, op=[]):
             output = '{}topics.terabyte0{}'.format(output, r)
 
             expanders = ef.get_nrf_expanders()
-            if include_rf:
+            if rf:
                 expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
             if 'generate' in op:generate(Qfilename='../ds/gov2/{}.terabyte0{}.txt'.format('topics', r), expanders=expanders, output=output)
@@ -215,7 +215,7 @@ def run(db, rankers, metrics, anserini, index, output, include_rf=True, op=[]):
             output = '{}topics.web.{}'.format(output, r)
 
             expanders = ef.get_nrf_expanders()
-            if include_rf:
+            if rf:
                 expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb09b/topics.web.{}.txt'.format(r), expanders=expanders, output=output)
@@ -241,7 +241,7 @@ def run(db, rankers, metrics, anserini, index, output, include_rf=True, op=[]):
             output = '{}topics.web.{}'.format(output, r)
 
             expanders = ef.get_nrf_expanders()
-            if include_rf:
+            if rf:
                 expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb12b13/topics.web.{}.txt'.format(r), expanders=expanders, output=output)
@@ -290,7 +290,7 @@ if __name__ == "__main__":
     addargs(parser)
     args = parser.parse_args()
 
-    ## include_rf: whether to include relevance feedback expanders (local analysis) or not
+    ## rf: whether to include relevance feedback expanders (local analysis) or not
     ## op: determines the steps in the pipeline. op=['generate', 'search', 'evaluate', 'build']
 
     run(db=args.corpus.lower(),
@@ -299,5 +299,5 @@ if __name__ == "__main__":
         anserini=args.anserini,
         index=args.index,
         output=args.output,
-        include_rf=True,
+        rf=True,
         op=['generate', 'search', 'evaluate', 'build'])
