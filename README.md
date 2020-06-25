@@ -6,7 +6,9 @@
     Workflow Diagram
     <img src="./classdiagram.png", width="1000", alt="ReQue: Class Diagram">
     <br>
-    Class Diagram for Query Expanders in <a href="./qe">qe/</a>. The expanders are initialized by the Expander Factory in <a href="./qe/cmn/expander_factory.py">qe/cmn/expander_factory.py</a>
+    Class Diagram for Query Expanders in <a href="./qe">qe/</a>. 
+    <br>
+    The expanders are initialized by the Expander Factory in <a href="./qe/cmn/expander_factory.py">qe/cmn/expander_factory.py</a>
 </p>
 
 
