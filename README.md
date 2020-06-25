@@ -1,5 +1,5 @@
 # A Toolkit for Generating Query Refinement Gold Standards
-## [Online Video Tutorial](https://drive.google.com/file/d/1p5UVf0Kv5AhUh7-df1TSx86HTQ7ewks3/view?usp=sharing)
+## [Online Video Tutorial](https://watch.wave.video/5ef51afa46e0fb000c39a36a)
 <p align="center">
     <img src="./workflow.png", width="400", alt="ReQue: Workflow Diagram">
     <br>
@@ -37,9 +37,9 @@ The target folders are the output repo for the expanders, gold standard datasets
 [`ds/qs/`](./ds/qs/): output folder for suggesters. This folder contains the benchmark results only and the trained models are ignored due to their sizes.
 
 ## Prerequisites
-### [Anserini](https://github.com/castorini/anserini)
-### [Cair](https://github.com/wasiahmad/context_attentive_ir) (optional, needed for benchmark on suggesters)
-### Python 3.7 and the following packages:
+### [anserini](https://github.com/castorini/anserini)
+### [cair](https://github.com/wasiahmad/context_attentive_ir) (optional, needed for benchmark on suggesters)
+### python 3.7 and the following packages:
 ```
 pandas, scipy, numpy, collections, requests, urllib, subprocess
 networkx, community
@@ -78,7 +78,7 @@ Refining queries is done using all [expanders](./qe/cmn/expander_factory.py) by 
 
 `--output`: The output path for the gold standard dataset, e.g., [`../ds/qe/robust04/`](./ds/qe/robust04/). Required; 
 
-`--ranker`: The ranker name which could be any of the available ranker models in [Anserini](https://github.com/castorini/anserini)([SearchCollection](https://github.com/matthew-z/Anserini/blob/master/src/main/java/io/anserini/search/SearchArgs.java)). ReQue has been tested for {`bm25`,`qld`} (default: bm25);
+`--ranker`: The ranker name which could be any of the available ranker models in [anserini](https://github.com/castorini/anserini)([SearchCollection](https://github.com/matthew-z/Anserini/blob/master/src/main/java/io/anserini/search/SearchArgs.java)). ReQue has been tested for {`bm25`,`qld`} (default: bm25);
 
 `--metric`: The evaluation metric name which could be any metric from [trec_eval](https://github.com/usnistgov/trec_eval). Currently, ReQue has been tested for mean average precision, (default: `map`);
 
