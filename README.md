@@ -211,5 +211,7 @@ Given a gold standard dataset which is built for an original query dataset for a
 <sup><sup>2</sup>University of Windsor, ON., Canada.</sup>
 
 ## License
+©2020. This work is licensed under a [CC BY-NC-SA 4.0](LICENSE.txt) license. 
+
 ## Acknowledgments
 We benefited from codebases of [cair](https://github.com/wasiahmad/context_attentive_ir) and [anserini](https://github.com/castorini/anserini). We would like to expresse our gratitdue for authors of these repositeries.
