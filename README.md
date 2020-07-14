@@ -41,8 +41,8 @@ The target folders are the output repo for the expanders, gold standard datasets
 ### [cair](https://github.com/wasiahmad/context_attentive_ir) (optional, needed for benchmark on suggesters)
 ### python 3.7 and the following packages:
 ```
-pandas, scipy, numpy, collections, requests, urllib, subprocess
-networkx, community
+pandas, scipy, numpy, requests, urllib
+networkx, community, python-louvain
 gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 ```
 ### Pre-trained Models/Embeddings
@@ -58,6 +58,15 @@ gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 - [Wikipedia Anchor Text](http://downloads.dbpedia.org/2016-10/core-i18n/en/anchor_text_en.ttl.bz2)
 
 ## Installing
+It is suggested to clone the repo and install a new conda environment along with the required packages using yaml configuration file by the following commands:
+
+```
+$> git clone https://github.com/hosseinfani/ReQue.git
+$> cd ReQue
+$> conda env create -f environment.yml
+$> conda activate ReQue
+```
+
 [Anserini](https://github.com/castorini/anserini) must be installed in [`anserini/`](./anserini/) for indexing, information retrieval and ranking, and evaluation on the original query datasets. The documents in the corpus must be indexed, e.g., by the following commands for `Robust04` (already available [here](https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-robust04-20191213.tar.gz)), `Gov2`, `ClueWeb09-B`, and `ClueWeb12-B13`:
 
 ```
