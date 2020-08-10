@@ -2,6 +2,7 @@
 import os, traceback, operator, sys, math
 from os import path
 import pandas as pd
+import argparse
 
 #build anserini (maven) for doing A) indexing, B) information retrieval, and C) evaluation
 #A) INDEX DOCUMENTS
@@ -161,14 +162,14 @@ def build(input, expanders, rankers, metrics, output):
     ds_df.to_csv(filename, index=False)
     return filename
 
-def run(dbs, rankers, metrics, anserini, include_rf=True, op=[]):
+def run(db, rankers, metrics, anserini, index, output, rf=True, op=[]):
 
-    if 'robust04' in dbs:
-        output = '../ds/qe/robust04/topics.robust04'
-        index = '/data/anserini/lucene-index.robust04.pos+docvectors+rawdocs'
+    if db == 'robust04':
+        output = '{}topics.robust04'.format(output)
+        # index = '/data/anserini/lucene-index.robust04.pos+docvectors+rawdocs'
 
         expanders = ef.get_nrf_expanders()
-        if include_rf:
+        if rf:#local analysis
             expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
         if 'generate' in op:generate(Qfilename='../ds/robust04/topics.robust04.txt', expanders=expanders, output=output)
@@ -178,16 +179,16 @@ def run(dbs, rankers, metrics, anserini, include_rf=True, op=[]):
             result = aggregate(expanders=expanders, rankers=rankers,metrics=metrics, output=output)
             build(input=result, expanders=expanders, rankers=rankers,metrics=metrics, output=output)
 
-    if 'gov2' in dbs :
-        index = '/data/anserini/lucene-index.gov2.pos+docvectors+rawdocs'
+    if db == 'gov2':
+        # index = '/data/anserini/lucene-index.gov2.pos+docvectors+rawdocs'
         topicreader = 'Trec'
 
         results = []
         for r in ['4.701-750', '5.751-800', '6.801-850']:
-            output = '../ds/qe/gov2/topics.terabyte0{}'.format(r)
+            output = '{}topics.terabyte0{}'.format(output, r)
 
             expanders = ef.get_nrf_expanders()
-            if include_rf:
+            if rf:
                 expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
             if 'generate' in op:generate(Qfilename='../ds/gov2/{}.terabyte0{}.txt'.format('topics', r), expanders=expanders, output=output)
@@ -205,16 +206,16 @@ def run(dbs, rankers, metrics, anserini, include_rf=True, op=[]):
                 df = pd.concat([df, pd.read_csv(r)], axis=0, ignore_index=True, sort=False)
             df.to_csv(output, index=False)
 
-    if 'clueweb09b' in dbs:
-        index = '/data/anserini/lucene-index.cw09b.pos+docvectors+rawdocs'
+    if db == 'clueweb09b':
+        # index = '/data/anserini/lucene-index.cw09b.pos+docvectors+rawdocs'
         topicreader = 'Webxml'
 
         results = []
         for r in ['1-50', '51-100', '101-150', '151-200']:
-            output = '../ds/qe/clueweb09b/topics.web.{}'.format(r)
+            output = '{}topics.web.{}'.format(output, r)
 
             expanders = ef.get_nrf_expanders()
-            if include_rf:
+            if rf:
                 expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb09b/topics.web.{}.txt'.format(r), expanders=expanders, output=output)
@@ -232,15 +233,15 @@ def run(dbs, rankers, metrics, anserini, include_rf=True, op=[]):
                 df = pd.concat([df, pd.read_csv(r)], axis=0, ignore_index=True, sort=False)
             df.to_csv(output, index=False)
 
-    if 'clueweb12b13' in dbs:
-        index = '/data/anserini/lucene-index.cw12b13.pos+docvectors+rawdocs'
+    if db == 'clueweb12b13':
+        # index = '/data/anserini/lucene-index.cw12b13.pos+docvectors+rawdocs'
         topicreader = 'Webxml'
         results = []
         for r in ['201-250', '251-300']:
-            output = '../ds/qe/clueweb12b13/{}.web.{}'.format('topics', r)
+            output = '{}topics.web.{}'.format(output, r)
 
             expanders = ef.get_nrf_expanders()
-            if include_rf:
+            if rf:
                 expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb12b13/topics.web.{}.txt'.format(r), expanders=expanders, output=output)
@@ -258,27 +259,45 @@ def run(dbs, rankers, metrics, anserini, include_rf=True, op=[]):
                 df = pd.concat([df, pd.read_csv(r)], axis=0, ignore_index=True, sort=False)
             df.to_csv(output, index=False)
 
-# # python -u main.py robust04 2>&1 | tee robust04.log &
-# # python -u main.py gov2 2>&1 | tee gov2.log &
-# # python -u main.py clueweb09b 2>&1 | tee clueweb09b.log &
-# # python -u main.py clueweb12b13 2>&1 | tee clueweb12b13.log &
+def addargs(parser):
+    anserini = parser.add_argument_group('Anserini')
+    anserini.add_argument('--anserini', type=str, default='../anserini/', help='The path to the anserini library (default: ../anserini/)')
+
+    corpus = parser.add_argument_group('Corpus')
+    corpus.add_argument('--corpus', type=str, choices=['robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], required=True, help='The corpus name; required; (example: robust04)')
+    corpus.add_argument('--index', type=str, required=True, help='The corpus index; required; (example: ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs)')
+
+    gold = parser.add_argument_group('Gold Standard Dataset')
+    gold.add_argument('--output', type=str, required=True, help='The output path for the gold standard dataset; required; (example: ../ds/qe/robust04/')
+    gold.add_argument('--ranker', type=str, choices=['bm25', 'qld'], default='bm25', help='The ranker name (default: bm25)')
+    gold.add_argument('--metric', type=str, choices=['map'], default='map', help='The evaluation metric name (default: map)')
+
+
+# # python -u main.py --anserini ../anserini --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker bm25 --metric map 2>&1 | tee robust04.log &
+# # python -u main.py --anserini ../anserini --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.log &
+
+# # python -u main.py --anserini ../anserini --corpus gov2 --index ../ds/robust04/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker bm25 --metric map 2>&1 | tee gov2.log &
+# # python -u main.py --anserini ../anserini --corpus gov2 --index ../ds/robust04/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker qld --metric map 2>&1 | tee gov2.log &
+
+# # python -u main.py --anserini ../anserini --corpus clueweb09b --index ../ds/robust04/lucene-index.cw09b.pos+docvectors+rawdocs --output ../ds/qe/clueweb09b/ --ranker bm25 --metric map 2>&1 | tee clueweb09b.log &
+# # python -u main.py --anserini ../anserini --corpus clueweb09b --index ../ds/robust04/lucene-index.cw09b.pos+docvectors+rawdocs --output ../ds/qe/clueweb09b/ --ranker qld --metric map 2>&1 | tee clueweb09b.log &
+
+# # python -u main.py --anserini ../anserini --corpus clueweb12b13 --index ../ds/robust04/lucene-index.cw12b13.pos+docvectors+rawdocs --output ../ds/qe/clueweb12b13/ --ranker bm25 --metric map 2>&1 | tee clueweb12b13.log &
+# # python -u main.py --anserini ../anserini --corpus clueweb12b13 --index ../ds/robust04/lucene-index.cw12b13.pos+docvectors+rawdocs --output ../ds/qe/clueweb12b13/ --ranker qld --metric map 2>&1 | tee clueweb12b13.log &
 
 if __name__ == "__main__":
-    dbs = sys.argv[1:]
-    if not dbs:
-        dbs = ['robust04', 'gov2', 'clueweb09b', 'clueweb12b13']
+    parser = argparse.ArgumentParser(description='ReQue (Refining Queries)')
+    addargs(parser)
+    args = parser.parse_args()
 
-    rankers = ['-bm25', '-bm25 -rm3', '-qld', '-qld -rm3']
-    metrics = ['map']
-    anserini = '/data/anserini/'
-
-    ## include_rf: whether to include relevance feedback expanders or not
+    ## rf: whether to include relevance feedback expanders (local analysis) or not
     ## op: determines the steps in the pipeline. op=['generate', 'search', 'evaluate', 'build']
 
-    ##per topic-ranker-metric database building. The only difference is in build operation
-    for ranker in rankers:
-        for metric in metrics:
-            run(dbs=dbs, rankers=[ranker], metrics=[metric], anserini=anserini, include_rf=True, op=[])#['generate', 'search', 'evaluate', 'build'])
-	
-    ##per topic database building
-    #run(dbs=dbs, rankers=rankers, metrics=metrics, anserini=anserini, include_rf=True, op=[])#['generate', 'search', 'evaluate', 'build']
+    run(db=args.corpus.lower(),
+        rankers=['-' + args.ranker.lower()],
+        metrics=[args.metric.lower()],
+        anserini=args.anserini,
+        index=args.index,
+        output=args.output,
+        rf=True,
+        op=['generate', 'search', 'evaluate', 'build'])
