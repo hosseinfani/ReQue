@@ -138,6 +138,13 @@ $> python -u qs/main.py 5 all 2>&1 | tee all.topn5.log &
 ```
 
 ## Authors
+[Hossein Fani](https://sites.google.com/site/hosseinfani/)<sup>1,2</sup>, [Mahtab Tamannaee](https://github.com/mtamannaee)<sup>1</sup>, [Fattane Zarrinkalam](http://ls3.rnet.ryerson.ca/people/fattane_zarrinkalam/)<sup>1</sup>, [Jamil Samouh](https://github.com/jamilsamouh)<sup>1</sup>, [Samad Paydar](http://s-paydar.profcms.um.ac.ir/)<sup>1</sup> and [Ebrahim Bagheri](https://www.ee.ryerson.ca/~bagheri/)<sup>1</sup>
+
+<sup><sup>1</sup>Laboratory for Systems, Software and Semantics ([LS3](http://ls3.rnet.ryerson.ca/)), Ryerson University, ON, Canada.</sup>
+
+<sup><sup>2</sup>School of Computer Science, Faculty of Science, University of Windsor, ON, Canada.</sup>
+
 ## License
+©2020. This work is licensed under a [CC BY-NC-SA 4.0](LICENSE.txt) license. 
 ## Acknowledgments
 We benefited from codebases of [cair](https://github.com/wasiahmad/context_attentive_ir) and [anserini](https://github.com/castorini/anserini). We would like to expresse our gratitdue for authors of these repositeries.
