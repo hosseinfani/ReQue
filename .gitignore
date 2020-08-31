@@ -10,14 +10,29 @@ pre/
 anserini/
 !anserini/gitkeep
 
-ds/clueweb09b/
+ds/clueweb09b/*
 !ds/clueweb09b/gitkeep
-ds/clueweb12b13/
+!ds/clueweb09b/lucene-index.clueweb09b.pos+docvectors+rawdocs/
+ds/clueweb09b/lucene-index.clueweb09b.pos+docvectors+rawdocs/*
+!ds/clueweb09b/lucene-index.clueweb09b.pos+docvectors+rawdocs/gitkeep
+
+ds/clueweb12b13/*
 !ds/clueweb12b13/gitkeep
-ds/gov2/
+!ds/clueweb12b13/lucene-index.clueweb12b13.pos+docvectors+rawdocs/
+ds/clueweb12b13/lucene-index.clueweb12b13.pos+docvectors+rawdocs/*
+!ds/clueweb12b13/lucene-index.clueweb12b13.pos+docvectors+rawdocs/gitkeep
+
+ds/gov2/*
 !ds/gov2/gitkeep
-ds/robust04/
+!ds/gov2/lucene-index.gov2.pos+docvectors+rawdocs/
+ds/gov2/lucene-index.gov2.pos+docvectors+rawdocs/*
+!ds/gov2/lucene-index.gov2.pos+docvectors+rawdocs/gitkeep
+
+ds/robust04/*
 !ds/robust04/gitkeep
+!ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs/
+ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs/*
+!ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs/gitkeep
 
 !ds/qe/eval/
 
