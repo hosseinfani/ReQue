@@ -12,29 +12,121 @@
 </p>
 
 
-## Overview
+## Overview [`<o>`](./tree.txt)
 ### Codebases
 [`qe/`](./qe/): (**q**uery **e**xpander) source code for the expanders `E={q}`.
 
+``` 
++---qe
+|   |   main.py
+|   +---cmn
+|   +---eval
+|   +---expanders
+|   |       abstractqexpander.py
+|   |       ...
+|   \---stemmers
+|           abstractstemmer.py
+|           ...
+```
+
 [`qs/`](./qs/): (**q**uery **s**uggester) source code from [cair](https://github.com/wasiahmad/context_attentive_ir) for the supervised query refinement methods (suggesters), including [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), and [hred-qs](https://arxiv.org/abs/1507.02221).
+
+```
++---qs
+    |   main.py
+    \---cair
+```
 
 ### Source Folders [empty]
 The following source folders are to be populated by the original query dataset `Q`, judment relevances `Jq`, and pre-trained models/embeddings.
 
 [`pre/`](./pre/): (**pre**-trained models) source folder for pre-trained models and/or embeddings, including [FastText](https://fasttext.cc/docs/en/english-vectors.html) and [GloVe](https://nlp.stanford.edu/projects/glove/).
 
+```
++---pre
+|       # anchor_text_en.ttl
+|       # gitkeep
+|       # glove.6B.300d.txt
+|       # temp_model_Wiki
+|       # temp_model_Wiki.vectors.npy
+|       # wiki-anchor-text-en-ttl-300d.vec
+|       # wiki-anchor-text-en-ttl-300d.vec.vectors.npy
+|       # wiki-news-300d-1M.vec
+```
+
 [`anserini/`](./anserini/): source folder for [anserini](https://github.com/castorini/anserini), indexes for the information corpuses, and [trec_eval](https://github.com/usnistgov/trec_eval).
 
+```
++---anserini 
+|   +---eval
+|   |   \---trec_eval.9.0.4
+|   \---target
+|       +---appassembler
+|       |   +---bin
+```
+
 [`ds/`](./ds/): (**d**ata**s**et) source folder for original query datasets, including [Robust04](https://trec.nist.gov/data_disks.html), [Gov2](http://ir.dcs.gla.ac.uk/test_collections/gov2-summary.htm), [ClueWeb09-B](http://lemurproject.org/clueweb09.php/), and [ClueWeb12-B13](http://lemurproject.org/clueweb12/ClueWeb12-CreateB13.php).
+
+```
++---ds
+|   +---robust04
+|   +---clueweb09b
+|   +---clueweb12b13
+|   +---gov2
+|   +---qe
+|   +---qs
+```
 
 ### Target Folders
 The target folders are the output repo for the expanders, gold standard datasets, and benchmarks.
 
 [`ds/qe/`](./ds/qe/): output folder for expanders and **the gold standard datasets.**
 
+```
++---ds
+|   +---qe
+|   |   +---clueweb09b
+|   |   |       topics.clueweb09b.1-200.bm25.map.dataset.csv
+|   |   |       topics.clueweb09b.1-200.bm25.rm3.map.dataset.csv
+|   |   |       topics.clueweb09b.1-200.qld.map.dataset.csv
+|   |   |       topics.clueweb09b.1-200.qld.rm3.map.dataset.csv
+|   |   +---clueweb12b13
+|   |   |       topics.clueweb12b13.201-300.bm25.map.dataset.csv
+|   |   |       topics.clueweb12b13.201-300.bm25.rm3.map.dataset.csv
+|   |   |       topics.clueweb12b13.201-300.qld.map.dataset.csv
+|   |   |       topics.clueweb12b13.201-300.qld.rm3.map.dataset.csv
+|   |   +---gov2
+|   |   |       topics.gov2.701-850.bm25.map.dataset.csv
+|   |   |       topics.gov2.701-850.bm25.rm3.map.dataset.csv
+|   |   |       topics.gov2.701-850.qld.map.dataset.csv
+|   |   |       topics.gov2.701-850.qld.rm3.map.dataset.csv
+|   |   |---robust04
+|   |   |       topics.robust04.bm25.map.dataset.csv
+|   |   |       topics.robust04.bm25.rm3.map.dataset.csv
+|   |   |       topics.robust04.qld.map.dataset.csv
+|   |   |       topics.robust04.qld.rm3.map.dataset.csv
+```
+
 [`ds/qe/eval/`](./ds/qe/eval): output folder for the reports on performance of expanders and statistics about the gold standard datasets.
 
+```
++---ds
+|   +---qe
+|   |   \---eval
+|   |           overall.stat.csv
+```
+
 [`ds/qs/`](./ds/qs/): output folder for suggesters. This folder contains the benchmark results only and the trained models are ignored due to their sizes.
+
+```
++---ds
+|   +---qs
+|   |   +---all.topn5
+|   |   +---clueweb09b.topn5
+|   |   +---clueweb12b13.topn5
+|   |   +---gov2.topn5
+|   |   \---robust04.topn5
+```
 
 ## Prerequisites
 ### [anserini](https://github.com/castorini/anserini)

@@ -1,0 +1,95 @@
++---anserini 
+|   +---eval
+|   |   \---trec_eval.9.0.4
+|   \---target
+|       +---appassembler
+|       |   +---bin
++---ds
+|   +---robust04
+|       \---lucene-index.robust04.pos+docvectors+rawdocs
+|   +---clueweb09b
+|   |   \---lucene-index.clueweb09b.pos+docvectors+rawdocs
+|   +---clueweb12b13
+|   |   \---lucene-index.clueweb12b13.pos+docvectors+rawdocs
+|   +---gov2
+|   |   \---lucene-index.gov2.pos+docvectors+rawdocs
+|   +---qe
+|   |   +---clueweb09b
+|   |   |       topics.clueweb09b.1-200.bm25.map.dataset.csv
+|   |   |       topics.clueweb09b.1-200.bm25.rm3.map.dataset.csv
+|   |   |       topics.clueweb09b.1-200.qld.map.dataset.csv
+|   |   |       topics.clueweb09b.1-200.qld.rm3.map.dataset.csv
+|   |   +---clueweb12b13
+|   |   |       topics.clueweb12b13.201-300.bm25.map.dataset.csv
+|   |   |       topics.clueweb12b13.201-300.bm25.rm3.map.dataset.csv
+|   |   |       topics.clueweb12b13.201-300.qld.map.dataset.csv
+|   |   |       topics.clueweb12b13.201-300.qld.rm3.map.dataset.csv
+|   |   +---gov2
+|   |   |       topics.gov2.701-850.bm25.map.dataset.csv
+|   |   |       topics.gov2.701-850.bm25.rm3.map.dataset.csv
+|   |   |       topics.gov2.701-850.qld.map.dataset.csv
+|   |   |       topics.gov2.701-850.qld.rm3.map.dataset.csv
+|   |   |---robust04
+|   |   |       topics.robust04.bm25.map.dataset.csv
+|   |   |       topics.robust04.bm25.rm3.map.dataset.csv
+|   |   |       topics.robust04.qld.map.dataset.csv
+|   |   |       topics.robust04.qld.rm3.map.dataset.csv
+|   |   \---eval
+|   |           overall.stat.csv
+|   +---qs
+|   |   +---all.topn5
+|   |   +---clueweb09b.topn5
+|   |   +---clueweb12b13.topn5
+|   |   +---gov2.topn5
+|   |   \---robust04.topn5
++---pre
+|       # anchor_text_en.ttl
+|       # gitkeep
+|       # glove.6B.300d.txt
+|       # temp_model_Wiki
+|       # temp_model_Wiki.vectors.npy
+|       # wiki-anchor-text-en-ttl-300d.vec
+|       # wiki-anchor-text-en-ttl-300d.vec.vectors.npy
+|       # wiki-news-300d-1M.vec
++---qe
+|   |   main.py
+|   +---cmn
+|   |       expander_factory.py
+|   |       utils.py
+|   +---eval
+|   |       stat.py
+|   +---expanders
+|   |       abstractqexpander.py
+|   |       anchor.py
+|   |       conceptluster.py
+|   |       conceptnet.py
+|   |       docluster.py
+|   |       glove.py
+|   |       relevancefeedback.py
+|   |       sensedisambiguation.py
+|   |       stem.py
+|   |       tagmee.py
+|   |       termluster.py
+|   |       thesaurus.py
+|   |       wiki.py
+|   |       word2vec.py
+|   |       wordnet.py
+|   \---stemmers
+|           abstractstemmer.py
+|           krovetz.py
+|           kstem-3.4.jar
+|           lovins.py
+|           lovinsstemmer.py
+|           nostemmer.py
+|           paicehusk.py
+|           paicehuskstemmer.py
+|           porter.py
+|           porter2.py
+|           porter2stemmer.py
+|           porterstemmer.py
+|           sstemmer.py
+|           trunc4.py
+|           trunc5.py
+\---qs
+    |   main.py
+    \---cair
