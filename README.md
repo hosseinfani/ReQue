@@ -139,6 +139,13 @@ pandas, scipy, numpy, requests, urllib
 networkx, community, python-louvain
 gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 ```
+For the full list, refer to [`environment.yml`](./environment.yml). A conda environment, namely `ReQue`, can be created and activated by the following commands:
+```
+$> conda env create -f environment.yml
+$> conda activate ReQue
+```
+
+
 ### Pre-trained Models/Embeddings
 - [FastText](https://fasttext.cc/docs/en/english-vectors.html)
 - [GloVe](https://nlp.stanford.edu/projects/glove/)
