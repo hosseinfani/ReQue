@@ -70,11 +70,13 @@ The following source folders are to be populated by the original query dataset `
 ```
 +---ds
 |   +---robust04
+|       \---lucene-index.robust04.pos+docvectors+rawdocs
 |   +---clueweb09b
+|   |   \---lucene-index.clueweb09b.pos+docvectors+rawdocs
 |   +---clueweb12b13
+|   |   \---lucene-index.clueweb12b13.pos+docvectors+rawdocs
 |   +---gov2
-|   +---qe
-|   +---qs
+|   |   \---lucene-index.gov2.pos+docvectors+rawdocs
 ```
 
 ### Target Folders
@@ -137,6 +139,13 @@ pandas, scipy, numpy, requests, urllib
 networkx, community, python-louvain
 gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
 ```
+For the full list, refer to [`environment.yml`](./environment.yml). A conda environment, namely `ReQue`, can be created and activated by the following commands:
+```
+$> conda env create -f environment.yml
+$> conda activate ReQue
+```
+
+
 ### Pre-trained Models/Embeddings
 - [FastText](https://fasttext.cc/docs/en/english-vectors.html)
 - [GloVe](https://nlp.stanford.edu/projects/glove/)
