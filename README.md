@@ -44,14 +44,13 @@ The following source folders are to be populated by the original query dataset `
 
 ```
 +---pre
-|       # anchor_text_en.ttl
-|       # gitkeep
-|       # glove.6B.300d.txt
-|       # temp_model_Wiki
-|       # temp_model_Wiki.vectors.npy
-|       # wiki-anchor-text-en-ttl-300d.vec
+|       # anchor_text_en.ttl                => http://downloads.dbpedia.org/2016-10/core-i18n/en/anchor_text_en.ttl.bz2
+|       # glove.6B.300d.txt                 => http://nlp.stanford.edu/data/glove.6B.zip
+|       # wiki-news-300d-1M.vec             => https://dl.fbaipublicfiles.com/fasttext/
+|       # temp_model_Wiki                   => https://www.aclweb.org/anthology/C16-1252/
+|       # temp_model_Wiki.vectors.npy       
+|       # wiki-anchor-text-en-ttl-300d.vec  => https://github.com/hosseinfani/ReQue/blob/df3bcbdc3189a936f39ade0743450b7871e35517/qe/expanders/anchor.py#L22
 |       # wiki-anchor-text-en-ttl-300d.vec.vectors.npy
-|       # wiki-news-300d-1M.vec
 ```
 
 [`anserini/`](./anserini/): source folder for [anserini](https://github.com/castorini/anserini), indexes for the information corpuses, and [trec_eval](https://github.com/usnistgov/trec_eval).
