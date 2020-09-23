@@ -33,7 +33,7 @@ ps = PorterStemmer()
 # }
 
 class QueryExpansionOnFields:
-    def __init__(self, ranker, prels, anserini, index, corpus,replace=False):
+    def __init__(self, ranker, prels, anserini, index, corpus,replace=False , top_k_docs=3 , top_n_terms=10):
         self.prels = prels
         self.anserini = anserini
         self.index = index
@@ -41,19 +41,24 @@ class QueryExpansionOnFields:
         self.replace = replace
         self.corpus = corpus
         self.index_reader = pyserini.index.IndexReader(self.index)
+        self.top_n_terms=10
+        self.top_k_docs=3
 
-    def extract_top_3_documents(self,query,run_file):
-        top_3_doc=[]
-        file = open(run_file,'r').readlines()
-        for line in file:
-            query_id = line.split()[0]
-            if query_id == query:
-                if len(top_3_doc)< 3:
-                    doc_id=line.split()[2]
-                    top_3_doc.append(doc_id)
-                else:
+
+    def get_topn_relevant_docids(self, qid):
+        relevant_documents = []
+        self.f = open(self.prels, "r", encoding='utf-8')
+        self.f.seek(0)
+        i = 0
+        for x in self.f:
+            x_splited =  x.split()
+            if int(x_splited[0]) == qid:
+                relevant_documents.append(x_splited[2])
+                i = i+1
+                if i >= self.top_k_docs:
                     break
-        return top_3_doc
+        return relevant_documents
+
 
     def extract_raw_documents(self,docid):
         index_address=self.index
@@ -155,7 +160,7 @@ class QueryExpansionOnFields:
     def get_expanded_query(self, q, args):
         
         qid=args[0]
-        top_3_docs=self.extract_top_3_documents(str(qid),self.prels)
+        top_3_docs = self.get_topn_relevant_docids(qid)
         top_3_title=''
         top_3_body=''
         top_3_anchor=''
@@ -220,34 +225,33 @@ class QueryExpansionOnFields:
 
         sorted_term_weights=dict(sorted(w_t_dic.items(), key=lambda x: x[1])[::-1])
         counter=0
-        top_10_informative_words={}
+        top_n_informative_words={}
         for keys,values in sorted_term_weights.items():
             counter=counter+1
-            top_10_informative_words[keys]=values
-            if counter>10:
+            top_n_informative_words[keys]=values
+            if counter>self.top_n_terms:
                 break
 
         expanded_term_freq= {}
-        for keys,values in top_10_informative_words.items():
+        for keys,values in top_n_informative_words.items():
             expanded_term_freq[keys]=all_top_3_docs.count(keys)
 
-        for keys,values in top_10_informative_words.items():
+        for keys,values in top_n_informative_words.items():
             part_A = expanded_term_freq[keys] /max(expanded_term_freq.values())
-            part_B = top_10_informative_words[keys] / max(top_10_informative_words.values())
-            top_10_informative_words[keys]= part_A+part_B
+            part_B = top_n_informative_words[keys] / max(top_n_informative_words.values())
+            top_n_informative_words[keys]= part_A+part_B
 
         for original_q_term in q.lower().split():
-            top_10_informative_words[ps.stem(original_q_term)]=2
+            top_n_informative_words[ps.stem(original_q_term)]=2
 
-        top_10_informative_words=dict(sorted(top_10_informative_words.items(), key=lambda x: x[1])[::-1])
-        return str(top_10_informative_words)
+        top_n_informative_words=dict(sorted(top_n_informative_words.items(), key=lambda x: x[1])[::-1])
+        return str(top_n_informative_words)
 
     def get_model_name(self):
-        if self.__class__.__name__ == 'QueryExpansionOnFields':
-            return 'QueryExpansionOnFields'.lower() #this is for backward compatibility for renaming this class
-        return '{}{}{}'.format(self.__class__.__name__.lower(),
-                         '.topn{}'.format(self.topn) if self.topn else '',
-                         '.replace' if self.replace else '')
+        return '{}{}{}{}'.format(self.__class__.__name__.lower(),
+                         '.topkdocs{}'.format(self.top_k_docs),
+                          '.topnterms{}'.format(self.top_n_terms),
+                          '.{}'.format(self.ranker))
 
     def write_expanded_queries(self, Qfilename, Q_filename):
         model_name = self.get_model_name().lower()
