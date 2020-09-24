@@ -36,14 +36,14 @@ ps = PorterStemmer()
 #   bibsource = {dblp computer science bibliography, https://dblp.org}
 # }
 
-class AdobpQEOnFields(RelevanceFeedback):
+class AdapQEOnFields(RelevanceFeedback):
 
-    def __init__(self, ranker, prels, anserini, index, corpus,externalindex, externalcorpus,externalprels, replace=False, topn=3, top_n_terms=10,adop=False):
+    def __init__(self, ranker, prels, anserini, index, corpus,externalindex, externalcorpus,externalprels, replace=False, topn=3, top_n_terms=10,adap=False):
         RelevanceFeedback.__init__(self, ranker, prels, anserini, index, topn=topn)
         self.corpus = corpus
         self.index_reader = pyserini.index.IndexReader(self.index)
         self.top_n_terms=10
-        self.adop=adop
+        self.adap=adap
         self.externalindex=externalindex
         self.externalcorpus=externalcorpus
         self.externalprels=externalprels
@@ -70,7 +70,7 @@ class AdobpQEOnFields(RelevanceFeedback):
                            anserini=self.anserini,
                            index=self.externalindex,
                            corpus=self.externalcorpus,
-                           adop=True)
+                           adap=True)
             return(qe.get_expanded_query(q, [qid]))
 
 
@@ -114,16 +114,8 @@ class AdobpQEOnFields(RelevanceFeedback):
 
 
 if __name__ == "__main__":
-    qe = QueryExpansionOnFields(ranker='bm25',
-                                prels='../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt',
-                                anserini='../anserini/',
-                                index='../anserini/lucene-index.gov2.pos+docvectors+rawdocs',
-                                corpus='gov2')
 
-    print(qe.get_model_name())
-    print(qe.get_expanded_query('pearl farming', [702]))
-
-    qe = AdobpQEOnFields(ranker='bm25',
+    qe = AdapQEOnFields(ranker='bm25',
                            corpus='robust04',
                            index='/data/anserini/lucene-index.robust04.pos+docvectors+rawdocs',
                            prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',
