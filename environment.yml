@@ -19,4 +19,5 @@ dependencies:
     - community==1.0.0b1
     - bs4==0.0.1
     - python-louvain==0.13
+    - pyserini==0.9.4.0
 
