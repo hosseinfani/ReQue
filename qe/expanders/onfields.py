@@ -34,10 +34,9 @@ ps = PorterStemmer()
 #   bibsource = {dblp computer science bibliography, https://dblp.org}
 # }
 
-class QueryExpansionOnFields(RelevanceFeedback):
-    def __init__(self, ranker, prels, anserini, index, corpus, w_t, w_a,document_number_in_C, replace=False, topn=3, top_n_terms=10,adop=False):
+class OnFields(RelevanceFeedback):
+    def __init__(self, ranker, prels, anserini, index, w_t, w_a, document_number_in_C, replace=False, topn=3, top_n_terms=10, adop=False):
         RelevanceFeedback.__init__(self, ranker, prels, anserini, index, topn=topn)
-        self.corpus = corpus
         self.index_reader = pyserini.index.IndexReader(self.index)
         self.top_n_terms=10
         self.adop=adop
@@ -135,18 +134,14 @@ class QueryExpansionOnFields(RelevanceFeedback):
         top_n_informative_words=dict(sorted(top_n_informative_words.items(), key=lambda x: x[1])[::-1])
         return str(top_n_informative_words)
 
-
-
-
     def get_model_name(self):
         return super().get_model_name().replace('topn{}'.format(self.topn),
-                                                'topn{}.topt{}.corpus{}'.format(self.topn, self.top_n_terms,self.corpus))
-
+                                                'topn{}.{}.{}.{}.{}'.format(self.topn, self.top_n_terms, self.w_t, self.w_a, (1 if self.adop else 0)))
 
     def extract_raw_documents(self,docid):
         index_address=self.index
         anserini_address=self.anserini
-        cmd = '{}/target/appassembler/bin/IndexUtils -index {} -dumpRawDoc {}'.format(anserini_address,index_address,docid)
+        cmd = '\"{}/target/appassembler/bin/IndexUtils\" -index \"{}\" -dumpRawDoc {}'.format(anserini_address,index_address,docid)
         output = subprocess.check_output(cmd, shell=True)
         return (output.decode('utf-8'))
     
@@ -188,7 +183,6 @@ class QueryExpansionOnFields(RelevanceFeedback):
                     anchor_out='{} {}'.format(anchor_out,link.string)
             return anchor_out
     
-
     def term_weighting(self,top_3_title,top_3_anchor,top_3_body):
         # w_t and w_a is tuned for all the copora ( should be tuned for future corpora as well)
 
@@ -253,7 +247,7 @@ if __name__ == "__main__":
                                 'cw12':  50000000}
 
 
-    qe = QueryExpansionOnFields(ranker='bm25',
+    qe = OnFields(ranker='bm25',
                                 prels='../../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt',
                                 anserini='../anserini/',
                                 index='/data/anserini/lucene-index.gov2.pos+docvectors+rawdocs',
