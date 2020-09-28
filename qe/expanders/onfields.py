@@ -1,7 +1,8 @@
 import sys
 
 sys.path.extend(['../qe'])
-
+sys.path.insert(0,'..')
+sys.path.insert(0,'../..')
 import traceback, os, subprocess, nltk, string, math
 from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
@@ -10,7 +11,6 @@ from collections import Counter
 from nltk.corpus import stopwords
 from pyserini import analysis, index
 import pyserini
-
 from expanders.relevancefeedback import RelevanceFeedback
 from cmn import utils
 
@@ -35,12 +35,15 @@ ps = PorterStemmer()
 # }
 
 class QueryExpansionOnFields(RelevanceFeedback):
-    def __init__(self, ranker, prels, anserini, index, corpus, replace=False, topn=3, top_n_terms=10,adop=False):
+    def __init__(self, ranker, prels, anserini, index, corpus, w_t, w_a,document_number_in_C, replace=False, topn=3, top_n_terms=10,adop=False):
         RelevanceFeedback.__init__(self, ranker, prels, anserini, index, topn=topn)
         self.corpus = corpus
         self.index_reader = pyserini.index.IndexReader(self.index)
         self.top_n_terms=10
         self.adop=adop
+        self.w_t = w_t # weight for title field
+        self.w_a = w_a # weight for anchor field
+        self.document_number_in_C=document_number_in_C #total number of documents in the collection
 
     def get_expanded_query(self, q, args):
         
@@ -86,12 +89,7 @@ class QueryExpansionOnFields(RelevanceFeedback):
         tfx=dict(sorted(tfx.items(), key=lambda x: x[1])[::-1])
         w_t_dic={}
         c=0
-        if self.corpus =='robust04':
-            document_number_in_C=520000
-        elif self.corpus =='gov2' :
-            document_number_in_C=25000000
-        elif self.corpus =='cw09'or self.corpus=='cw12':
-            document_number_in_C=50000000
+        
 
         for term in tfx.keys():
             if term.isalnum():
@@ -105,7 +103,7 @@ class QueryExpansionOnFields(RelevanceFeedback):
                 if collection_freq==0 or collection_freq==None:
                     collection_freq=1
 
-                P_n = collection_freq / document_number_in_C
+                P_n = collection_freq / self.document_number_in_C
                 try:
                     term_weight= tfx[term] * math.log2( (1 + P_n ) / P_n) + math.log2( 1 + P_n)
                     w_t_dic[term]=term_weight
@@ -142,7 +140,7 @@ class QueryExpansionOnFields(RelevanceFeedback):
 
     def get_model_name(self):
         return super().get_model_name().replace('topn{}'.format(self.topn),
-                                                'topn{}.{}'.format(self.topn, self.top_n_terms))
+                                                'topn{}.topt{}.corpus{}'.format(self.topn, self.top_n_terms,self.corpus))
 
 
     def extract_raw_documents(self,docid):
@@ -158,25 +156,24 @@ class QueryExpansionOnFields(RelevanceFeedback):
         body_out=''
         anchor_out=''
         if field=='title':
-            if self.corpus=='robust04':
-                try:
-                    title= soup.find('headline')
-                    title_out=title.text
-                except:
-                    pass
-            elif self.corpus =='gov2' or self.corpus=='cw09' or self.corpus=='cw12':
-                try:
-                    title = soup.find('title')
-                    title_out=title.text
-                except:
-                    pass
+            try:
+                title= soup.find('headline')
+                title_out=title.text
+            except:
+                if title_out=='':
+                    try:
+                        title = soup.find('title')
+                        title_out=title.text
+                    except:
+                        pass
+
             return title_out
 
         if field == 'body':
-            if self.corpus=='robust04':
+            if '<html>' not in raw_document:
                 pageText = soup.findAll(text=True)
                 body_out= (' '.join(pageText))
-            elif self.corpus =='gov2' or self.corpus=='cw09' or self.corpus=='cw12':
+            else:
                 bodies=  soup.find_all('body')
                 for b in bodies:
                     try:
@@ -194,18 +191,6 @@ class QueryExpansionOnFields(RelevanceFeedback):
 
     def term_weighting(self,top_3_title,top_3_anchor,top_3_body):
         # w_t and w_a is tuned for all the copora ( should be tuned for future corpora as well)
-        if self.corpus =='robust04':
-            w_t=2.25
-            w_a=1
-        elif self.corpus =='gov2':
-            w_t=4
-            w_a=0.25
-        elif self.corpus =='cw09':
-            w_t=1
-            w_a=0
-        elif self.corpus == 'cw12':
-            w_t=4
-            w_a=0
 
         w_b = 1 
         top_3_title=top_3_title.translate(str.maketrans('', '', string.punctuation))
@@ -228,7 +213,7 @@ class QueryExpansionOnFields(RelevanceFeedback):
         for term in list(set(filtered_words_title)):
             if term not in term_weights.keys():
                 term_weights[term]=0
-            term_weights[term]=term_weights[term] + term_freq_title[term] * w_t
+            term_weights[term]=term_weights[term] + term_freq_title[term] * self.w_t
 
         for term in list(set(filtered_words_body)):
             if  term_freq_body[term]  :
@@ -239,7 +224,7 @@ class QueryExpansionOnFields(RelevanceFeedback):
         for term in list(set(filtered_words_anchor)):
             if term not in term_weights.keys():
                 term_weights[term]=0
-            term_weights[term]=term_weights[term] + term_freq_anchor[term] * w_a
+            term_weights[term]=term_weights[term] + term_freq_anchor[term] * self.w_a
 
         return term_weights
 
@@ -257,12 +242,27 @@ class QueryExpansionOnFields(RelevanceFeedback):
 
 
 if __name__ == "__main__":
+    tuned_weights={'robust04':  {'w_t':2.25 , 'w_a':1 },
+                    'gov2':     {'w_t':4 , 'w_a':0.25 },
+                    'cw09':     {'w_t': 1, 'w_a': 0},
+                    'cw12':     {'w_t': 4, 'w_a': 0}} 
+
+    total_documents_number = { 'robust04':520000 , 
+                                'gov2' : 25000000, 
+                                'cw09' : 50000000 ,
+                                'cw12':  50000000}
+
+
     qe = QueryExpansionOnFields(ranker='bm25',
-                                prels='../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt',
-                                anserini='../anserini/',
-                                index='../anserini/lucene-index.gov2.pos+docvectors+rawdocs',
-                                corpus='gov2')
+                                prels='../../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt',
+                                anserini='/home/negar/anserini/',
+                                index='/data/anserini/lucene-index.gov2.pos+docvectors+rawdocs',
+                                corpus='gov2',
+                                w_t=tuned_weights['gov2']['w_t'],
+                                w_a=tuned_weights['gov2']['w_a'],
+                                document_number_in_C= total_documents_number['gov2'])
 
     print(qe.get_model_name())
     print(qe.get_expanded_query('pearl farming', [702]))
+
 
