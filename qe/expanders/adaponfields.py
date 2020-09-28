@@ -1,7 +1,6 @@
 import sys
 sys.path.extend(['../qe'])
-sys.path.insert(0,'..')
-sys.path.insert(0,'../..')
+
 import traceback, os, subprocess, nltk, string, math
 from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
@@ -12,8 +11,8 @@ from pyserini import analysis, index
 import pyserini
 from pyserini.search import SimpleSearcher
 from pyserini import analysis, index
-from expanders.relevancefeedback import RelevanceFeedback
-from expanders.onfields import QueryExpansionOnFields
+
+from expanders.onfields import OnFields
 from cmn import utils
 
 stop_words = set(stopwords.words('english'))
@@ -36,26 +35,22 @@ ps = PorterStemmer()
 #   bibsource = {dblp computer science bibliography, https://dblp.org}
 # }
 
-class AdapQEOnFields(RelevanceFeedback):
+class AdapOnFields(OnFields):
 
-    def __init__(self, ranker, prels, anserini, index, corpus,externalindex, externalcorpus,externalprels, collection_tokens, external_collection_tokens,
-     w_t, w_a,document_number_in_C,external_w_t, external_w_a,external_document_number_in_C,replace=False, topn=3, top_n_terms=10,adap=False):
-        RelevanceFeedback.__init__(self, ranker, prels, anserini, index, topn=topn)
-        self.corpus = corpus
-        self.index_reader = pyserini.index.IndexReader(self.index)
-        self.top_n_terms=10
-        self.adap=adap
-        self.externalindex=externalindex
-        self.externalcorpus=externalcorpus
-        self.externalprels=externalprels
-        self.collection_tokens=collection_tokens # number of tokens in the collection
-        self.external_collection_tokens=external_collection_tokens # number of tokens in the external collection
-        self.w_t=w_t
-        self.w_a=w_a
-        self.document_number_in_C=document_number_in_C
-        self.external_w_t=external_w_t
-        self.external_w_a=external_w_a
-        self.external_document_number_in_C=external_document_number_in_C
+    def __init__(self, ranker, prels, anserini, index, w_t, w_a,corpus_size, collection_tokens,  
+                 ext_index, ext_corpus,ext_prels, ext_collection_tokens, ext_w_t, ext_w_a, ext_corpus_size,
+                 replace=False, topn=3, top_n_terms=10, adap=False):
+        OnFields.__init__(self, ranker, prels, anserini, index, w_t, w_a,corpus_size, topn=topn, replace=replace, top_n_terms=top_n_terms, adap=adap)
+
+        self.collection_tokens = collection_tokens  # number of tokens in the collection
+
+        self.ext_index=ext_index
+        self.ext_corpus=ext_corpus
+        self.ext_prels=ext_prels
+        self.ext_collection_tokens=ext_collection_tokens # number of tokens in the external collection
+        self.ext_w_t=ext_w_t
+        self.ext_w_a=ext_w_a
+        self.ext_corpus_size=ext_corpus_size
 
 
     def get_expanded_query(self, q, args):
@@ -66,39 +61,28 @@ class AdapQEOnFields(RelevanceFeedback):
             for terms in q.split():
                 output_weighted_q_dic[ps.stem(terms)]=2
             return output_weighted_q_dic
+        
         elif Preferred_expansion =="InternalExpansionPreferred":
-            qe = QueryExpansionOnFields(ranker=self.ranker,
-                           prels=self.prels,
-                           anserini=self.anserini,
-                           index=self.index,
-                           corpus=self.corpus,
-                           w_t=self.w_t,
-                           w_a=self.w_a,
-                           document_number_in_C=self.document_number_in_C)
-
-            return(qe.get_expanded_query(q, [qid]))
+            return(super().get_expanded_query(q, [qid]))
+        
         elif Preferred_expansion =="ExternalExpansionPreferred":
-            qe = QueryExpansionOnFields(ranker=self.ranker,
-                           prels=self.externalprels,
-                           anserini=self.anserini,
-                           index=self.externalindex,
-                           corpus=self.externalcorpus,
-                           adap=True,
-                           w_t=self.external_w_t,
-                           w_a=self.external_w_a,
-                           document_number_in_C=self.external_document_number_in_C)
-
-            return(qe.get_expanded_query(q, [qid]))
+            self.adap = True,
+            self.prels = self.ext_prels,
+            self.index = self.ext_index,
+            self.corpus = self.ext_corpus,
+            self.w_t = self.ext_w_t,
+            self.w_a = self.ext_w_a,
+            self.corpus_size = self.ext_corpus_size
+            
+            return(super().get_expanded_query(q, [qid]))
 
 
     def get_model_name(self):
         return super().get_model_name().replace('topn{}'.format(self.topn),
-                                                'corpus{}.topn{}.topt{}.EX{}'.format(self.corpus,self.topn, self.top_n_terms,self.externalcorpus))
+                                                'topn{}.ex{}.{}.{}'.format(self.topn,self.ext_corpus, self.ext_w_t, self.ext_w_a))
                                                 
     def avICTF(self,query):
-
-
-        index_reader = index.IndexReader(self.externalindex)
+        index_reader = index.IndexReader(self.ext_index)
         ql=len(query.split())
         sub_result=1
         for term in query.split():
@@ -106,7 +90,7 @@ class AdapQEOnFields(RelevanceFeedback):
             if collection_freq ==0:
                 collection_freq=1
 
-            sub_result= sub_result * (self.external_collection_tokens / collection_freq)
+            sub_result= sub_result * (self.ext_collection_tokens / collection_freq)
         sub_result=math.log2(sub_result)
         externalavICTF= (sub_result/ql)
         index_reader = index.IndexReader(self.index)
@@ -142,22 +126,22 @@ if __name__ == "__main__":
                                 'cw09' : 50000000 ,
                                 'cw12':  50000000}
 
-    qe = AdapQEOnFields(ranker='bm25',
-                           corpus='robust04',
-                           index='/data/anserini/lucene-index.robust04.pos+docvectors+rawdocs',
-                           prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',
-                           anserini='../anserini/',
-                           externalcorpus='gov2',
-                           externalindex='/data/anserini/lucene-index.gov2.pos+docvectors+rawdocs',
-                           externalprels='../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt',
-                           collection_tokens= number_of_tokens_in_collections['robust04'],
-                           external_collection_tokens = number_of_tokens_in_collections['gov2'],
-                           w_t=tuned_weights['robust04']['w_t'],
-                           w_a=tuned_weights['robust04']['w_a'],
-                           external_document_number_in_C=total_documents_number['robust04'],
-                           document_number_in_C=total_documents_number['gov2'],
-                           external_w_t= tuned_weights['gov2']['w_t'],
-                           external_w_a= tuned_weights['robust04']['w_a'],
+    qe = AdapOnFields(ranker='bm25',
+                      corpus='robust04',
+                      index='../anserini/lucene-index.robust04.pos+docvectors+rawdocs',
+                      prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',
+                      anserini='../anserini/',
+                      w_t=tuned_weights['robust04']['w_t'],
+                      w_a=tuned_weights['robust04']['w_a'],
+                      corpus_size=total_documents_number['gov2'],
+                      collection_tokens=number_of_tokens_in_collections['robust04'],
+                      ext_corpus='gov2',
+                      ext_index='../anserini/lucene-index.gov2.pos+docvectors+rawdocs',
+                      ext_prels='../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt',
+                      ext_collection_tokens = number_of_tokens_in_collections['gov2'],
+                      ext_corpus_size=total_documents_number['robust04'],
+                      ext_w_t= tuned_weights['gov2']['w_t'],
+                      ext_w_a= tuned_weights['robust04']['w_a'],
                            )
                            
     print(qe.get_model_name())

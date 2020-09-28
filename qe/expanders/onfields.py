@@ -1,7 +1,6 @@
 import sys
 sys.path.extend(['../qe'])
-sys.path.insert(0,'..')
-sys.path.insert(0,'../..')
+
 from pyserini.search import SimpleSearcher
 import traceback, os, subprocess, nltk, string, math
 from bs4 import BeautifulSoup
@@ -11,6 +10,7 @@ from collections import Counter
 from nltk.corpus import stopwords
 from pyserini import analysis, index
 import pyserini
+
 from expanders.relevancefeedback import RelevanceFeedback
 from cmn import utils
 
@@ -34,16 +34,15 @@ ps = PorterStemmer()
 #   bibsource = {dblp computer science bibliography, https://dblp.org}
 # }
 
-class QueryExpansionOnFields(RelevanceFeedback):
-    def __init__(self, ranker, prels, anserini, index, corpus, w_t, w_a,document_number_in_C, replace=False, topn=3, top_n_terms=10,adap=False):
+class OnFields(RelevanceFeedback):
+    def __init__(self, ranker, prels, anserini, index, w_t, w_a, corpus_size, replace=False, topn=3, top_n_terms=10,adap=False):
         RelevanceFeedback.__init__(self, ranker, prels, anserini, index, topn=topn)
-        self.corpus = corpus
         self.index_reader = pyserini.index.IndexReader(self.index)
         self.top_n_terms=10
         self.adap=adap
         self.w_t = w_t # weight for title field
         self.w_a = w_a # weight for anchor field
-        self.document_number_in_C=document_number_in_C #total number of documents in the collection
+        self.corpus_size=corpus_size #total number of documents in the collection
 
     def get_expanded_query(self, q, args):
         
@@ -103,7 +102,7 @@ class QueryExpansionOnFields(RelevanceFeedback):
                 if collection_freq==0 or collection_freq==None:
                     collection_freq=1
 
-                P_n = collection_freq / self.document_number_in_C
+                P_n = collection_freq / self.corpus_size
                 try:
                     term_weight= tfx[term] * math.log2( (1 + P_n ) / P_n) + math.log2( 1 + P_n)
                     w_t_dic[term]=term_weight
@@ -135,18 +134,14 @@ class QueryExpansionOnFields(RelevanceFeedback):
         top_n_informative_words=dict(sorted(top_n_informative_words.items(), key=lambda x: x[1])[::-1])
         return str(top_n_informative_words)
 
-
-
-
     def get_model_name(self):
         return super().get_model_name().replace('topn{}'.format(self.topn),
-                                                'corpus{}.topn{}.topt{}'.format(self.corpus,self.topn, self.top_n_terms))
-
+                                                'topn{}.{}.{}.{}'.format(self.topn, self.top_n_terms, self.w_t, self.w_a))
 
     def extract_raw_documents(self,docid):
         index_address=self.index
         anserini_address=self.anserini
-        cmd = '{}/target/appassembler/bin/IndexUtils -index {} -dumpRawDoc {}'.format(anserini_address,index_address,docid)
+        cmd = '\"{}/target/appassembler/bin/IndexUtils\" -index \"{}\" -dumpRawDoc {}'.format(anserini_address,index_address,docid)
         output = subprocess.check_output(cmd, shell=True)
         return (output.decode('utf-8'))
     
@@ -254,14 +249,14 @@ if __name__ == "__main__":
 
 
 
-    qe = QueryExpansionOnFields(ranker='bm25',
+    qe = OnFields(ranker='bm25',
                                 prels='../../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',
                                 anserini='../anserini/',
                                 index='/data/anserini/lucene-index.robust04.pos+docvectors+rawdocs',
                                 corpus='robust04',
                                 w_t=tuned_weights['robust04']['w_t'],
                                 w_a=tuned_weights['robust04']['w_a'],
-                                document_number_in_C= total_documents_number['robust04'])
+                                corpus_size= total_documents_number['robust04'])
 
     print(qe.get_model_name())
     print(qe.get_expanded_query('Most Dangerous Vehicles', [305]))
