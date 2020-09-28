@@ -255,7 +255,7 @@ if __name__ == "__main__":
 
     qe = QueryExpansionOnFields(ranker='bm25',
                                 prels='../../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt',
-                                anserini='/home/negar/anserini/',
+                                anserini='../anserini/',
                                 index='/data/anserini/lucene-index.gov2.pos+docvectors+rawdocs',
                                 corpus='gov2',
                                 w_t=tuned_weights['gov2']['w_t'],
