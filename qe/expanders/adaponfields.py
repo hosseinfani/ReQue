@@ -1,7 +1,7 @@
 import sys
-
 sys.path.extend(['../qe'])
-
+sys.path.insert(0,'..')
+sys.path.insert(0,'../..')
 import traceback, os, subprocess, nltk, string, math
 from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
@@ -38,7 +38,8 @@ ps = PorterStemmer()
 
 class AdapQEOnFields(RelevanceFeedback):
 
-    def __init__(self, ranker, prels, anserini, index, corpus,externalindex, externalcorpus,externalprels, replace=False, topn=3, top_n_terms=10,adap=False):
+    def __init__(self, ranker, prels, anserini, index, corpus,externalindex, externalcorpus,externalprels, collection_tokens, external_collection_tokens,
+     w_t, w_a,document_number_in_C,external_w_t, external_w_a,external_document_number_in_C,replace=False, topn=3, top_n_terms=10,adap=False):
         RelevanceFeedback.__init__(self, ranker, prels, anserini, index, topn=topn)
         self.corpus = corpus
         self.index_reader = pyserini.index.IndexReader(self.index)
@@ -47,6 +48,15 @@ class AdapQEOnFields(RelevanceFeedback):
         self.externalindex=externalindex
         self.externalcorpus=externalcorpus
         self.externalprels=externalprels
+        self.collection_tokens=collection_tokens # number of tokens in the collection
+        self.external_collection_tokens=external_collection_tokens # number of tokens in the external collection
+        self.w_t=w_t
+        self.w_a=w_a
+        self.document_number_in_C=document_number_in_C
+        self.external_w_t=external_w_t
+        self.external_w_a=external_w_a
+        self.external_document_number_in_C=external_document_number_in_C
+
 
     def get_expanded_query(self, q, args):
         qid=args[0]
@@ -61,7 +71,10 @@ class AdapQEOnFields(RelevanceFeedback):
                            prels=self.prels,
                            anserini=self.anserini,
                            index=self.index,
-                           corpus=self.corpus)
+                           corpus=self.corpus,
+                           w_t=self.w_t,
+                           w_a=self.w_a,
+                           document_number_in_C=self.document_number_in_C)
 
             return(qe.get_expanded_query(q, [qid]))
         elif Preferred_expansion =="ExternalExpansionPreferred":
@@ -70,20 +83,20 @@ class AdapQEOnFields(RelevanceFeedback):
                            anserini=self.anserini,
                            index=self.externalindex,
                            corpus=self.externalcorpus,
-                           adap=True)
+                           adap=True,
+                           w_t=self.external_w_t,
+                           w_a=self.external_w_a,
+                           document_number_in_C=self.external_document_number_in_C)
+
             return(qe.get_expanded_query(q, [qid]))
 
 
     def get_model_name(self):
         return super().get_model_name().replace('topn{}'.format(self.topn),
-                                                'EX{}.topn{}.{}'.format(self.externalcorpus,self.topn, self.top_n_terms))
+                                                'corpus{}.topn{}.topt{}.EX{}'.format(self.corpus,self.topn, self.top_n_terms,self.externalcorpus))
                                                 
     def avICTF(self,query):
-        # Other collections number of total tokens needs to be added if required
-        collection_token={'robust04':148000000,
-                   'gov2' : 17000000000,
-                   'cw09' : 31000000000, 
-                   'cw12' : 31000000000}
+
 
         index_reader = index.IndexReader(self.externalindex)
         ql=len(query.split())
@@ -93,7 +106,7 @@ class AdapQEOnFields(RelevanceFeedback):
             if collection_freq ==0:
                 collection_freq=1
 
-            sub_result= sub_result * (collection_token[self.externalcorpus] / collection_freq)
+            sub_result= sub_result * (self.external_collection_tokens / collection_freq)
         sub_result=math.log2(sub_result)
         externalavICTF= (sub_result/ql)
         index_reader = index.IndexReader(self.index)
@@ -102,7 +115,7 @@ class AdapQEOnFields(RelevanceFeedback):
             df, collection_freq = index_reader.get_term_counts(term)
             if collection_freq ==0:
                 collection_freq=1
-            sub_result= sub_result * (collection_token[self.corpus] / collection_freq)
+            sub_result= sub_result * (self.collection_tokens / collection_freq)
         sub_result=math.log2(sub_result)
         internalavICTF = (sub_result/ql)
         if internalavICTF < 10 and externalavICTF < 10:
@@ -114,15 +127,38 @@ class AdapQEOnFields(RelevanceFeedback):
 
 
 if __name__ == "__main__":
+    number_of_tokens_in_collections={'robust04':148000000,
+                   'gov2' : 17000000000,
+                   'cw09' : 31000000000, 
+                   'cw12' : 31000000000}
+
+    tuned_weights={'robust04':  {'w_t':2.25 , 'w_a':1 },
+                    'gov2':     {'w_t':4 , 'w_a':0.25 },
+                    'cw09':     {'w_t': 1, 'w_a': 0},
+                    'cw12':     {'w_t': 4, 'w_a': 0}} 
+
+    total_documents_number = { 'robust04':520000 , 
+                                'gov2' : 25000000, 
+                                'cw09' : 50000000 ,
+                                'cw12':  50000000}
 
     qe = AdapQEOnFields(ranker='bm25',
                            corpus='robust04',
                            index='/data/anserini/lucene-index.robust04.pos+docvectors+rawdocs',
                            prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',
-                           anserini='.../anserini/',
+                           anserini='../anserini/',
                            externalcorpus='gov2',
                            externalindex='/data/anserini/lucene-index.gov2.pos+docvectors+rawdocs',
-                           externalprels='../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt')
+                           externalprels='../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt',
+                           collection_tokens= number_of_tokens_in_collections['robust04'],
+                           external_collection_tokens = number_of_tokens_in_collections['gov2'],
+                           w_t=tuned_weights['robust04']['w_t'],
+                           w_a=tuned_weights['robust04']['w_a'],
+                           external_document_number_in_C=total_documents_number['robust04'],
+                           document_number_in_C=total_documents_number['gov2'],
+                           external_w_t= tuned_weights['gov2']['w_t'],
+                           external_w_a= tuned_weights['robust04']['w_a'],
+                           )
                            
     print(qe.get_model_name())
 
