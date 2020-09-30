@@ -26,7 +26,8 @@ def clean(str):
     result = [0] * len(str)
     for i in range(len(str)):
         ch = str[i]
-        if ch.isalpha():
+        if ch.isalnum() or ch==':' or ch=='{' or ch=='}' or ch=='.' or ch==',': 
+        #if ch.isalpha():
             result[i] = ch
         else:
             result[i] = ' '
