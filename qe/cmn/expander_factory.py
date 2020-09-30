@@ -67,7 +67,8 @@ def get_nrf_expanders():
     return expanders
 
 #local analysis
-def get_rf_expanders(rankers, index, anserini, output):
+def get_rf_expanders(rankers, index, anserini, output,corpus=None,w_t=None,w_a=None,document_number_in_C=None,collection_tokens=None,
+external_corpus=None,external_index=None,external_document_number_in_C=None,external_collection_tokens=None,external_w_t=None,external_w_a=None):
     expanders = []
     for ranker in rankers:
         ranker_name = get_ranker_name(ranker)
@@ -75,6 +76,8 @@ def get_rf_expanders(rankers, index, anserini, output):
         expanders.append(Docluster(ranker=ranker_name, prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini, index=index)),
         expanders.append(Termluster(ranker=ranker_name, prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini, index=index))
         expanders.append(Conceptluster(ranker=ranker_name, prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name), anserini=anserini, index=index))
+        expanders.append(QueryExpansionOnFields(ranker=ranker_name,prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini,index=index,
+        corpus=corpus,w_t=w_t,w_a=w_a,document_number_in_C=document_number_in_C ))
     return expanders
 
 def get_expanders_names(rankers):
