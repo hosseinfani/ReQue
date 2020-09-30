@@ -126,7 +126,7 @@ class OnFields(RelevanceFeedback):
         for keys,values in top_n_informative_words.items():
             part_A = expanded_term_freq[keys] /max(expanded_term_freq.values())
             part_B = top_n_informative_words[keys] / max(top_n_informative_words.values())
-            top_n_informative_words[keys]= part_A+part_B
+            top_n_informative_words[keys]= round(part_A+part_B,3)
 
         for original_q_term in q.lower().split():
             top_n_informative_words[ps.stem(original_q_term)]=2
