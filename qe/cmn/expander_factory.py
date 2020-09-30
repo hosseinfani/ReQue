@@ -67,8 +67,7 @@ def get_nrf_expanders():
     return expanders
 
 #local analysis
-def get_rf_expanders(rankers, index, anserini, output,corpus=None,w_t=None,w_a=None,document_number_in_C=None,collection_tokens=None,
-external_corpus=None,external_index=None,external_document_number_in_C=None,external_collection_tokens=None,external_w_t=None,external_w_a=None):
+def get_rf_expanders(rankers, index, anserini, output,corpus=None,w_t=None,w_a=None,document_number_in_C=None):
     expanders = []
     for ranker in rankers:
         ranker_name = get_ranker_name(ranker)
