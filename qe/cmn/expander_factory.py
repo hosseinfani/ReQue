@@ -16,7 +16,8 @@ from expanders.conceptluster import Conceptluster
 from expanders.anchor import Anchor
 from expanders.tagmee import Tagmee
 from expanders.wiki import Wiki
-
+from expanders.onfields import QueryExpansionOnFields
+from expanders.adaponfields import AdapQEOnFields
 
 
 #TODO: ServiceFactory: dynamically load the class files in stemmers folder and create an instance object
