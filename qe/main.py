@@ -169,7 +169,7 @@ def run(db, rankers, metrics, anserini, index, output, rf=True, op=[]):
         output = '{}topics.robust04'.format(output)
         expanders = ef.get_nrf_expanders()
         if rf:#local analysis
-            expanders += ef.get_rf_expanders(corpus='robust04',w_t=2.25,w_a=1,document_number_in_C=520000,
+            expanders += ef.get_rf_expanders(w_t=2.25,w_a=1,corpus_size=520000,
                         rankers=rankers, index=index, anserini=anserini, output=output )
 
         if 'generate' in op:generate(Qfilename='../ds/robust04/topics.robust04.txt', expanders=expanders, output=output)
@@ -189,8 +189,8 @@ def run(db, rankers, metrics, anserini, index, output, rf=True, op=[]):
 
             expanders = ef.get_nrf_expanders()
             if rf:
-                expanders += ef.get_rf_expanders(corpus='gov2',rankers=rankers, index=index, anserini=anserini, output=output,
-                                                w_t=4,w_a=0.25,document_number_in_C=25000000)
+                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output,
+                                                w_t=4,w_a=0.25,corpus_size=25000000)
 
             if 'generate' in op:generate(Qfilename='../ds/gov2/{}.terabyte0{}.txt'.format('topics', r), expanders=expanders, output=output)
             if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output)
@@ -217,8 +217,8 @@ def run(db, rankers, metrics, anserini, index, output, rf=True, op=[]):
 
             expanders = ef.get_nrf_expanders()
             if rf:
-                expanders += ef.get_rf_expanders(corpus='clueweb09b',rankers=rankers, index=index, anserini=anserini, output=output,
-                                                w_t=1,w_a=0,document_number_in_C=50000000)
+                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output,
+                                                w_t=1,w_a=0,corpus_size=50000000)
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb09b/topics.web.{}.txt'.format(r), expanders=expanders, output=output)
             if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output)
@@ -244,8 +244,8 @@ def run(db, rankers, metrics, anserini, index, output, rf=True, op=[]):
 
             expanders = ef.get_nrf_expanders()
             if rf:
-                expanders += ef.get_rf_expanders(corpus='clueweb12b13',rankers=rankers, index=index, anserini=anserini, output=output,
-                                                w_t=4,w_a=0,document_number_in_C=50000000)
+                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output,
+                                                w_t=4,w_a=0,corpus_size=50000000)
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb12b13/topics.web.{}.txt'.format(r), expanders=expanders, output=output)
             if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output)
