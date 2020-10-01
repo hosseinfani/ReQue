@@ -16,8 +16,8 @@ from expanders.conceptluster import Conceptluster
 from expanders.anchor import Anchor
 from expanders.tagmee import Tagmee
 from expanders.wiki import Wiki
-from expanders.onfields import QueryExpansionOnFields
-from expanders.adaponfields import AdapQEOnFields
+from expanders.onfields import OnFields
+
 
 
 #TODO: ServiceFactory: dynamically load the class files in stemmers folder and create an instance object
@@ -75,8 +75,8 @@ def get_rf_expanders(rankers, index, anserini, output,corpus=None,w_t=None,w_a=N
         expanders.append(Docluster(ranker=ranker_name, prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini, index=index)),
         expanders.append(Termluster(ranker=ranker_name, prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini, index=index))
         expanders.append(Conceptluster(ranker=ranker_name, prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name), anserini=anserini, index=index))
-        expanders.append(QueryExpansionOnFields(ranker=ranker_name,prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini,index=index,
-        corpus=corpus,w_t=w_t,w_a=w_a,document_number_in_C=document_number_in_C ))
+        expanders.append(OnFields(ranker=ranker_name,prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini,index=index,
+        w_t=w_t,w_a=w_a,corpus_size=corpus_size ))
     return expanders
 
 def get_expanders_names(rankers):
