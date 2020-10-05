@@ -231,7 +231,7 @@ class OnFields(RelevanceFeedback):
         searcher = SimpleSearcher(self.index)
         if self.ranker =='bm25':
             searcher.set_bm25()
-        elif self.ranker=='ql':
+        elif self.ranker=='qld':
             searcher.set_qld()
         hits = searcher.search(q)
         for i in range(0, self.topn):
