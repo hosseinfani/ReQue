@@ -15,7 +15,7 @@ class AbstractStemmer(object):
         self.basename = 'nostemmer'
 
     def stem_query(self, q):
-        isword = re.compile('[a-z0-9]+')
+        q = utils.clean(q)
         curr_words = self.tokenizer.tokenize(q)
         clean_words = [word.lower() for word in curr_words]
         processed_words = self.process(clean_words)
