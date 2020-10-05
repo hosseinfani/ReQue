@@ -19,7 +19,7 @@ class AbstractQExpander:
                          '.topn{}'.format(self.topn) if self.topn else '',
                          '.replace' if self.replace else '')
 
-    def write_expanded_queries(self, Qfilename, Q_filename):
+    def write_expanded_queries(self, Qfilename, Q_filename, clean=True):
         model_name = self.get_model_name().lower()
         Q_ = pd.DataFrame()
         with open(Qfilename, 'r') as Qfile:
@@ -36,7 +36,7 @@ class AbstractQExpander:
 
                         try:
                             q_ = self.get_expanded_query(q, [qid])
-                            q_ = utils.clean(q_)
+                            q_ = utils.clean(q_) if clean else q_
                         except:
                             print('WARNING: MAIN: {}: Expanding query [{}:{}] failed!'.format(self.get_model_name(), qid, q))
                             print(traceback.format_exc())
@@ -55,7 +55,7 @@ class AbstractQExpander:
                             q = line[9:-9]
                             try:
                                 q_ = self.get_expanded_query(q, [qid])
-                                q_ = utils.clean(q_)
+                                q_ = utils.clean(q_)if clean else q_
                             except:
                                 print('WARNING: MAIN: {}: Expanding query [{}:{}] failed!'.format(self.get_model_name(), qid, q))
                                 print(traceback.format_exc())

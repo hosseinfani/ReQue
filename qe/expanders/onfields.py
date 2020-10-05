@@ -138,6 +138,9 @@ class OnFields(RelevanceFeedback):
         return super().get_model_name().replace('topn{}'.format(self.topn),
                                                 'topn{}.{}.{}.{}'.format(self.topn, self.top_n_terms, self.w_t, self.w_a))
 
+    def write_expanded_queries(self, Qfilename, Q_filename):
+        return super().write_expanded_queries(Qfilename, Q_filename, clean=False)
+
     def extract_raw_documents(self,docid):
         index_address=self.index
         anserini_address=self.anserini

@@ -76,11 +76,13 @@ class AdapOnFields(OnFields):
             
             return(super().get_expanded_query(q, [qid]))
 
-
     def get_model_name(self):
         return super().get_model_name().replace('topn{}'.format(self.topn),
                                                 'topn{}.ex{}.{}.{}'.format(self.topn,self.ext_corpus, self.ext_w_t, self.ext_w_a))
-                                                
+
+    def write_expanded_queries(self, Qfilename, Q_filename):
+        return super().write_expanded_queries(Qfilename, Q_filename, clean=False)
+
     def avICTF(self,query):
         index_reader = index.IndexReader(self.ext_index)
         ql=len(query.split())
