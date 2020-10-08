@@ -91,7 +91,8 @@ class AdapOnFields(OnFields):
             try:
                 df, collection_freq = index_reader.get_term_counts(ps.stem(term.lower()))
             except:
-                pass
+                collection_freq=1
+                df=1
 
             if isinstance(collection_freq,int)==False:
                 collection_freq=1
@@ -106,7 +107,8 @@ class AdapOnFields(OnFields):
             try:
                 df, collection_freq = index_reader.get_term_counts(ps.stem(term.lower()))
             except:
-                pass
+                collection_freq=1
+                df=1
             if  isinstance(collection_freq,int)==False:
                 df=1
                 collection_freq=1
