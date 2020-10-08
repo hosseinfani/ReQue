@@ -66,12 +66,12 @@ class AdapOnFields(OnFields):
             return(super().get_expanded_query(q, [qid]))
         
         elif Preferred_expansion =="ExternalExpansionPreferred":
-            self.adap = True,
-            self.prels = self.ext_prels,
-            self.index = self.ext_index,
-            self.corpus = self.ext_corpus,
-            self.w_t = self.ext_w_t,
-            self.w_a = self.ext_w_a,
+            self.adap = True
+            self.prels = self.ext_prels
+            self.index = self.ext_index
+            self.corpus = self.ext_corpus
+            self.w_t = self.ext_w_t
+            self.w_a = self.ext_w_a
             self.corpus_size = self.ext_corpus_size
             
             return(super().get_expanded_query(q, [qid]))
@@ -80,7 +80,7 @@ class AdapOnFields(OnFields):
         return super().get_model_name().replace('topn{}'.format(self.topn),
                                                 'topn{}.ex{}.{}.{}'.format(self.topn,self.ext_corpus, self.ext_w_t, self.ext_w_a))
 
-    def write_expanded_queries(self, Qfilename, Q_filename):
+    def write_expanded_queries(self, Qfilename, Q_filename,clean=False):
         return super().write_expanded_queries(Qfilename, Q_filename, clean=False)
 
     def avICTF(self,query):
@@ -88,9 +88,14 @@ class AdapOnFields(OnFields):
         ql=len(query.split())
         sub_result=1
         for term in query.split():
-            df, collection_freq = index_reader.get_term_counts(term)
-            if collection_freq ==0:
+            try:
+                df, collection_freq = index_reader.get_term_counts(ps.stem(term.lower()))
+            except:
+                pass
+
+            if isinstance(collection_freq,int)==False:
                 collection_freq=1
+                df=1
 
             sub_result= sub_result * (self.ext_collection_tokens / collection_freq)
         sub_result=math.log2(sub_result)
@@ -98,8 +103,12 @@ class AdapOnFields(OnFields):
         index_reader = index.IndexReader(self.index)
         sub_result=1
         for term in query.split():
-            df, collection_freq = index_reader.get_term_counts(term)
-            if collection_freq ==0:
+            try:
+                df, collection_freq = index_reader.get_term_counts(ps.stem(term.lower()))
+            except:
+                pass
+            if  isinstance(collection_freq,int)==False:
+                df=1
                 collection_freq=1
             sub_result= sub_result * (self.collection_tokens / collection_freq)
         sub_result=math.log2(sub_result)

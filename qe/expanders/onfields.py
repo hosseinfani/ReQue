@@ -50,7 +50,7 @@ class OnFields(RelevanceFeedback):
         if self.adap == False:
             top_3_docs = self.get_topn_relevant_docids(qid)
         elif self.adap == True:
-            top_3_docs=self.retrieve_and_get_topn_relevant_docids(q)
+            top_3_docs=self.retrieve_and_get_topn_relevant_docids(ps.stem(q.lower()))
         top_3_title=''
         top_3_body=''
         top_3_anchor=''
@@ -138,7 +138,7 @@ class OnFields(RelevanceFeedback):
         return super().get_model_name().replace('topn{}'.format(self.topn),
                                                 'topn{}.{}.{}.{}'.format(self.topn, self.top_n_terms, self.w_t, self.w_a))
 
-    def write_expanded_queries(self, Qfilename, Q_filename):
+    def write_expanded_queries(self, Qfilename, Q_filename,clean=False):
         return super().write_expanded_queries(Qfilename, Q_filename, clean=False)
 
     def extract_raw_documents(self,docid):
@@ -229,6 +229,7 @@ class OnFields(RelevanceFeedback):
     def retrieve_and_get_topn_relevant_docids(self, q):
         relevant_documents = []
         searcher = SimpleSearcher(self.index)
+
         if self.ranker =='bm25':
             searcher.set_bm25()
         elif self.ranker=='qld':

@@ -60,6 +60,7 @@ def search(expanders, rankers, topicreader, index, anserini, output):
         try:
             Q_filename = '{}.{}.txt'.format(output, model_name)
             for ranker in rankers:
+                
                 Q_pred = '{}.{}.{}.txt'.format(output, model_name, ef.get_ranker_name(ranker))
                 cli_cmd = '\"{}\" {} -threads 44 -topicreader {} -index {} -topics {} -output {}'.format(rank_cmd, ranker, topicreader, index, Q_filename, Q_pred)
                 print('{}\n'.format(cli_cmd))
@@ -169,8 +170,11 @@ def run(db, rankers, metrics, anserini, index, output, rf=True, op=[]):
         output_ = '{}topics.robust04'.format(output)
         expanders = ef.get_nrf_expanders()
         if rf:#local analysis
-            expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output_, w_t=2.25, w_a=1, corpus_size=520000)
-
+            expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output_, w_t=2.25, w_a=1, corpus_size=520000,
+                                           collection_tokens=148000000,ext_index=args.ext_index,ext_corpus=args.ext_corpus,ext_prels=args.ext_prels,
+                                           ext_collection_tokens=args.ext_collection_tokens,
+                                            ext_w_a=args.ext_w_a,ext_w_t=args.ext_w_t,ext_corpus_size=args.ext_corpus_size)
+                                            
         if 'generate' in op:generate(Qfilename='../ds/robust04/topics.robust04.txt', expanders=expanders, output=output_)
         if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader='Trec', index=index, anserini=anserini, output=output_)
         if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/robust04/qrels.robust04.txt', rankers=rankers, metrics=metrics, anserini=anserini, output=output_)
@@ -271,9 +275,22 @@ def addargs(parser):
     gold.add_argument('--ranker', type=str, choices=['bm25', 'qld'], default='bm25', help='The ranker name (default: bm25)')
     gold.add_argument('--metric', type=str, choices=['map'], default='map', help='The evaluation metric name (default: map)')
 
+    external_corpus = parser.add_argument_group('external_corpus')
+    external_corpus.add_argument('--ext_corpus', type=str, choices=['robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], help='The external corpus name; required only for AdapOnFields and OnFields; (example: robust04)')
+    external_corpus.add_argument('--ext_index', type=str, help='The external corpus index; required only for AdapOnFields and OnFields; (example: ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs)')
+    external_corpus.add_argument('--ext_prels',  type=str, help='Retrieval run results for external corpus; required only for AdapOnFields and OnFields; (example: ../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt)')
+    external_corpus.add_argument('--ext_collection_tokens' , type=int , help = 'Total Number of tokens in the external corpus; required only for AdapOnFields and OnFields; (example: 148000000 )')
+    external_corpus.add_argument('--ext_w_a' , type=float, help ='Weight for anchor fields in external corpus.required only for AdapOnFields and OnFields; (example: 1.0)')
+    external_corpus.add_argument('--ext_w_t', type = float, help ='Weight for title fields in external corpus.required only for AdapOnFields and OnFields; (example: 2.25)')
+    external_corpus.add_argument('--ext_corpus_size', type = int, help ='Total Number of documents in the external corpus; required only for AdapOnFields and OnFields; (example: 520000 )')
+
 
 # # python -u main.py --anserini ../anserini --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker bm25 --metric map 2>&1 | tee robust04.bm25.log &
 # # python -u main.py --anserini ../anserini --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.qld.log &
+
+# Example for OnFields and AdopOnFields :
+# # python -u main.py --anserini /home/negar/anserini --corpus robust04 --index /data/anserini/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker bm25 --metric map --ext_corpus gov2 --ext_index /data/anserini/lucene-index.gov2.pos+docvectors+rawdocs --ext_prels /home/negar/ReQue/ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt --ext_collection_tokens 17000000000 --ext_w_a 0.25 --ext_w_t 4 --ext_corpus_size 25000000 2>&1 | tee robust04.bm25.log &
+
 
 # # python -u main.py --anserini ../anserini --corpus gov2 --index ../ds/robust04/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker bm25 --metric map 2>&1 | tee gov2.bm25.log &
 # # python -u main.py --anserini ../anserini --corpus gov2 --index ../ds/robust04/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker qld --metric map 2>&1 | tee gov2.qld.log &
@@ -283,6 +300,7 @@ def addargs(parser):
 
 # # python -u main.py --anserini ../anserini --corpus clueweb12b13 --index ../ds/robust04/lucene-index.cw12b13.pos+docvectors+rawdocs --output ../ds/qe/clueweb12b13/ --ranker bm25 --metric map 2>&1 | tee clueweb12b13.bm25.log &
 # # python -u main.py --anserini ../anserini --corpus clueweb12b13 --index ../ds/robust04/lucene-index.cw12b13.pos+docvectors+rawdocs --output ../ds/qe/clueweb12b13/ --ranker qld --metric map 2>&1 | tee clueweb12b13.qld.log &
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='ReQue (Refining Queries)')

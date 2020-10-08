@@ -17,6 +17,7 @@ from expanders.anchor import Anchor
 from expanders.tagmee import Tagmee
 from expanders.wiki import Wiki
 from expanders.onfields import OnFields
+from expanders.adaponfields import AdapOnFields
 
 
 
@@ -67,7 +68,9 @@ def get_nrf_expanders():
     return expanders
 
 #local analysis
-def get_rf_expanders(rankers, index, anserini, output, w_t=None, w_a=None, corpus_size=None):
+def get_rf_expanders(rankers, index, anserini, output, w_t=None, w_a=None, corpus_size=None, collection_tokens= None, 
+                    ext_index=None, ext_corpus=None, ext_prels=None,ext_collection_tokens=None,ext_w_t=None , ext_w_a=None,
+                    ext_corpus_size=None):
     expanders = []
     for ranker in rankers:
         ranker_name = get_ranker_name(ranker)
@@ -76,6 +79,10 @@ def get_rf_expanders(rankers, index, anserini, output, w_t=None, w_a=None, corpu
         expanders.append(Termluster(ranker=ranker_name, prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini, index=index))
         expanders.append(Conceptluster(ranker=ranker_name, prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name), anserini=anserini, index=index))
         expanders.append(OnFields(ranker=ranker_name,prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini,index=index, w_t=w_t, w_a=w_a, corpus_size=corpus_size))
+        expanders.append(AdapOnFields(ranker=ranker_name,prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini,index=index, w_t=w_t, w_a=w_a, corpus_size=corpus_size,
+                        collection_tokens=collection_tokens,ext_index=ext_index,ext_corpus=ext_corpus,ext_prels=ext_prels,ext_collection_tokens=ext_collection_tokens,
+                        ext_w_a=ext_w_a,ext_w_t=ext_w_t,ext_corpus_size=ext_corpus_size,adap=True))
+
     return expanders
 
 def get_expanders_names(rankers):
