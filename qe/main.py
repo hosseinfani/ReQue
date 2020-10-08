@@ -289,7 +289,7 @@ def addargs(parser):
 # # python -u main.py --anserini ../anserini --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.qld.log &
 
 # Example for OnFields and AdopOnFields :
-# # python -u main.py --anserini /home/negar/anserini --corpus robust04 --index /data/anserini/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker bm25 --metric map --ext_corpus gov2 --ext_index /data/anserini/lucene-index.gov2.pos+docvectors+rawdocs --ext_prels /home/negar/ReQue/ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt --ext_collection_tokens 17000000000 --ext_w_a 0.25 --ext_w_t 4 --ext_corpus_size 25000000 2>&1 | tee robust04.bm25.log &
+# # python -u main.py --anserini ../anserini --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker bm25 --metric map --ext_corpus gov2 --ext_index../ds/lucene-index.gov2.pos+docvectors+rawdocs --ext_prels ../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt --ext_collection_tokens 17000000000 --ext_w_a 0.25 --ext_w_t 4 --ext_corpus_size 25000000 2>&1 | tee robust04.bm25.log &
 
 
 # # python -u main.py --anserini ../anserini --corpus gov2 --index ../ds/robust04/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker bm25 --metric map 2>&1 | tee gov2.bm25.log &
