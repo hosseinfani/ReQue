@@ -192,8 +192,10 @@ def run(db, rankers, metrics, anserini, index, output, rf=True, op=[]):
 
             expanders = ef.get_nrf_expanders()
             if rf:
-                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output_, w_t=4, w_a=0.25, corpus_size=25000000)
-
+                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output_, w_t=4, w_a=0.25, corpus_size=25000000,
+                                           collection_tokens=17000000000,ext_index=args.ext_index,ext_corpus=args.ext_corpus,ext_prels=args.ext_prels,
+                                           ext_collection_tokens=args.ext_collection_tokens,
+                                            ext_w_a=args.ext_w_a,ext_w_t=args.ext_w_t,ext_corpus_size=args.ext_corpus_size)
             if 'generate' in op:generate(Qfilename='../ds/gov2/{}.terabyte0{}.txt'.format('topics', r), expanders=expanders, output=output_)
             if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output_)
             if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/gov2/qrels.terabyte0{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=anserini, output=output_)
@@ -219,7 +221,10 @@ def run(db, rankers, metrics, anserini, index, output, rf=True, op=[]):
 
             expanders = ef.get_nrf_expanders()
             if rf:
-                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output_, w_t=1, w_a=0, corpus_size=50000000)
+                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output_, w_t=1, w_a=0, corpus_size=50000000,
+                                           collection_tokens=31000000000,ext_index=args.ext_index,ext_corpus=args.ext_corpus,ext_prels=args.ext_prels,
+                                           ext_collection_tokens=args.ext_collection_tokens,
+                                            ext_w_a=args.ext_w_a,ext_w_t=args.ext_w_t,ext_corpus_size=args.ext_corpus_size)
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb09b/topics.web.{}.txt'.format(r), expanders=expanders, output=output_)
             if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output_)
@@ -245,7 +250,10 @@ def run(db, rankers, metrics, anserini, index, output, rf=True, op=[]):
 
             expanders = ef.get_nrf_expanders()
             if rf:
-                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output_, w_t=4, w_a=0, corpus_size=50000000)
+                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output_, w_t=4, w_a=0, corpus_size=50000000,
+                                                 collection_tokens=31000000000,ext_index=args.ext_index,ext_corpus=args.ext_corpus,ext_prels=args.ext_prels,
+                                           ext_collection_tokens=args.ext_collection_tokens,
+                                            ext_w_a=args.ext_w_a,ext_w_t=args.ext_w_t,ext_corpus_size=args.ext_corpus_size)
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb12b13/topics.web.{}.txt'.format(r), expanders=expanders, output=output_)
             if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output_)
