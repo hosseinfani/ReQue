@@ -83,6 +83,7 @@ def search(expanders, rankers, topicreader, index, anserini, output):
                             try:
                                 boost.append( querybuilder.get_boost_query(querybuilder.get_term_query(q_terms),q_weights))
                             except:
+                                # term do not exist in the indexed collection () e.g., stop words 
                                 pass
 
                         should = querybuilder.JBooleanClauseOccur['should'].value
