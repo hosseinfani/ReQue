@@ -3,7 +3,9 @@ import os, traceback, operator, sys, math
 from os import path
 import pandas as pd
 import argparse
-
+from cmn import  utils
+from pyserini.search import querybuilder
+from pyserini.search import SimpleSearcher
 #build anserini (maven) for doing A) indexing, B) information retrieval, and C) evaluation
 #A) INDEX DOCUMENTS
 #robust04
@@ -62,10 +64,44 @@ def search(expanders, rankers, topicreader, index, anserini, output):
             for ranker in rankers:
                 
                 Q_pred = '{}.{}.{}.txt'.format(output, model_name, ef.get_ranker_name(ranker))
-                cli_cmd = '\"{}\" {} -threads 44 -topicreader {} -index {} -topics {} -output {}'.format(rank_cmd, ranker, topicreader, index, Q_filename, Q_pred)
-                print('{}\n'.format(cli_cmd))
-                stream = os.popen(cli_cmd)
-                print(stream.read())
+                q_dic={}
+                searcher = SimpleSearcher(index)
+                if ranker =='bm25':
+                    searcher.set_bm25(0.9, 0.4)
+                elif ranker =='qld':
+                    searcher.set_qld()
+
+                if 'onfields'  in model_name:
+                    run_file=open(Q_pred,'w')
+                    list_of_raw_queries=utils.get_raw_query(topicreader,Q_filename)
+                    for qid,query in list_of_raw_queries.items():
+                        q_text=utils.convert_onfield_query_format(query)
+                        q_dic[qid.strip()]= json.loads(q_text)
+                    for qid in q_dic.keys():
+                        boost=[]
+                        for q_terms,q_weights in q_dic[qid].items():
+                            try:
+                                boost.append( querybuilder.get_boost_query(querybuilder.get_term_query(q_terms),q_weights))
+                            except:
+                                pass
+
+                        should = querybuilder.JBooleanClauseOccur['should'].value
+                        boolean_query_builder = querybuilder.get_boolean_query_builder()
+                        for boost_i in boost:
+                            boolean_query_builder.add(boost_i, should)
+
+                        query = boolean_query_builder.build()
+                        hits = searcher.search(query,k=10000)
+                        for i in range(0, 1000):
+                            run_file.write(f'{qid} Q0  {hits[i].docid:15} {i+1:2}  {hits[i].score:.5f} Pyserini \n')
+                    run_file.close()
+
+
+                else:
+                    cli_cmd = '\"{}\" {} -threads 44 -topicreader {} -index {} -topics {} -output {}'.format(rank_cmd, ranker, topicreader, index, Q_filename, Q_pred)
+                    print('{}\n'.format(cli_cmd))
+                    stream = os.popen(cli_cmd)
+                    print(stream.read())
         except:
             model_errs[model_name] = traceback.format_exc()
             continue
