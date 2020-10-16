@@ -65,16 +65,19 @@ class OnFields(RelevanceFeedback):
             try:
                 title=self.extract_specific_field(raw_doc,'title')
             except:
+                # 'title' field do not exist
                 pass
             try:
                 body=self.extract_specific_field(raw_doc,'body')
                 if body =='':
                     body=raw_doc
             except:
+                # 'body' field do not exist
                 pass
             try:
                 anchor=self.extract_specific_field(raw_doc,'anchor')
             except:
+                #'anchor' field do not exist
                 pass
 
             top_3_title='{} {}'.format(top_3_title ,title)
@@ -98,6 +101,7 @@ class OnFields(RelevanceFeedback):
                 try:
                     df, collection_freq = self.index_reader.get_term_counts(term)
                 except:
+                    # term do not exist in the collection
                     pass 
                 if collection_freq==0 or collection_freq==None:
                     collection_freq=1
@@ -107,6 +111,7 @@ class OnFields(RelevanceFeedback):
                     term_weight= tfx[term] * math.log2( (1 + P_n ) / P_n) + math.log2( 1 + P_n)
                     w_t_dic[term]=term_weight
                 except:
+                    
                     pass
 
 
@@ -163,6 +168,7 @@ class OnFields(RelevanceFeedback):
                         title = soup.find('title')
                         title_out=title.text
                     except:
+                        # document had not 'title'
                         pass
 
             return title_out
@@ -177,6 +183,7 @@ class OnFields(RelevanceFeedback):
                     try:
                         body_out='{} {}'.format(body_out,b.text.strip())
                     except:
+                        # no 'body' field in the document
                         pass
             return body_out
 
