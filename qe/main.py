@@ -3,9 +3,9 @@ import os, traceback, operator, sys, math
 from os import path
 import pandas as pd
 import argparse
-from cmn import  utils
 from pyserini.search import querybuilder
 from pyserini.search import SimpleSearcher
+
 #build anserini (maven) for doing A) indexing, B) information retrieval, and C) evaluation
 #A) INDEX DOCUMENTS
 #robust04
@@ -35,7 +35,9 @@ from pyserini.search import SimpleSearcher
 #Q_: set of expanded queries(Q')
 
 from cmn import expander_factory as ef
+from cmn import utils
 from expanders.abstractqexpander import AbstractQExpander
+from expanders.onfields import OnFields
 
 def generate(Qfilename, expanders, output):
     df = pd.DataFrame()
@@ -71,7 +73,7 @@ def search(expanders, rankers, topicreader, index, anserini, output):
                 elif ranker =='qld':
                     searcher.set_qld()
 
-                if 'onfields'  in model_name:
+                if isinstance(model, OnFields):
                     run_file=open(Q_pred,'w')
                     list_of_raw_queries=utils.get_raw_query(topicreader,Q_filename)
                     for qid,query in list_of_raw_queries.items():
