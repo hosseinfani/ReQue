@@ -65,7 +65,7 @@ def search(expanders, rankers, topicreader, index, anserini, output):
         try:
             Q_filename = '{}.{}.txt'.format(output, model_name)
             for ranker in rankers:
-                
+
                 Q_pred = '{}.{}.{}.txt'.format(output, model_name, ef.get_ranker_name(ranker))
                 q_dic={}
                 searcher = SimpleSearcher(index)
@@ -86,7 +86,7 @@ def search(expanders, rankers, topicreader, index, anserini, output):
                             try:
                                 boost.append( querybuilder.get_boost_query(querybuilder.get_term_query(q_terms),q_weights))
                             except:
-                                # term do not exist in the indexed collection () e.g., stop words 
+                                # term do not exist in the indexed collection () e.g., stop words
                                 pass
 
                         should = querybuilder.JBooleanClauseOccur['should'].value
@@ -203,7 +203,7 @@ def build(input, expanders, rankers, metrics, output):
     ds_df.to_csv(filename, index=False)
     return filename
 
-def run(db, rankers, metrics, anserini, index, output, ext_corpus, ext_prels, rf=True, op=[]):
+def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
 
     if db == 'robust04':
         #/data/anserini/lucene-index.robust04.pos+docvectors+rawdocs
@@ -211,9 +211,9 @@ def run(db, rankers, metrics, anserini, index, output, ext_corpus, ext_prels, rf
         expanders = ef.get_nrf_expanders()
         if rf:#local analysis
             expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
-                                            
+
         if 'generate' in op:generate(Qfilename='../ds/robust04/topics.robust04.txt', expanders=expanders, output=output_)
-        if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader='Trec', index=index, anserini=anserini, output=output_)
+        if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader='Trec', index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
         if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/robust04/qrels.robust04.txt', rankers=rankers, metrics=metrics, anserini=anserini, output=output_)
         if 'build' in op:
             result = aggregate(expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
@@ -232,7 +232,7 @@ def run(db, rankers, metrics, anserini, index, output, ext_corpus, ext_prels, rf
                 expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
 
             if 'generate' in op:generate(Qfilename='../ds/gov2/{}.terabyte0{}.txt'.format('topics', r), expanders=expanders, output=output_)
-            if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output_)
+            if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
             if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/gov2/qrels.terabyte0{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=anserini, output=output_)
             if 'build' in op:
                 result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
@@ -259,7 +259,7 @@ def run(db, rankers, metrics, anserini, index, output, ext_corpus, ext_prels, rf
                 expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb09b/topics.web.{}.txt'.format(r), expanders=expanders, output=output_)
-            if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output_)
+            if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
             if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/clueweb09b/qrels.web.{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=anserini, output=output_)
             if 'build' in op:
                 result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
@@ -285,7 +285,7 @@ def run(db, rankers, metrics, anserini, index, output, ext_corpus, ext_prels, rf
                 expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb12b13/topics.web.{}.txt'.format(r), expanders=expanders, output=output_)
-            if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output_)
+            if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
             if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/clueweb12b13/qrels.web.{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=anserini, output=output_)
             if 'build' in op:
                 result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
@@ -349,8 +349,6 @@ if __name__ == "__main__":
     run(db=args.corpus.lower(),
         rankers=['-' + args.ranker.lower()],
         metrics=[args.metric.lower()],
-        # anserini=args.anserini,
-        # index=args.index,
         output=args.output,
         ext_corpus=args.ext_corpus,
         ext_prels=args.ext_prels,
