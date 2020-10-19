@@ -300,12 +300,12 @@ def run(db, rankers, metrics, anserini, index, output, ext_corpus, ext_prels, rf
             df.to_csv(output_, index=False)
 
 def addargs(parser):
-    anserini = parser.add_argument_group('Anserini')
-    anserini.add_argument('--anserini', type=str, default='../anserini/', help='The path to the anserini library (default: ../anserini/)')
+    # anserini = parser.add_argument_group('Anserini')
+    # anserini.add_argument('--anserini', type=str, default='../anserini/', help='The path to the anserini library (default: ../anserini/)')
 
     corpus = parser.add_argument_group('Corpus')
     corpus.add_argument('--corpus', type=str, choices=['robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], required=True, help='The corpus name; required; (example: robust04)')
-    corpus.add_argument('--index', type=str, required=True, help='The corpus index; required; (example: ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs)')
+    # corpus.add_argument('--index', type=str, required=True, help='The corpus index; required; (example: ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs)')
 
     gold = parser.add_argument_group('Gold Standard Dataset')
     gold.add_argument('--output', type=str, required=True, help='The output path for the gold standard dataset; required; (example: ../ds/qe/robust04/')
@@ -322,20 +322,20 @@ def addargs(parser):
     # external_corpus.add_argument('--ext_corpus_size', type = int, help ='Total Number of documents in the external corpus; required only for AdapOnFields and OnFields; (example: 520000 )')
 
 
-# # python -u main.py --anserini ../anserini --corpus robust04 --output ../ds/qe/robust04/ --ranker bm25 --metric map 2>&1 | tee robust04.bm25.log &
-# # python -u main.py --anserini ../anserini --corpus robust04 --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.qld.log &
+# # python -u main.py --corpus robust04 --output ../ds/qe/robust04/ --ranker bm25 --metric map 2>&1 | tee robust04.bm25.log &
+# # python -u main.py --corpus robust04 --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.qld.log &
 
 # Example for OnFields and AdopOnFields:
-# # python -u main.py --anserini ../anserini --corpus robust04 --output ../ds/qe/robust04/ --ranker bm25 --metric map --ext_corpus gov2 --ext_prels ../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt 2>&1 | tee robust04.bm25.log &
+# # python -u main.py --corpus robust04 --output ../ds/qe/robust04/ --ranker bm25 --metric map --ext_corpus gov2 --ext_prels ../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt 2>&1 | tee robust04.bm25.log &
 
-# # python -u main.py --anserini ../anserini --corpus gov2 --output ../ds/qe/gov2/ --ranker bm25 --metric map 2>&1 | tee gov2.bm25.log &
-# # python -u main.py --anserini ../anserini --corpus gov2 --output ../ds/qe/gov2/ --ranker qld --metric map 2>&1 | tee gov2.qld.log &
+# # python -u main.py --corpus gov2 --output ../ds/qe/gov2/ --ranker bm25 --metric map 2>&1 | tee gov2.bm25.log &
+# # python -u main.py --corpus gov2 --output ../ds/qe/gov2/ --ranker qld --metric map 2>&1 | tee gov2.qld.log &
 
-# # python -u main.py --anserini ../anserini --corpus clueweb09b --output ../ds/qe/clueweb09b/ --ranker bm25 --metric map 2>&1 | tee clueweb09b.bm25.log &
-# # python -u main.py --anserini ../anserini --corpus clueweb09b --output ../ds/qe/clueweb09b/ --ranker qld --metric map 2>&1 | tee clueweb09b.qld.log &
+# # python -u main.py --corpus clueweb09b --output ../ds/qe/clueweb09b/ --ranker bm25 --metric map 2>&1 | tee clueweb09b.bm25.log &
+# # python -u main.py --corpus clueweb09b --output ../ds/qe/clueweb09b/ --ranker qld --metric map 2>&1 | tee clueweb09b.qld.log &
 
-# # python -u main.py --anserini ../anserini --corpus clueweb12b13 --output ../ds/qe/clueweb12b13/ --ranker bm25 --metric map 2>&1 | tee clueweb12b13.bm25.log &
-# # python -u main.py --anserini ../anserini --corpus clueweb12b13 --output ../ds/qe/clueweb12b13/ --ranker qld --metric map 2>&1 | tee clueweb12b13.qld.log &
+# # python -u main.py --corpus clueweb12b13 --output ../ds/qe/clueweb12b13/ --ranker bm25 --metric map 2>&1 | tee clueweb12b13.bm25.log &
+# # python -u main.py --corpus clueweb12b13 --output ../ds/qe/clueweb12b13/ --ranker qld --metric map 2>&1 | tee clueweb12b13.qld.log &
 
 
 if __name__ == "__main__":
@@ -349,8 +349,8 @@ if __name__ == "__main__":
     run(db=args.corpus.lower(),
         rankers=['-' + args.ranker.lower()],
         metrics=[args.metric.lower()],
-        anserini=args.anserini,
-        index=args.index,
+        # anserini=args.anserini,
+        # index=args.index,
         output=args.output,
         ext_corpus=args.ext_corpus,
         ext_prels=args.ext_prels,
