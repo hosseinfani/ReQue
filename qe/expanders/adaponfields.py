@@ -146,15 +146,15 @@ if __name__ == "__main__":
                       anserini='../anserini/',
                       w_t=tuned_weights['robust04']['w_t'],
                       w_a=tuned_weights['robust04']['w_a'],
-                      corpus_size=total_documents_number['gov2'],
+                      corpus_size=total_documents_number['robust04'],
                       collection_tokens=number_of_tokens_in_collections['robust04'],
                       ext_corpus='gov2',
                       ext_index='../anserini/lucene-index.gov2.pos+docvectors+rawdocs',
                       ext_prels='../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt',
                       ext_collection_tokens = number_of_tokens_in_collections['gov2'],
-                      ext_corpus_size=total_documents_number['robust04'],
+                      ext_corpus_size=total_documents_number['gov2'],
                       ext_w_t= tuned_weights['gov2']['w_t'],
-                      ext_w_a= tuned_weights['robust04']['w_a'],
+                      ext_w_a= tuned_weights['gov2']['w_a'],
                            )
                            
     print(qe.get_model_name())
