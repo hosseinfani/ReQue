@@ -32,6 +32,7 @@ from stemmers.trunc4 import Trunc4Stemmer
 from stemmers.trunc5 import Trunc5Stemmer
 from expanders.stem import Stem # Stem expander is the wrapper for all stemmers as an expnader :)
 
+import param
 #global analysis
 def get_nrf_expanders():
     expanders = [AbstractQExpander(),
@@ -68,25 +69,54 @@ def get_nrf_expanders():
     return expanders
 
 #local analysis
-def get_rf_expanders(rankers, index, anserini, output, w_t=None, w_a=None, corpus_size=None, collection_tokens= None, 
-                    ext_index=None, ext_corpus=None, ext_prels=None,ext_collection_tokens=None,ext_w_t=None , ext_w_a=None,
-                    ext_corpus_size=None):
+def get_rf_expanders(rankers, corpus, output, ext_corpus=None, ext_prels=None):
     expanders = []
     for ranker in rankers:
         ranker_name = get_ranker_name(ranker)
-        expanders.append(RelevanceFeedback(ranker=ranker_name, prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini, index=index))
-        expanders.append(Docluster(ranker=ranker_name, prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini, index=index)),
-        expanders.append(Termluster(ranker=ranker_name, prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini, index=index))
-        expanders.append(Conceptluster(ranker=ranker_name, prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name), anserini=anserini, index=index))
-        expanders.append(OnFields(ranker=ranker_name,prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini,index=index, w_t=w_t, w_a=w_a, corpus_size=corpus_size))
-        expanders.append(AdapOnFields(ranker=ranker_name,prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),anserini=anserini,index=index, w_t=w_t, w_a=w_a, corpus_size=corpus_size,
-                        collection_tokens=collection_tokens,ext_index=ext_index,ext_corpus=ext_corpus,ext_prels=ext_prels,ext_collection_tokens=ext_collection_tokens,
-                        ext_w_a=ext_w_a,ext_w_t=ext_w_t,ext_corpus_size=ext_corpus_size,adap=True))
+        expanders.append(RelevanceFeedback(ranker=ranker_name,
+                                           prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
+                                           anserini=param.anserini['path'],
+                                           index=param.database[corpus]['index']))
+        expanders.append(Docluster(ranker=ranker_name,
+                                   prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
+                                   anserini=param.anserini['path'],
+                                   index=param.database[corpus]['index'])),
+        expanders.append(Termluster(ranker=ranker_name,
+                                    prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
+                                    anserini=param.anserini['path'],
+                                    index=param.database[corpus]['index']))
+        expanders.append(Conceptluster(ranker=ranker_name,
+                                       prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
+                                       anserini=param.anserini['path'],
+                                       index=param.database[corpus]['index']))
+        expanders.append(OnFields(ranker=ranker_name,
+                                  prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
+                                  anserini=param.anserini['path'],
+                                  index=param.database[corpus]['index'],
+                                  w_t=param.database[corpus]['w_t'],
+                                  w_a=param.database[corpus]['w_a'],
+                                  corpus_size=param.database[corpus]['size']))
+        expanders.append(AdapOnFields(ranker=ranker_name,
+                                      prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
+                                      anserini=param.anserini['path'],
+                                      index=param.database[corpus]['index'],
+                                      w_t=param.database[corpus]['w_t'],
+                                      w_a=param.database[corpus]['w_a'],
+                                      corpus_size=param.database[corpus]['size'],
+                                      collection_tokens=param.database[corpus]['tokens'],
+                                      ext_corpus=ext_corpus,
+                                      ext_index=param.database[ext_corpus]['index'],
+                                      ext_prels=ext_prels,
+                                      ext_collection_tokens=param.database[ext_corpus]['tokens'],
+                                      ext_w_t=param.database[ext_corpus]['w_t'],
+                                      ext_w_a=param.database[ext_corpus]['w_a'],
+                                      ext_corpus_size=param.database[ext_corpus]['size'],
+                                      adap=True))
 
     return expanders
 
 def get_expanders_names(rankers):
-    expanders = get_nrf_expanders() + get_rf_expanders(rankers, None, None, None)
+    expanders = get_nrf_expanders() + get_rf_expanders(rankers, None, None)
     return [e.get_model_name() for e in expanders]
 
 def get_ranker_name(ranker):
