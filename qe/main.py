@@ -322,10 +322,10 @@ def addargs(parser):
     gold.add_argument('--ranker', type=str, choices=['bm25', 'qld'], default='bm25', help='The ranker name (default: bm25)')
     gold.add_argument('--metric', type=str, choices=['map'], default='map', help='The evaluation metric name (default: map)')
 
-    external_corpus = parser.add_argument_group('external_corpus')
+    external_corpus = parser.add_argument_group('External Corpus')
     external_corpus.add_argument('--ext_corpus', type=str, choices=['robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], help='The external corpus name; required only for AdapOnFields and OnFields; (example: robust04)')
     external_corpus.add_argument('--ext_index', type=str, help='The external corpus index; required only for AdapOnFields and OnFields; (example: ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs)')
-    external_corpus.add_argument('--ext_prels',  type=str, help='Retrieval run results for external corpus; required only for AdapOnFields and OnFields; (example: ../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt)')
+    external_corpus.add_argument('--ext_prels',  type=str, help='Retrieval run results for external corpus; required only for AdapOnFields and OnFields; (example: ../ds/robust04/topics.robust04.txt)')
     external_corpus.add_argument('--ext_collection_tokens' , type=int , help = 'Total Number of tokens in the external corpus; required only for AdapOnFields and OnFields; (example: 148000000 )')
     external_corpus.add_argument('--ext_w_a' , type=float, help ='Weight for anchor fields in external corpus.required only for AdapOnFields and OnFields; (example: 1.0)')
     external_corpus.add_argument('--ext_w_t', type = float, help ='Weight for title fields in external corpus.required only for AdapOnFields and OnFields; (example: 2.25)')
@@ -336,7 +336,7 @@ def addargs(parser):
 # # python -u main.py --anserini ../anserini --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.qld.log &
 
 # Example for OnFields and AdopOnFields :
-# # python -u main.py --anserini ../anserini --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker bm25 --metric map --ext_corpus gov2 --ext_index../ds/lucene-index.gov2.pos+docvectors+rawdocs --ext_prels ../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt --ext_collection_tokens 17000000000 --ext_w_a 0.25 --ext_w_t 4 --ext_corpus_size 25000000 2>&1 | tee robust04.bm25.log &
+# # python -u main.py --anserini ../anserini --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker bm25 --metric map --ext_corpus gov2 --ext_index../ds/lucene-index.gov2.pos+docvectors+rawdocs --ext_prels ../ds/gov2/topics.terabyte04.701-750.txt --ext_collection_tokens 17000000000 --ext_w_a 0.25 --ext_w_t 4 --ext_corpus_size 25000000 2>&1 | tee robust04.bm25.log &
 
 
 # # python -u main.py --anserini ../anserini --corpus gov2 --index ../ds/robust04/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker bm25 --metric map 2>&1 | tee gov2.bm25.log &
