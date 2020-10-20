@@ -1,9 +1,9 @@
 # A Toolkit for Generating Query Refinement Gold Standards
 <p align="center">
-    <img src="./workflow.png", width="400", alt="ReQue: Workflow Diagram">
+    <img src="https://user-images.githubusercontent.com/8619934/96526659-40dd6e00-124c-11eb-986a-4cfe0bc50dad.png", width="400", alt="ReQue: Workflow Diagram">
     <br>
     Workflow Diagram
-    <img src="./classdiagram.png", width="1000", alt="ReQue: Class Diagram">
+    <img src="https://user-images.githubusercontent.com/8619934/96526577-0247b380-124c-11eb-85c0-e3abc6b08e9c.png", width="1000", alt="ReQue: Class Diagram">
     <br>
     Class Diagram for Query Expanders in <a href="./qe">qe/</a>. [<a href="https://app.lucidchart.com/documents/view/64fedbb0-b385-4696-9adc-b89bc06e84ba/HWEp-vi-RSFO">zoom in!</a>]
     <br>
