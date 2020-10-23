@@ -98,7 +98,10 @@ class AdapOnFields(OnFields):
                 collection_freq=1
                 df=1
 
-            sub_result= sub_result * (self.ext_collection_tokens / collection_freq)
+            try:
+                sub_result= sub_result * (self.ext_collection_tokens / collection_freq)
+            except:
+                sub_result= sub_result * self.ext_collection_tokens
         sub_result=math.log2(sub_result)
         externalavICTF= (sub_result/ql)
         index_reader = index.IndexReader(self.index)
@@ -112,7 +115,10 @@ class AdapOnFields(OnFields):
             if  isinstance(collection_freq,int)==False:
                 df=1
                 collection_freq=1
-            sub_result= sub_result * (self.collection_tokens / collection_freq)
+            try:
+                sub_result= sub_result * (self.ext_collection_tokens / collection_freq)
+            except:
+                sub_result= sub_result * self.ext_collection_tokens
         sub_result=math.log2(sub_result)
         internalavICTF = (sub_result/ql)
         if internalavICTF < 10 and externalavICTF < 10:
