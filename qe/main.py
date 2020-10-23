@@ -214,7 +214,7 @@ def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
 
         if 'generate' in op:generate(Qfilename='../ds/robust04/topics.robust04.txt', expanders=expanders, output=output_)
         if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader='Trec', index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
-        if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/robust04/qrels.robust04.txt', rankers=rankers, metrics=metrics, anserini=anserini, output=output_)
+        if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/robust04/qrels.robust04.txt', rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
         if 'build' in op:
             result = aggregate(expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
             build(input=result, expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
@@ -233,7 +233,7 @@ def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
 
             if 'generate' in op:generate(Qfilename='../ds/gov2/{}.terabyte0{}.txt'.format('topics', r), expanders=expanders, output=output_)
             if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
-            if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/gov2/qrels.terabyte0{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=anserini, output=output_)
+            if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/gov2/qrels.terabyte0{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
             if 'build' in op:
                 result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
                 result = build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
@@ -260,7 +260,7 @@ def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb09b/topics.web.{}.txt'.format(r), expanders=expanders, output=output_)
             if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
-            if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/clueweb09b/qrels.web.{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=anserini, output=output_)
+            if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/clueweb09b/qrels.web.{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
             if 'build' in op:
                 result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
                 result = build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
@@ -286,7 +286,7 @@ def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb12b13/topics.web.{}.txt'.format(r), expanders=expanders, output=output_)
             if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
-            if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/clueweb12b13/qrels.web.{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=anserini, output=output_)
+            if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/clueweb12b13/qrels.web.{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
             if 'build' in op:
                 result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
                 result = build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
