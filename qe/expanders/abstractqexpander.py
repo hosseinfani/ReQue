@@ -44,7 +44,7 @@ class AbstractQExpander:
 
                         Q_ = Q_.append({model_name: q_}, ignore_index=True)
                         print('INFO: MAIN: {}: {}: {} -> {}'.format(self.get_model_name(), qid, q, q_))
-                        Q_file.write('<title> ' + str(q_) + '\n')
+                        Q_file.write('<title> ' + q_ + '\n')
 
                     elif '<topic' in line:
                         s = line.index('\"') + 1
@@ -63,7 +63,7 @@ class AbstractQExpander:
 
                             Q_ = Q_.append({model_name: q_}, ignore_index=True)
                             print('INFO: MAIN: {}: {}: {} -> {}'.format(self.get_model_name(), qid, q, q_))
-                            Q_file.write('  <query>' + str(q_) + '</query>' + '\n')
+                            Q_file.write('  <query>' + q_ + '</query>' + '\n')
                     else:
                         Q_file.write(line)
         return Q_
