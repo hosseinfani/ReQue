@@ -50,8 +50,16 @@ database = {
         'w_t': 4,#OnFields
         'w_a': 0,#OnFields
         'tokens': 31000000000,
+    },
+        'antique': {
+        'index': '/home/negar/ReQue/Antique/index/lucene-index-antique',
+        'size': 403000,
+        'topics': '',
+        'prels': '',
+        'w_t': 2.25,#OnFields # to be tuned
+        'w_a': 1,#OnFields # to be tuned
+        'tokens': 16000000,
     }
-
 }
 # print(database['robust04']['index'])
 # #TypeError: unhashable type: 'dict'
@@ -229,4 +237,3 @@ database = {
 #
 # def get_model_specific_params(model_name, field):
 #     return model2params[model_name.upper()][field]
-

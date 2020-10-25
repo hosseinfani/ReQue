@@ -45,7 +45,7 @@ class OnFields(RelevanceFeedback):
         self.corpus_size=corpus_size #total number of documents in the collection
 
     def get_expanded_query(self, q, args):
-        
+        q=q.translate(str.maketrans('', '', string.punctuation))
         qid=args[0]
         if self.adap == False:
             top_3_docs = self.get_topn_relevant_docids(qid)

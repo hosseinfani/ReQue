@@ -64,6 +64,19 @@ class AbstractQExpander:
                             Q_ = Q_.append({model_name: q_}, ignore_index=True)
                             print('INFO: MAIN: {}: {}: {} -> {}'.format(self.get_model_name(), qid, q, q_))
                             Q_file.write('  <query>' + str(q_) + '</query>' + '\n')
+                    elif 'antique' in Q_filename:
+                        qid = int(line.split('\t')[0].rstrip())
+                        q=line.split('\t')[1].rstrip()
+                        try:
+                            q_ = self.get_expanded_query(q, [qid])
+                            q_ = utils.clean(q_) if clean else q_
+                        except:
+                            print('WARNING: MAIN: {}: Expanding query [{}:{}] failed!'.format(self.get_model_name(), qid, q))
+                            print(traceback.format_exc())
+                            q_ = q
+                        Q_ = Q_.append({model_name: q_}, ignore_index=True)
+                        print('INFO: MAIN: {}: {}: {} -> {}'.format(self.get_model_name(), qid, q, q_))
+                        Q_file.write(str(qid)+'\t'+ str(q_) + '\n')
                     else:
                         Q_file.write(line)
         return Q_
@@ -85,6 +98,9 @@ class AbstractQExpander:
                     qid = int(line[s:e])
                 elif line[2:9] == '<query>':  # for clueweb09b & clueweb12b13
                     q_ = line[9:-9] + ' '
+                elif 'antique' in Q_filename:
+                    qid = int(line.split('\t')[0].rstrip())
+                    q_=line.split('\t')[1].rstrip()
                 else:
                     continue
                 if q_:

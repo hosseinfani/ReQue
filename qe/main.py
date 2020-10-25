@@ -34,7 +34,7 @@ from pyserini.search import SimpleSearcher
 #Q: set of queries
 #q_: expanded query (q')
 #Q_: set of expanded queries(Q')
-
+from cmn import param
 from cmn import expander_factory as ef
 from cmn import utils
 from expanders.abstractqexpander import AbstractQExpander
@@ -204,6 +204,20 @@ def build(input, expanders, rankers, metrics, output):
     return filename
 
 def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
+    if db == 'antique':
+        topicreader = 'TsvInt'
+        #//data/anserini/lucene-index-antique
+        output_ = '{}topics.antique'.format(output)
+        expanders = ef.get_nrf_expanders()
+        if rf:#local analysis
+            expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
+
+        if 'generate' in op:generate(Qfilename='../ds/antique/topics.antique.txt', expanders=expanders, output=output_)
+        if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
+        if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/antique/qrels.antique.txt', rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
+        if 'build' in op:
+            result = aggregate(expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
+            build(input=result, expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
 
     if db == 'robust04':
         #/data/anserini/lucene-index.robust04.pos+docvectors+rawdocs
@@ -211,7 +225,6 @@ def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
         expanders = ef.get_nrf_expanders()
         if rf:#local analysis
             expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
-
         if 'generate' in op:generate(Qfilename='../ds/robust04/topics.robust04.txt', expanders=expanders, output=output_)
         if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader='Trec', index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
         if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/robust04/qrels.robust04.txt', rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
@@ -286,7 +299,7 @@ def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
 
             if 'generate' in op:generate(Qfilename='../ds/clueweb12b13/topics.web.{}.txt'.format(r), expanders=expanders, output=output_)
             if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
-            if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/clueweb12b13/qrels.web.{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
+            if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/clueweb12b13/qrels.web.{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=anserini, output=output_)
             if 'build' in op:
                 result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
                 result = build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
@@ -304,7 +317,7 @@ def addargs(parser):
     # anserini.add_argument('--anserini', type=str, default='../anserini/', help='The path to the anserini library (default: ../anserini/)')
 
     corpus = parser.add_argument_group('Corpus')
-    corpus.add_argument('--corpus', type=str, choices=['robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], required=True, help='The corpus name; required; (example: robust04)')
+    corpus.add_argument('--corpus', type=str, choices=['antique','robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], required=True, help='The corpus name; required; (example: robust04)')
     # corpus.add_argument('--index', type=str, required=True, help='The corpus index; required; (example: ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs)')
 
     gold = parser.add_argument_group('Gold Standard Dataset')
