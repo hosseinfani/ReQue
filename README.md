@@ -209,7 +209,7 @@ There are other required parameters that should be set in [params.py](https://gi
 
 `w_a`: Weight for anchor field. Required for Onfields and AdapOnFields query expander.
 
-`tokens`:  Total number of tokens in the collection e.g., [`148000000`](https://github.com/hosseinfani/ReQue/blob/cfa7eddcb526bd0f82acda77505010a804df884f/qe/cmn/param.py#L25)
+`tokens`:  Total number of tokens in the collection e.g., [`148000000`](https://github.com/hosseinfani/ReQue/blob/cfa7eddcb526bd0f82acda77505010a804df884f/qe/cmn/param.py#L25); Required for Onfields and AdapOnFields query expander.
 
 The sample running commands are:
 
