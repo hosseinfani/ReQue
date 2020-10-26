@@ -338,9 +338,6 @@ def addargs(parser):
 # # python -u main.py --corpus robust04 --output ../ds/qe/robust04/ --ranker bm25 --metric map 2>&1 | tee robust04.bm25.log &
 # # python -u main.py --corpus robust04 --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.qld.log &
 
-# Example for OnFields and AdopOnFields:
-# # python -u main.py --corpus robust04 --output ../ds/qe/robust04/ --ranker bm25 --metric map --ext_corpus gov2 --ext_prels ../ds/qe/gov2/topics.terabyte04.701-750.abstractqueryexpansion.bm25.txt 2>&1 | tee robust04.bm25.log &
-
 # # python -u main.py --corpus gov2 --output ../ds/qe/gov2/ --ranker bm25 --metric map 2>&1 | tee gov2.bm25.log &
 # # python -u main.py --corpus gov2 --output ../ds/qe/gov2/ --ranker qld --metric map 2>&1 | tee gov2.qld.log &
 
@@ -350,6 +347,8 @@ def addargs(parser):
 # # python -u main.py --corpus clueweb12b13 --output ../ds/qe/clueweb12b13/ --ranker bm25 --metric map 2>&1 | tee clueweb12b13.bm25.log &
 # # python -u main.py --corpus clueweb12b13 --output ../ds/qe/clueweb12b13/ --ranker qld --metric map 2>&1 | tee clueweb12b13.qld.log &
 
+# # python -u main.py --corpus antique --output ../ds/qe/antique/ --ranker bm25 --metric map 2>&1 | tee antique.bm25.log &
+# # python -u main.py --corpus antique --output ../ds/qe/antique/ --ranker qld --metric map 2>&1 | tee antique.qld.log &
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='ReQue (Refining Queries)')
