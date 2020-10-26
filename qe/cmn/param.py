@@ -18,7 +18,7 @@ database = {
     'robust04': {
         'index': '../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs',
         'size': 528155,
-        'topics': '',
+        'topics': '../ds/robust04/topics.robust04.txt',
         'prels': '',
         'w_t': 2.25,#OnFields
         'w_a': 1,#OnFields
@@ -28,39 +28,39 @@ database = {
     'gov2': {
         'index': '../ds/gov2/lucene-index.gov2.pos+docvectors+rawdocs',
         'size': 25000000,
-        'topics': '',
+        'topics': '../ds/gov2/{}.terabyte0{}.txt',#{} is a placeholder for subtopics in main.py -> run()
         'prels': '',
         'w_t': 4,#OnFields
         'w_a': 0.25,#OnFields
         'tokens': 17000000000,
-        'qrels':'',
+        'qrels':'../ds/gov2/qrels.terabyte0{}.txt',#{} is a placeholder for subtopics in main.py -> run()
 
     },
     'clueweb09b': {
         'index': '../ds/clueweb09b/lucene-index.cw09b.pos+docvectors+rawdocs',
         'size': 50000000,
-        'topics': '',
+        'topics': '../ds/clueweb09b/topics.web.{}.txt',#{} is a placeholder for subtopics in main.py -> run()
         'prels': '',
         'w_t': 1,#OnFields
         'w_a': 0,#OnFields
         'tokens': 31000000000,
-        'qrels':'',
+        'qrels':'../ds/clueweb09b/qrels.web.{}.txt',#{} is a placeholder for subtopics in main.py -> run()
     },
     'clueweb12b13': {
         'index': '../ds/clueweb12b13/lucene-index.cw12b13.pos+docvectors+rawdocs',
         'size': 50000000,
-        'topics': '',
+        'topics': '../ds/clueweb12b13/topics.web.{}.txt',#{} is a placeholder for subtopics in main.py -> run()
         'prels': '',
         'w_t': 4,#OnFields
         'w_a': 0,#OnFields
         'tokens': 31000000000,
-        'qrels':'',
+        'qrels':'../ds/clueweb12b13/qrels.web.{}.txt',#{} is a placeholder for subtopics in main.py -> run()
 
     },
         'antique': {
         'index': '../ds/antique/lucene-index-antique',
         'size': 403000,
-        'topics': '',
+        'topics': '../ds/antique/topics.antique.txt',
         'prels': '',
         'w_t': 2.25,#OnFields # to be tuned
         'w_a': 1,#OnFields # to be tuned
