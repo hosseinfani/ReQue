@@ -33,7 +33,7 @@ database = {
         'w_t': 4,#OnFields
         'w_a': 0.25,#OnFields
         'tokens': 17000000000,
-        'qrels':,
+        'qrels':'',
 
     },
     'clueweb09b': {
@@ -44,7 +44,7 @@ database = {
         'w_t': 1,#OnFields
         'w_a': 0,#OnFields
         'tokens': 31000000000,
-        'qrels':,
+        'qrels':'',
     },
     'clueweb12b13': {
         'index': '../ds/clueweb12b13/lucene-index.cw12b13.pos+docvectors+rawdocs',
@@ -54,7 +54,7 @@ database = {
         'w_t': 4,#OnFields
         'w_a': 0,#OnFields
         'tokens': 31000000000,
-        'qrels':,
+        'qrels':'',
 
     },
         'antique': {
