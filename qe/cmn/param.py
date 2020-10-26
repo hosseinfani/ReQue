@@ -58,7 +58,7 @@ database = {
 
     },
         'antique': {
-        'index': '/home/negar/ReQue/Antique/index/lucene-index-antique',
+        'index': '../ds/antique/lucene-index-antique',
         'size': 403000,
         'topics': '',
         'prels': '',
