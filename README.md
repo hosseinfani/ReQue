@@ -197,11 +197,19 @@ Refining queries is done using all [expanders](./qe/cmn/expander_factory.py) by 
 
 `--metric`: The evaluation metric name which could be any metric from [trec_eval](https://github.com/usnistgov/trec_eval). Currently, ReQue has been tested for mean average precision, (default: `map`);
 
-Other required parameters should be set in [params.py](https://github.com/hosseinfani/ReQue/blob/develop/qe/cmn/param.py), including:
+There are other required parameters that should be set in [params.py](https://github.com/hosseinfani/ReQue/blob/develop/qe/cmn/param.py) for each collection, including:
 
-`anserini`: The path to the anserini library (default: [`../anserini/`](https://github.com/hosseinfani/ReQue/blob/ac1b9557a88faa15e8d0c50f934a03a56b9318f6/qe/cmn/param.py#L14));
-`index`: The corpus index, e.g. [`../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs`](https://github.com/hosseinfani/ReQue/blob/ac1b9557a88faa15e8d0c50f934a03a56b9318f6/qe/cmn/param.py#L19). Required;
+`anserini`: The path to the anserini library e.g., [`../anserini/`](https://github.com/hosseinfani/ReQue/blob/ac1b9557a88faa15e8d0c50f934a03a56b9318f6/qe/cmn/param.py#L14); Required.
 
+`index`: The corpus index, e.g. [`../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs`](https://github.com/hosseinfani/ReQue/blob/ac1b9557a88faa15e8d0c50f934a03a56b9318f6/qe/cmn/param.py#L19); Required
+
+`size`: Number of documents in the collection e.g., [`528155`](https://github.com/hosseinfani/ReQue/blob/cfa7eddcb526bd0f82acda77505010a804df884f/qe/cmn/param.py#L20); Required for Onfields and AdapOnFields query expander.
+
+`w_t`: Weight for title field. Required for Onfields and AdapOnFields query expander.
+
+`w_a`: Weight for anchor field. Required for Onfields and AdapOnFields query expander.
+
+`tokens`:  Total number of tokens in the collection e.g., [`148000000`](https://github.com/hosseinfani/ReQue/blob/cfa7eddcb526bd0f82acda77505010a804df884f/qe/cmn/param.py#L25)
 
 The sample running commands are:
 
