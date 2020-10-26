@@ -189,11 +189,7 @@ $> anserini/target/appassembler/bin/IndexCollection -collection JsonCollection -
 ## ReQue: Refining Queries: [`qe/`](./qe/)
 Refining queries is done using all [expanders](./qe/cmn/expander_factory.py) by [`qe/main.py`](./qe/main.py) that accept the following arguments:
 
-`--anserini`: The path to the anserini library (default: [`../anserini/`](./anserini));
-
 `--corpus`: The name of the original query dataset whose queries are to be expanded and paired with the refined queries, if any, which could be one of {`robust04`, `gov2`, `clueweb09b`, and `clueweb12b13`}. Required;
-
-`--index`: The corpus index, e.g. [`../ds/robust04/`](./ds/robust04/)`lucene-index.robust04.pos+docvectors+rawdocs`. Required;
 
 `--output`: The output path for the gold standard dataset, e.g., [`../ds/qe/robust04/`](./ds/qe/robust04/). Required; 
 
@@ -201,20 +197,30 @@ Refining queries is done using all [expanders](./qe/cmn/expander_factory.py) by 
 
 `--metric`: The evaluation metric name which could be any metric from [trec_eval](https://github.com/usnistgov/trec_eval). Currently, ReQue has been tested for mean average precision, (default: `map`);
 
+Other required parameters should be set in [params.py](https://github.com/hosseinfani/ReQue/blob/develop/qe/cmn/param.py), including:
+
+`anserini`: The path to the anserini library (default: [`../anserini/`](https://github.com/hosseinfani/ReQue/blob/ac1b9557a88faa15e8d0c50f934a03a56b9318f6/qe/cmn/param.py#L14));
+`index`: The corpus index, e.g. [`../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs`](https://github.com/hosseinfani/ReQue/blob/ac1b9557a88faa15e8d0c50f934a03a56b9318f6/qe/cmn/param.py#L19). Required;
+
+
 The sample running commands are:
 
 ```
-$> python -u main.py --anserini ../anserini/ --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker bm25 --metric map 2>&1 | tee robust04.log &
-$> python -u main.py --anserini ../anserini/ --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.log &
- 
-$> python -u main.py --anserini ../anserini/ --corpus gov2 --index ../ds/gov2/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker bm25 --metric map 2>&1 | tee gov2.log &
-$> python -u main.py --anserini ../anserini/ --corpus gov2 --index ../ds/gov2/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker qld --metric map 2>&1 | tee gov2.log &
+$> python -u main.py --corpus robust04 --output ../ds/qe/robust04/ --ranker bm25 --metric map 2>&1 | tee robust04.bm25.log &
+$> python -u main.py --corpus robust04 --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.qld.log &
 
-$> python -u main.py --anserini ../anserini/ --corpus clueweb09b --index ../ds/clueweb09b/lucene-index.cw09b.pos+docvectors+rawdocs --output ../ds/qe/clueweb09b/ --ranker bm25 --metric map 2>&1 | tee clueweb09b.log &
-$> python -u main.py --anserini ../anserini/ --corpus clueweb09b --index ../ds/clueweb09b/lucene-index.cw09b.pos+docvectors+rawdocs --output ../ds/qe/clueweb09b/ --ranker qld --metric map 2>&1 | tee clueweb09b.log &
+$> python -u main.py --corpus gov2 --output ../ds/qe/gov2/ --ranker bm25 --metric map 2>&1 | tee gov2.bm25.log &
+$> python -u main.py --corpus gov2 --output ../ds/qe/gov2/ --ranker qld --metric map 2>&1 | tee gov2.qld.log &
 
-$> python -u main.py --anserini ../anserini/ --corpus clueweb12b13 --index ../ds/clueweb12b13/lucene-index.cw12b13.pos+docvectors+rawdocs --output ../ds/qe/clueweb12b13/ --ranker bm25 --metric map 2>&1 | tee clueweb12b13.log &
-$> python -u main.py --anserini ../anserini/ --corpus clueweb12b13 --index ../ds/clueweb12b13/lucene-index.cw12b13.pos+docvectors+rawdocs --output ../ds/qe/clueweb12b13/ --ranker qld --metric map 2>&1 | tee clueweb12b13.log &
+$> python -u main.py --corpus clueweb09b --output ../ds/qe/clueweb09b/ --ranker bm25 --metric map 2>&1 | tee clueweb09b.bm25.log &
+$> python -u main.py --corpus clueweb09b --output ../ds/qe/clueweb09b/ --ranker qld --metric map 2>&1 | tee clueweb09b.qld.log &
+
+$> python -u main.py --corpus clueweb12b13 --output ../ds/qe/clueweb12b13/ --ranker bm25 --metric map 2>&1 | tee clueweb12b13.bm25.log &
+$> python -u main.py --corpus clueweb12b13 --output ../ds/qe/clueweb12b13/ --ranker qld --metric map 2>&1 | tee clueweb12b13.qld.log &
+
+$> python -u main.py --corpus antique --output ../ds/qe/antique/ --ranker bm25 --metric map 2>&1 | tee antique.bm25.log &
+$> python -u main.py --corpus antique --output ../ds/qe/antique/ --ranker qld --metric map 2>&1 | tee antique.qld.log &
+
 ```
 
 ## Gold Standard Dataset: [`ds/qe/`](./ds/qe/)
