@@ -23,6 +23,7 @@ database = {
         'w_t': 2.25,#OnFields
         'w_a': 1,#OnFields
         'tokens': 148000000,
+        'qrels':'../ds/robust04/qrels.robust04.txt',
     },
     'gov2': {
         'index': '../ds/gov2/lucene-index.gov2.pos+docvectors+rawdocs',
@@ -32,6 +33,8 @@ database = {
         'w_t': 4,#OnFields
         'w_a': 0.25,#OnFields
         'tokens': 17000000000,
+        'qrels':,
+
     },
     'clueweb09b': {
         'index': '../ds/clueweb09b/lucene-index.cw09b.pos+docvectors+rawdocs',
@@ -41,6 +44,7 @@ database = {
         'w_t': 1,#OnFields
         'w_a': 0,#OnFields
         'tokens': 31000000000,
+        'qrels':,
     },
     'clueweb12b13': {
         'index': '../ds/clueweb12b13/lucene-index.cw12b13.pos+docvectors+rawdocs ',
@@ -50,6 +54,8 @@ database = {
         'w_t': 4,#OnFields
         'w_a': 0,#OnFields
         'tokens': 31000000000,
+        'qrels':,
+
     },
         'antique': {
         'index': '/home/negar/ReQue/Antique/index/lucene-index-antique',
@@ -59,6 +65,8 @@ database = {
         'w_t': 2.25,#OnFields # to be tuned
         'w_a': 1,#OnFields # to be tuned
         'tokens': 16000000,
+        'qrels':'../ds/antique/qrels.antique.txt',
+
     }
 }
 # print(database['robust04']['index'])
