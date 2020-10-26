@@ -182,7 +182,8 @@ $> anserini/target/appassembler/bin/IndexCollection -collection TrecCollection -
 $> anserini/target/appassembler/bin/IndexCollection -collection TrecwebCollection -input Gov2-Corpus -index lucene-index.gov2.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.gov2.pos+docvectors+rawdocs &
 $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb09Collection -input ClueWeb09-B-Corpus -index lucene-index.cw09b.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw09b.pos+docvectors+rawdocs &
 $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collection -input ClueWeb12-B-Corpus -index lucene-index.cw12b13.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw12b13.pos+docvectors+rawdocs &
-$> anserini/target/appassembler/bin/IndexCollection -collection antique -input antique-Corpus -index lucene-index-antique -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw12b13.pos+docvectors+rawdocs &
+$> anserini/target/appassembler/bin/IndexCollection -collection JsonCollection -input antique-Corpus -index lucene-index-antique -generator DefaultLuceneDocumentGenerator -threads 1 -storePositions -storeDocvectors -storeRaw 2>&1 | tee  log.antique.pos+docvectors+rawdocs &
+ 
 ```
 
 ## ReQue: Refining Queries: [`qe/`](./qe/)
