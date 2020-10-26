@@ -17,7 +17,7 @@ anserini = {
 database = {
     'robust04': {
         'index': '../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs',
-        'size': 520000,
+        'size': 528155,
         'topics': '',
         'prels': '',
         'w_t': 2.25,#OnFields
