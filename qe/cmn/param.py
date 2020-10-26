@@ -47,7 +47,7 @@ database = {
         'qrels':,
     },
     'clueweb12b13': {
-        'index': '../ds/clueweb12b13/lucene-index.cw12b13.pos+docvectors+rawdocs ',
+        'index': '../ds/clueweb12b13/lucene-index.cw12b13.pos+docvectors+rawdocs',
         'size': 50000000,
         'topics': '',
         'prels': '',
