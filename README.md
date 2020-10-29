@@ -1,5 +1,4 @@
 # A Toolkit for Generating Query Refinement Gold Standards
-## [Online Video Tutorial](https://watch.wave.video/reque-a-toolkit-for-generating-query-refinement-gold-standards-5ef6c24046e0fb000c354004)
 <p align="center">
     <img src="./workflow.png", width="400", alt="ReQue: Workflow Diagram">
     <br>
