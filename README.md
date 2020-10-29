@@ -1,4 +1,4 @@
-# A Toolkit for Generating Query Refinement Gold Standards
+# ReQue: An Extensible Toolkit of Query Refinement Methods and Gold Standard Dataset Generation
 <p align="center">
     <img src="./workflow.png", width="400", alt="ReQue: Workflow Diagram">
     <br>
