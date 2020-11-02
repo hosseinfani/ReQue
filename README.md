@@ -1,4 +1,5 @@
 # ReQue: An Extensible Toolkit of Query Refinement Methods and Gold Standard Dataset Generation
+## Video Tutorial: [1) Introduction](https://youtu.be/ydO-LVhzVb8) -> [2) Installation]() -> [3) Extension]()
 <p align="center">
     <img src="https://user-images.githubusercontent.com/8619934/96526659-40dd6e00-124c-11eb-986a-4cfe0bc50dad.png", width="400", alt="ReQue: Workflow Diagram">
     <br>
