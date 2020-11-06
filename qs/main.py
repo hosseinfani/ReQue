@@ -108,27 +108,30 @@ def call_cair_run(data_dir, epochs):
 # # python -u main.py 1 gov2 2>&1 | tee gov2.topn1.log &
 # # python -u main.py 1 clueweb09b 2>&1 | tee clueweb09b.topn1.log &
 # # python -u main.py 1 clueweb12b13 2>&1 | tee clueweb12b13.topn1.log &
+# # python -u main.py 1 antique 2>&1 | tee antique.topn1.log &
 # # python -u main.py 1 all 2>&1 | tee all.topn1.log &
 # # python -u main.py 5 robust04 2>&1 | tee robust04.topn5.log &
 # # python -u main.py 5 gov2 2>&1 | tee gov2.topn5.log &
 # # python -u main.py 5 clueweb09b 2>&1 | tee clueweb09b.topn5.log &
 # # python -u main.py 5 clueweb12b13 2>&1 | tee clueweb12b13.topn5.log &
+# # python -u main.py 5 antique 2>&1 | tee antique.topn5.log &
 # # python -u main.py 5 all 2>&1 | tee all.topn5.log &
 # # python -u main.py 100 robust04 2>&1 | tee robust04.topn100.log &
 # # python -u main.py 100 gov2 2>&1 | tee gov2.topn100.log &
 # # python -u main.py 100 clueweb09b 2>&1 | tee clueweb09b.topn100.log &
 # # python -u main.py 100 clueweb12b13 2>&1 | tee clueweb12b13.topn100.log &
+# # python -u main.py 100 antique 2>&1 | tee antique.topn100.log &
 # # python -u main.py 100 all 2>&1 | tee all.topn100.log &
 
 if __name__=='__main__':
     topn = int(sys.argv[1])
     dbs = sys.argv[2:]
     if not dbs:
-        dbs = ['robust04', 'gov2', 'clueweb09b', 'clueweb12b13', 'all']
+        dbs = ['robust04', 'gov2', 'clueweb09b', 'clueweb12b13', 'antique', 'all']
     if not topn:
         topn = 1
 
-    rankers = ['-bm25', '-bm25 -rm3', '-qld', '-qld -rm3']
+    rankers = ['-bm25', '-qld']
     metrics = ['map']
 
     for db in dbs:
@@ -148,14 +151,18 @@ if __name__=='__main__':
                 if db == 'clueweb12b13':
                     df = pd.read_csv('../ds/qe/{}/topics.{}.201-300.{}.{}.dataset.csv'.format(db, db, ranker, metric), header=0)
                     csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
+                if db == 'antique':
+                    df = pd.read_csv('../ds/qe/{}/topics.{}.{}.{}.dataset.csv'.format(db, db, ranker, metric), header=0)
+                    csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
 
                 if db == 'all':
                     df1 = pd.read_csv('../ds/qe/robust04/topics.robust04.{}.{}.dataset.csv'.format(ranker, metric), header=0)
                     df2 = pd.read_csv('../ds/qe/gov2/topics.gov2.701-850.{}.{}.dataset.csv'.format(ranker, metric), header=0)
                     df3 = pd.read_csv('../ds/qe/clueweb09b/topics.clueweb09b.1-200.{}.{}.dataset.csv'.format(ranker, metric), header=0)
                     df4 = pd.read_csv('../ds/qe/clueweb12b13/topics.clueweb12b13.201-300.{}.{}.dataset.csv'.format(ranker, metric), header=0)
-                    df5 = pd.concat([df1, df2, df3, df4], ignore_index=True)
-                    csv2json(df5, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
+                    df5 = pd.read_csv('../ds/qe/antique/topics.antique.{}.{}.dataset.csv'.format(ranker, metric), header=0)
+                    df = pd.concat([df1, df2, df3, df4, df5], ignore_index=True)
+                    csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
 
                 data_dir = '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric)
                 print('INFO: MAIN: Calling cair for {}'.format(data_dir))
