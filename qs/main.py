@@ -37,6 +37,12 @@ def csv2json(df, output, topn=1):
                 qcol = 'query.' + str(i)
                 if (qcol not in df.columns) or pd.isna(row[qcol]):
                     break
+                #check if the query string is a dict (for weighted expanders such as onfields)
+                try:
+                    row[qcol] = ' '.join(eval(row[qcol]).keys())
+                except:
+                    pass
+
                 q_Obj = OrderedDict([
                     ('id', generate_random_string(12)),
                     ('text', row[qcol]),
@@ -50,7 +56,7 @@ def csv2json(df, output, topn=1):
                     ('session_id', generate_random_string()),
                     ('query', session_queries)
                 ])
-                print(qObj['text'] + '--' + str(i)+ '--> ' + q_Obj['text']);
+                print(str(row.qid) + ": " + qObj['text'] + '--' + str(i)+ '--> ' + q_Obj['text']);
 
                 fds.write(json.dumps(obj) + '\n')
 
@@ -167,4 +173,4 @@ if __name__=='__main__':
                 data_dir = '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric)
                 print('INFO: MAIN: Calling cair for {}'.format(data_dir))
                 #call_cair_run(data_dir, epochs=[e for e in range(1, 10)] + [e * 10 for e in range(1, 21)])
-                call_cair_run(data_dir, epochs=[100])
+                #call_cair_run(data_dir, epochs=[100])
