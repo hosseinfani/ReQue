@@ -1,5 +1,6 @@
 import sys
 sys.path.extend(['../qe'])
+sys.path.extend(['../qe/cmn'])
 
 #TODO: ServiceFactory: dynamically load the class files in expanders folder and create an instance object
 from expanders.abstractqexpander import AbstractQExpander

@@ -70,7 +70,7 @@ class ResultAnalyzer:
                 self.query_expander_contributions_best[key] = 0
 
     def collect_query_expander_names(self):
-        names = expander_factory.get_expanders_names(['-bm25', '-bm25 -rm3', '-qld', '-qld -rm3'])
+        names = expander_factory.get_expanders_names(['-bm25', '-qld'])
         for name in names:
             self.add_to_query_expander_names(name)
 
