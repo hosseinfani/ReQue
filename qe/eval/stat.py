@@ -70,7 +70,15 @@ class ResultAnalyzer:
                 self.query_expander_contributions_best[key] = 0
 
     def collect_query_expander_names(self):
-        names = expander_factory.get_expanders_names(['-bm25', '-qld'])
+        #names = expander_factory.get_expanders_names(['-bm25', '-qld'])
+        names = ["thesaurus.topn3", "wordnet.topn3", "word2vec.topn3", "glove.topn3", "anchor.topn3", "wiki.topn3",
+                 "tagmee.topn3", "sensedisambiguation", "conceptnet.topn3", "thesaurus.topn3.replace",
+                 "wordnet.topn3.replace", "word2vec.topn3.replace", "glove.topn3.replace", "anchor.topn3.replace",
+                 "wiki.topn3.replace", "tagmee.topn3.replace", "sensedisambiguation.replace",
+                 "conceptnet.topn3.replace", "stem.krovetz", "stem.lovins", "stem.paicehusk", "stem.porter",
+                 "stem.porter2", "stem.sstemmer", "stem.trunc4", "stem.trunc5", "relevancefeedback.topn10.qld",
+                 "docluster.topn10.3.qld", "termluster.topn5.3.qld", "conceptluster.topn5.3.qld",
+                 "onfields.topn3.10.2.25.1.qld", "adaponfields.topn3.exgov2.4.0.25.10.2.25.1.qld"]
         for name in names:
             self.add_to_query_expander_names(name)
 
