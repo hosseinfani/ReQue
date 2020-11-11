@@ -55,6 +55,7 @@ def generate(Qfilename, expanders, output):
     for model_err, msg in model_errs.items():
         print('INFO: MAIN: GENERATE: There has been error in {}!\n{}'.format(model_err, msg))
 
+
 def search(expanders, rankers, topicreader, index, anserini, output):
     # Information Retrieval using Anserini
     rank_cmd = '{}target/appassembler/bin/SearchCollection'.format(anserini)
@@ -69,9 +70,9 @@ def search(expanders, rankers, topicreader, index, anserini, output):
                 Q_pred = '{}.{}.{}.txt'.format(output, model_name, ef.get_ranker_name(ranker))
                 q_dic={}
                 searcher = SimpleSearcher(index)
-                if ranker =='bm25':
+                if ranker =='-bm25':
                     searcher.set_bm25(0.9, 0.4)
-                elif ranker =='qld':
+                elif ranker =='-qld':
                     searcher.set_qld()
 
                 if isinstance(model, OnFields):
@@ -93,19 +94,35 @@ def search(expanders, rankers, topicreader, index, anserini, output):
                         boolean_query_builder = querybuilder.get_boolean_query_builder()
                         for boost_i in boost:
                             boolean_query_builder.add(boost_i, should)
-
+                        retrieved_docs=[]
                         query = boolean_query_builder.build()
                         hits = searcher.search(query,k=10000)
                         for i in range(0, 1000):
-                            run_file.write(f'{qid} Q0  {hits[i].docid:15} {i+1:2}  {hits[i].score:.5f} Pyserini \n')
+                            if hits[i].docid not in retrieved_docs:
+                                retrieved_docs.append(hits[i].docid)
+                                run_file.write(f'{qid} Q0  {hits[i].docid:15} {i+1:2}  {hits[i].score:.5f} Pyserini \n')
                     run_file.close()
 
+                elif topicreader=='TsvString':
+                    run_file=open(Q_pred,'w')
+                    qlines=open(Q_filename,'r').readlines()
+                    
+                    for line in qlines:
+                        retrieved_docs=[]
+                        qid,qtext=line.split('\t')
+                        hits = searcher.search(qtext,k=1000)
+                        for i in range(len(hits)):
+                            if hits[i].docid not in retrieved_docs:
+                                retrieved_docs.append(hits[i].docid)
+                                run_file.write(f'{qid} Q0  {hits[i].docid:15} {i+1:2} {hits[i].score:.5f} Pyserini\n')
+                    run_file.close()
 
                 else:
                     cli_cmd = '\"{}\" {} -threads 44 -topicreader {} -index {} -topics {} -output {}'.format(rank_cmd, ranker, topicreader, index, Q_filename, Q_pred)
                     print('{}\n'.format(cli_cmd))
                     stream = os.popen(cli_cmd)
                     print(stream.read())
+                
         except:
             model_errs[model_name] = traceback.format_exc()
             continue
@@ -204,6 +221,19 @@ def build(input, expanders, rankers, metrics, output):
     return filename
 
 def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
+    if db == 'dbpedia':
+        topicreader = 'TsvString'
+        output_ = '{}topics.dbpedia'.format(output)
+        expanders = ef.get_nrf_expanders()
+        if rf:#local analysis
+            expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
+
+        if 'generate' in op:generate(Qfilename=param.database[db]['topics'], expanders=expanders, output=output_)
+        if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
+        if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.database[db]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
+        if 'build' in op:
+            result = aggregate(expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
+            build(input=result, expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
     if db == 'antique':
         topicreader = 'TsvInt'
         output_ = '{}topics.antique'.format(output)

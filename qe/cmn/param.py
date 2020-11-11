@@ -67,6 +67,17 @@ database = {
         'tokens': 16000000,
         'qrels':'../ds/antique/qrels.antique.txt',
 
+    },
+        'dbpedia': {
+        'index': '/home/negar/ReQue/DBPedia/lucene-index-dbpedia-collection',
+        'size': 4632359,
+        'topics': '../ds/dbpedia/topics.dbpedia.txt',
+        'prels': '',
+        'w_t': 1,#OnFields # to be tuned
+        'w_a': 1,#OnFields # to be tuned
+        'tokens': 200000000,
+        'qrels':'../ds/dbpedia/qrels.dbpedia.txt',
+
     }
 }
 # print(database['robust04']['index'])

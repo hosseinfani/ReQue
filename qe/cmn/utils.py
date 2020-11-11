@@ -57,7 +57,7 @@ def get_raw_query(topicreader,Q_filename):
                 raw_queries[qid]=line.split('<query>')[1].rstrip().lower().split('</query>')[0]
             elif '<topic number' in line:
                 qid=line.split('<topic number="')[1].split('"')[0]
-    elif topicreader=='TsvInt':
+    elif topicreader=='TsvInt' or topicreader=='TsvString':
         for line in q_file:
             qid=line.split('\t')[0]
             raw_queries[qid]=line.split('\t')[1].rstrip().lower()

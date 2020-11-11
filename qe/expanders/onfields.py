@@ -149,7 +149,7 @@ class OnFields(RelevanceFeedback):
     def extract_raw_documents(self,docid):
         index_address=self.index
         anserini_address=self.anserini
-        cmd = '\"{}/target/appassembler/bin/IndexUtils\" -index \"{}\" -dumpRawDoc {}'.format(anserini_address,index_address,docid)
+        cmd = '\"{}/target/appassembler/bin/IndexUtils\" -index \"{}\" -dumpRawDoc \"{}\"'.format(anserini_address,index_address,docid)
         output = subprocess.check_output(cmd, shell=True)
         return (output.decode('utf-8'))
     

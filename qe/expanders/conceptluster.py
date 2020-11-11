@@ -28,7 +28,7 @@ class Conceptluster(Termluster):
         return super().expand_query_term_cluster(q, G, cluster_dict, k_relevant_words)
 
     def get_document(self, docid):
-        command = '\"{}target/appassembler/bin/IndexUtils\" -index \"{}\" -dumpRawDoc {}'.format(self.anserini, self.index, docid)
+        command = '\"{}target/appassembler/bin/IndexUtils\" -index \"{}\" -dumpRawDoc \"{}\"'.format(self.anserini, self.index, docid)
         stream = os.popen(command)
         return stream.read()
 
