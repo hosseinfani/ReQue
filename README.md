@@ -180,7 +180,7 @@ $> conda activate ReQue
 
 For `Antique` dataset, we first need to convert the antique tsv files into tsv into Anserini's jsonl files as per instructed [here](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage.md), 
 
-For `DBPedia` dataset, you may use [Nordlys toolkit](https://nordlys.readthedocs.io/en/latest/installation.html) in order to download MongoDB DBpedia cleaned collection. Later, you can index it using elastic search or convert it into TSV format and index it using Anserini.
+For `DBPedia` dataset, you may use [Nordlys toolkit](https://nordlys.readthedocs.io/en/latest/installation.html) in order to download MongoDB DBpedia cleaned collection. Later, you can index it using elastic search or convert it into tsv format and index it using [Anserini](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage.md).
 
 Further, we can use the following commands to index the documents: 
 
