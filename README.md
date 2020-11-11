@@ -93,19 +93,13 @@ The target folders are the output repo for the expanders, gold standard datasets
 |   +---qe
 |   |   +---clueweb09b
 |   |   |       topics.clueweb09b.1-200.bm25.map.dataset.csv
-|   |   |       topics.clueweb09b.1-200.bm25.rm3.map.dataset.csv
 |   |   |       topics.clueweb09b.1-200.qld.map.dataset.csv
-|   |   |       topics.clueweb09b.1-200.qld.rm3.map.dataset.csv
 |   |   +---clueweb12b13
 |   |   |       topics.clueweb12b13.201-300.bm25.map.dataset.csv
-|   |   |       topics.clueweb12b13.201-300.bm25.rm3.map.dataset.csv
 |   |   |       topics.clueweb12b13.201-300.qld.map.dataset.csv
-|   |   |       topics.clueweb12b13.201-300.qld.rm3.map.dataset.csv
 |   |   +---gov2
 |   |   |       topics.gov2.701-850.bm25.map.dataset.csv
-|   |   |       topics.gov2.701-850.bm25.rm3.map.dataset.csv
 |   |   |       topics.gov2.701-850.qld.map.dataset.csv
-|   |   |       topics.gov2.701-850.qld.rm3.map.dataset.csv
 |   |   |---robust04
 |   |   |       topics.robust04.bm25.map.dataset.csv
 |   |   |       topics.robust04.bm25.rm3.map.dataset.csv
@@ -182,7 +176,13 @@ $> conda env create -f environment.yml
 $> conda activate ReQue
 ```
 
-[Anserini](https://github.com/castorini/anserini) must be installed in [`anserini/`](./anserini/) for indexing, information retrieval and ranking, and evaluation on the original query datasets. The documents in the corpus must be indexed, e.g., by the following commands for `Robust04` (already available [here](https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-robust04-20191213.tar.gz)), `Gov2`, `ClueWeb09-B`, and `ClueWeb12-B13`. For `Antique` dataset, we first need to convert the antique tsv files into tsv into Anserini's jsonl files as per instructed [here](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage.md), then we can use the following commands : 
+[Anserini](https://github.com/castorini/anserini) must be installed in [`anserini/`](./anserini/) for indexing, information retrieval and ranking, and evaluation on the original query datasets. The documents in the corpus must be indexed, e.g., by the following commands for `Robust04` (already available [here](https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-robust04-20191213.tar.gz)), `Gov2`, `ClueWeb09-B`, and `ClueWeb12-B13`.
+
+For `Antique` dataset, we first need to convert the antique tsv files into tsv into Anserini's jsonl files as per instructed [here](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage.md), 
+
+For `DBPedia` dataset, you may use [Nordlys toolkit](https://nordlys.readthedocs.io/en/latest/installation.html) in order to download MongoDB DBpedia cleaned collection. Later, you can index it using elastic search or convert it into TSV format and index it using Anserini.
+
+Further, we can use the following commands to index the documents: 
 
 ```
 $> anserini/target/appassembler/bin/IndexCollection -collection TrecCollection -input Robust04-Corpus -index lucene-index.robust04.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee log.robust04.pos+docvectors+rawdocs &
@@ -190,6 +190,7 @@ $> anserini/target/appassembler/bin/IndexCollection -collection TrecwebCollectio
 $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb09Collection -input ClueWeb09-B-Corpus -index lucene-index.cw09b.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw09b.pos+docvectors+rawdocs &
 $> anserini/target/appassembler/bin/IndexCollection -collection ClueWeb12Collection -input ClueWeb12-B-Corpus -index lucene-index.cw12b13.pos+docvectors+rawdocs -generator JsoupGenerator -threads 44 -storePositions -storeDocvectors -storeRawDocs 2>&1 | tee  log.cw12b13.pos+docvectors+rawdocs &
 $> anserini/target/appassembler/bin/IndexCollection -collection JsonCollection -input antique-Corpus -index lucene-index-antique -generator DefaultLuceneDocumentGenerator -threads 1 -storePositions -storeDocvectors -storeRaw 2>&1 | tee  log.antique.pos+docvectors+rawdocs &
+$> anserini/target/appassembler/bin/IndexCollection -collection JsonCollection -input dbpedia-collection -index lucene-index-dbpedia -generator DefaultLuceneDocumentGenerator -threads 1 -storePositions -storeDocvectors -storeRaw 2>&1 | tee  log.dbpedia.pos+docvectors+rawdocs &
  
 ```
 
