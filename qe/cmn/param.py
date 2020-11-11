@@ -69,7 +69,7 @@ database = {
 
     },
         'dbpedia': {
-        'index': '/home/negar/ReQue/DBPedia/lucene-index-dbpedia-collection',
+        'index': '../ds/dbpedia/lucene-index-dbpedia-collection',
         'size': 4632359,
         'topics': '../ds/dbpedia/topics.dbpedia.txt',
         'prels': '',
