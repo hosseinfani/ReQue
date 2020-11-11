@@ -78,6 +78,9 @@ The following source folders are to be populated by the original query dataset `
 |   |   \---lucene-index.gov2.pos+docvectors+rawdocs
 |   +---antique
 |   |   \---lucene-index-antique
+|   +---dbpedia
+|   |   \---lucene-index-dbpedia
+
 ```
 
 ### Target Folders
@@ -110,9 +113,11 @@ The target folders are the output repo for the expanders, gold standard datasets
 |   |   |       topics.robust04.qld.rm3.map.dataset.csv
 |   |   |---antique
 |   |   |       topics.antique.bm25.map.dataset.csv
-|   |   |       topics.antique.bm25.rm3.map.dataset.csv
 |   |   |       topics.antique.qld.map.dataset.csv
-|   |   |       topics.antique.qld.rm3.map.dataset.csv
+|   |   |---dbpedia
+|   |   |       topics.dbpedia.bm25.map.dataset.csv
+|   |   |       topics.dbpedia.qld.map.dataset.csv
+
 ```
 
 [`ds/qe/eval/`](./ds/qe/eval): output folder for the reports on performance of expanders and statistics about the gold standard datasets.
@@ -165,6 +170,7 @@ $> conda activate ReQue
 - [ClueWeb12-B13](http://lemurproject.org/clueweb12/ClueWeb12-CreateB13.php) [corpus, [topics](https://github.com/castorini/anserini/blob/master/docs/regressions-cw12b13.md#retrieval), [qrels](https://github.com/castorini/anserini/blob/master/docs/regressions-cw12b13.md#retrieval)]
 - [Antique](https://arxiv.org/abs/1905.08957) [[corpus](https://ciir.cs.umass.edu/downloads/Antique/antique-collection.txt), [topics](https://ciir.cs.umass.edu/downloads/Antique/antique-test-queries.txt), [qrels](https://ciir.cs.umass.edu/downloads/Antique/antique-test.qrel)]
 - [Wikipedia Anchor Text](http://downloads.dbpedia.org/2016-10/core-i18n/en/anchor_text_en.ttl.bz2)
+- [DBPedia](https://dl.acm.org/doi/10.1145/3077136.3080751)[[corpus]](https://iai-group.github.io/DBpedia-Entity/), [topics](https://github.com/iai-group/DBpedia-Entity/blob/master/collection/v2/queries-v2.txt), [qrels](https://github.com/iai-group/DBpedia-Entity/blob/master/collection/v2/qrels-v2.txt)]
 
 ## Installing
 It is suggested to clone the repo and install a new conda environment along with the required packages using yaml configuration file by the following commands:
