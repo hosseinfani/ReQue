@@ -311,6 +311,25 @@ Given a gold standard dataset which is built for an original query dataset for a
 
 <sup><sup>2</sup>School of Computer Science, Faculty of Science, University of Windsor, ON, Canada.</sup>
 
+## Citation
+```
+@inproceedings{ReQue,
+  author    = {Mahtab Tamannaee and
+               Hossein Fani and
+               Fattane Zarrinkalam and
+               Jamil Samouh and
+               Samad Paydar and
+               Ebrahim Bagheri},
+  title     = {ReQue: A Configurable Workflow and Dataset Collection for Query Refinement},
+  booktitle = {{CIKM} '20: The 29th {ACM} International Conference on Information and Knowledge Management, Virtual Event, Ireland, October 19-23, 2020},
+  pages     = {3165--3172},
+  publisher = {{ACM}},
+  year      = {2020},
+  url       = {https://doi.org/10.1145/3340531.3412775},
+  doi       = {10.1145/3340531.3412775}
+  }
+```
+
 ## License
 ©2020. This work is licensed under a [CC BY-NC-SA 4.0](LICENSE.txt) license. 
 
