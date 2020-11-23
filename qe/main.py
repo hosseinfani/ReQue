@@ -39,6 +39,7 @@ from cmn import expander_factory as ef
 from cmn import utils
 from expanders.abstractqexpander import AbstractQExpander
 from expanders.onfields import OnFields
+from expanders.bertqe import BertQE
 
 def generate(Qfilename, expanders, output):
     df = pd.DataFrame()
@@ -75,7 +76,7 @@ def search(expanders, rankers, topicreader, index, anserini, output):
                 elif ranker =='-qld':
                     searcher.set_qld()
 
-                if isinstance(model, OnFields):
+                if isinstance(model, OnFields) or isinstance(model, BertQE) :
                     run_file=open(Q_pred,'w')
                     list_of_raw_queries=utils.get_raw_query(topicreader,Q_filename)
                     for qid,query in list_of_raw_queries.items():
@@ -98,9 +99,12 @@ def search(expanders, rankers, topicreader, index, anserini, output):
                         query = boolean_query_builder.build()
                         hits = searcher.search(query,k=10000)
                         for i in range(0, 1000):
-                            if hits[i].docid not in retrieved_docs:
-                                retrieved_docs.append(hits[i].docid)
-                                run_file.write(f'{qid} Q0  {hits[i].docid:15} {i+1:2}  {hits[i].score:.5f} Pyserini \n')
+                            try:
+                                if hits[i].docid not in retrieved_docs:
+                                    retrieved_docs.append(hits[i].docid)
+                                    run_file.write(f'{qid} Q0  {hits[i].docid:15} {i+1:2}  {hits[i].score:.5f} Pyserini \n')
+                            except:
+                                pass
                     run_file.close()
 
                 elif topicreader=='TsvString':
@@ -342,7 +346,7 @@ def addargs(parser):
     # anserini.add_argument('--anserini', type=str, default='../anserini/', help='The path to the anserini library (default: ../anserini/)')
 
     corpus = parser.add_argument_group('Corpus')
-    corpus.add_argument('--corpus', type=str, choices=['antique','robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], required=True, help='The corpus name; required; (example: robust04)')
+    corpus.add_argument('--corpus', type=str, choices=['dbpedia','antique','robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], required=True, help='The corpus name; required; (example: robust04)')
     # corpus.add_argument('--index', type=str, required=True, help='The corpus index; required; (example: ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs)')
 
     gold = parser.add_argument_group('Gold Standard Dataset')
@@ -351,7 +355,7 @@ def addargs(parser):
     gold.add_argument('--metric', type=str, choices=['map'], default='map', help='The evaluation metric name (default: map)')
 
     external_corpus = parser.add_argument_group('External Corpus')
-    external_corpus.add_argument('--ext_corpus', type=str, choices=['robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], help='The external corpus name; required only for AdapOnFields and OnFields; (example: robust04)')
+    external_corpus.add_argument('--ext_corpus', type=str, choices=['dbpedia','antique','robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], help='The external corpus name; required only for AdapOnFields and OnFields; (example: robust04)')
     # external_corpus.add_argument('--ext_index', type=str, help='The external corpus index; required only for AdapOnFields and OnFields; (example: ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs)')
     external_corpus.add_argument('--ext_prels',  type=str, help='Retrieval run results for external corpus; required only for AdapOnFields and OnFields; (example: ../ds/robust04/topics.robust04.txt)')
     # external_corpus.add_argument('--ext_collection_tokens' , type=int , help = 'Total Number of tokens in the external corpus; required only for AdapOnFields and OnFields; (example: 148000000 )')

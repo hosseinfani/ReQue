@@ -40,7 +40,7 @@ class RelevanceFeedback(AbstractQExpander):
         for x in self.f:
             x_splited =  x.split()
             try :
-                if (int(x_splited[0]) == qid):
+                if (int(x_splited[0]) == qid or x_splited[0] == qid):
                     relevant_documents.append(x_splited[2])
                     i = i+1
                     if i >= self.topn:

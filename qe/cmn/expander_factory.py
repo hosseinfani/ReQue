@@ -19,8 +19,7 @@ from expanders.tagmee import Tagmee
 from expanders.wiki import Wiki
 from expanders.onfields import OnFields
 from expanders.adaponfields import AdapOnFields
-
-
+from expanders.bertqe import BertQE
 
 #TODO: ServiceFactory: dynamically load the class files in stemmers folder and create an instance object
 from stemmers.krovetz import KrovetzStemmer
@@ -113,6 +112,10 @@ def get_rf_expanders(rankers, corpus, output, ext_corpus=None, ext_prels=None):
                                       ext_w_a=param.database[ext_corpus]['w_a'],
                                       ext_corpus_size=param.database[ext_corpus]['size'],
                                       adap=True))
+        expanders.append(BertQE(ranker=ranker_name,
+                          prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
+                          index=param.database[corpus]['index'],
+                           anserini=param.anserini['path']))
 
     return expanders
 

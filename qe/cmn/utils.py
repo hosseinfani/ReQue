@@ -64,6 +64,7 @@ def get_raw_query(topicreader,Q_filename):
     return raw_queries
 
 def convert_onfield_query_format(line):
+    line=line.replace("''","' '")
     line=line.replace("{'",'{"')
     line=line.replace(" '",' "')
     line=line.replace("':",'":')
