@@ -80,8 +80,8 @@ def search(expanders, rankers, topicreader, index, anserini, output):
                     run_file=open(Q_pred,'w')
                     list_of_raw_queries=utils.get_raw_query(topicreader,Q_filename)
                     for qid,query in list_of_raw_queries.items():
-                        q_text=utils.convert_onfield_query_format(query)
-                        q_dic[qid.strip()]= json.loads(q_text)
+                        q_text=utils.convert_onfield_query_format(query)#why not eval(query) which outputs a dic obj
+                        q_dic[qid.strip()]= json.loads(q_text)#we don't need to use json. See comment in prev. line
                     for qid in q_dic.keys():
                         boost=[]
                         for q_terms,q_weights in q_dic[qid].items():
