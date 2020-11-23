@@ -1,6 +1,6 @@
 import sys
 sys.path.extend(['../qe'])
-sys.path.extend(['/home/negar/pygaggle'])
+
 import pyserini
 from pyserini import index
 #from pyserini.search import SimpleSearcher
@@ -18,12 +18,11 @@ from nltk.tokenize import word_tokenize
 from pygaggle.rerank.transformer import MonoBERT
 from pygaggle.rerank.base import hits_to_texts
 
-reranker =  MonoBERT()
 from expanders.relevancefeedback import RelevanceFeedback
 from cmn import utils
 
-stop_words = set(stopwords.words('english'))
 ps = PorterStemmer()
+reranker =  MonoBERT()
 
 #@inproceedings{zheng-etal-2020-bert,
 #    title = "{BERT-QE}: {C}ontextualized {Q}uery {E}xpansion for {D}ocument {R}e-ranking",
@@ -67,15 +66,9 @@ class BertQE(RelevanceFeedback):
         for i in range(5):
             normalized_chunks[list(chunk_scores.keys())[i]]=norm[i]
         return str(normalized_chunks)
-            
-
-    def get_model_name(self):
-        return super().get_model_name().replace('topn{}'.format(self.topn),
-                                                'topn{}'.format(self.topn))
 
     def write_expanded_queries(self, Qfilename, Q_filename,clean=False):
         return super().write_expanded_queries(Qfilename, Q_filename, clean=False)
-
 
     def make_chunks(self,raw_doc):
         chunks=[]
@@ -106,9 +99,9 @@ class BertQE(RelevanceFeedback):
 if __name__ == "__main__":
 
     qe = BertQE(ranker='bm25',
-                                prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',
-                                anserini='../anserini/',
-                                index='../anserini/lucene-index.robust04.pos+docvectors+rawdocs')
+                prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',
+                anserini='../anserini/',
+                index='../anserini/lucene-index.robust04.pos+docvectors+rawdocs')
     print(qe.get_model_name())
     print(qe.get_expanded_query('International Organized Crime  ', [305]))
     
