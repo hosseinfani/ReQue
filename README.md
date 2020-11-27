@@ -134,14 +134,14 @@ The target folders are the output repo for the expanders, gold standard datasets
 ```
 
 ## Prerequisites
-### [anserini](https://github.com/castorini/anserini)
+### [anserini](https://github.com/castorini/anserini) (Jave 11)
 ### [cair](https://github.com/wasiahmad/context_attentive_ir) (optional, needed for benchmark on suggesters)
 ### python 3.7 and the following packages:
 ```
 pandas, scipy, numpy, requests, urllib
 networkx, community, python-louvain
 gensim, tagme, bs4, pywsd, nltk [stem, tokenize, corpus]
-pyserini
+pyserini, pygaggle, pytorch
 ```
 For the full list, refer to [`environment.yml`](./environment.yml). A conda environment, namely `ReQue`, can be created and activated by the following commands:
 ```
