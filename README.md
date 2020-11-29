@@ -134,7 +134,7 @@ The target folders are the output repo for the expanders, gold standard datasets
 ```
 
 ## Prerequisites
-### [anserini](https://github.com/castorini/anserini) (jave 11)
+### [anserini](https://github.com/castorini/anserini) (java 11+)
 ### [cair](https://github.com/wasiahmad/context_attentive_ir) (optional, needed for benchmark on suggesters)
 ### python 3.7 and the following packages:
 ```
