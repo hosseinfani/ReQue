@@ -38,8 +38,12 @@ relevancefeedback.topn10.bm25.rm3,Top_Documents
 relevancefeedback.topn10.qld,Top_Documents
 relevancefeedback.topn10.qld.rm3,Top_Documents
 adaponfields.topn3.exgov2.4.0.25.10.2.25.1.bm25,Top_Documents
+adaponfields.topn3.exgov2.4.0.25.10.1.1.bm25,Top_Documents
+adaponfields.topn3.exgov2.4.0.25.10.1.1.qld,Top_Documents
 onfields.topn3.10.2.25.1.bm25,Top_Documents
+onfields.topn3.10.1.1.bm25,Top_Documents
 onfields.topn3.10.2.25.1.qld,Top_Documents
+onfields.topn3.10.1.1.qld,Top_Documents
 onfields.topn3.10.4.0.25.bm25,Top_Documents
 onfields.topn3.10.1.0.bm25,Top_Documents
 adaponfields.topn3.exgov2.4.0.25.10.2.25.1.qld,Top_Documents

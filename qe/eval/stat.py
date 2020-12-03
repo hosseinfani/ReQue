@@ -33,7 +33,8 @@ class ResultAnalyzer:
                      "gov2",
                      "clueweb12b13",
                      "clueweb09b",
-                     "antique"
+                     "antique",
+                     "dbpedia",
                      ]
 
     pattern = "topics.{original_dataset_name}.{topic_first_index-topic_last_index}.{ranker}.{metric}.dataset.csv"
@@ -53,7 +54,8 @@ class ResultAnalyzer:
             "gov2": [".701-850"],
             "clueweb12b13": [".201-300"],
             "clueweb09b": [".1-200"],
-            "antique": [""]
+            "antique": [""],
+            "dbpedia": [""]
         })
         return indices.get(dataset, None)
 
@@ -72,31 +74,6 @@ class ResultAnalyzer:
                 self.query_expander_contributions_best[key] = 0
 
     def collect_query_expander_names(self):
-        """
-        names = ["stem.krovetz", "stem.lovins", "stem.paicehusk", "stem.porter", "stem.porter2", "stem.sstemmer",
-                 "stem.trunc4", "stem.trunc5", "conceptnet.topn3", "conceptnet.topn3.replace", "glove.topn3",
-                 "glove.topn3.replace", "sensedisambiguation", "sensedisambiguation.replace", "thesaurus.topn3",
-                 "thesaurus.topn3.replace", "word2vec.topn3", "word2vec.topn3.replace", "wordnet.topn3",
-                 "wordnet.topn3.replace", "termluster.topn5.3.bm25", "termluster.topn5.3.bm25.rm3",
-                 "termluster.topn5.3.qld", "termluster.topn5.3.qld.rm3", "conceptluster.topn5.3.bm25",
-                 "conceptluster.topn5.3.bm25.rm3", "conceptluster.topn5.3.qld", "conceptluster.topn5.3.qld.rm3",
-                 "anchor.topn3", "anchor.topn3.replace", "wiki.topn3", "wiki.topn3.replace", "tagmee.topn3",
-                 "tagmee.topn3.replace", "relevancefeedback.topn10.bm25", "relevancefeedback.topn10.bm25.rm3",
-                 "relevancefeedback.topn10.qld", "relevancefeedback.topn10.qld.rm3",
-                 "adaponfields.topn3.exgov2.4.0.25.10.2.25.1.bm25", "onfields.topn3.10.2.25.1.bm25",
-                 "onfields.topn3.10.2.25.1.qld", "onfields.topn3.10.4.0.25.bm25", "onfields.topn3.10.1.0.bm25",
-                 "adaponfields.topn3.exgov2.4.0.25.10.2.25.1.qld", "adaponfields.topn3.exgov2.4.0.25.10.1.0.qld",
-                 "adaponfields.topn3.exrobust04.2.25.1.10.4.0.25.bm25",
-                 "adaponfields.topn3.exrobust04.2.25.1.10.4.0.25.qld", "adaponfields.topn3.exgov2.4.0.25.10.4.0.qld",
-                 "onfields.topn3.10.4.0.25.qld", "onfields.topn3.10.4.0.bm25",
-                 "adaponfields.topn3.exgov2.4.0.25.10.4.0.bm25", "onfields.topn3.10.4.0.qld",
-                 "adaponfields.topn3.exgov2.4.0.25.10.1.0.bm25", "onfields.topn3.10.1.0.qld", "bertqe.topn10.bm25",
-                 "bertqe.topn10.qld", "docluster.topn10.3.bm25", "docluster.topn10.3.bm25.rm3",
-                 "docluster.topn10.3.qld", "docluster.topn10.3.qld.rm3"
-                 ]
-        for name in names:
-            self.add_to_query_expander_names(name)
-        """
         for index, row in self.expanders_info.iterrows():
             self.add_to_query_expander_names(row[0])
 
@@ -253,94 +230,6 @@ class ResultAnalyzer:
         return self.get_category(query_expander_method) == query_expander_category
 
     def get_category(self, query_expander_method, return_index=False):
-        """
-        stemming_methods = ["stem.krovetz",
-                            "stem.lovins",
-                            "stem.paicehusk",
-                            "stem.porter",
-                            "stem.porter2",
-                            "stem.sstemmer",
-                            "stem.trunc4",
-                            "stem.trunc5",
-                            ]
-        semantic_methods = ["conceptnet.topn3",
-                            "conceptnet.topn3.replace",
-                            "glove.topn3",
-                            "glove.topn3.replace",
-                            "sensedisambiguation",
-                            "sensedisambiguation.replace",
-                            "thesaurus.topn3",
-                            "thesaurus.topn3.replace",
-                            "word2vec.topn3",
-                            "word2vec.topn3.replace",
-                            "wordnet.topn3",
-                            "wordnet.topn3.replace"
-                            ]
-        term_clustering_methods = ["termluster.topn5.3.bm25",
-                                   "termluster.topn5.3.bm25.rm3",
-                                   "termluster.topn5.3.qld",
-                                   "termluster.topn5.3.qld.rm3",
-                                   ]
-        concept_clustering_methods = ["conceptluster.topn5.3.bm25",
-                                      "conceptluster.topn5.3.bm25.rm3",
-                                      "conceptluster.topn5.3.qld",
-                                      "conceptluster.topn5.3.qld.rm3",
-                                      ]
-        anchor_text_methods = ["anchor.topn3",
-                               "anchor.topn3.replace"]
-        wikipedia_methods = ["wiki.topn3",
-                             "wiki.topn3.replace",
-                             "tagmee.topn3",
-                             "tagmee.topn3.replace",
-                             ]
-        top_documents_methods = ["relevancefeedback.topn10.bm25",
-                                 "relevancefeedback.topn10.bm25.rm3",
-                                 "relevancefeedback.topn10.qld",
-                                 "relevancefeedback.topn10.qld.rm3",
-                                 "adaponfields.topn3.exgov2.4.0.25.10.2.25.1.bm25",
-                                 "onfields.topn3.10.2.25.1.bm25",
-                                 "onfields.topn3.10.2.25.1.qld",
-                                 "onfields.topn3.10.4.0.25.bm25",
-                                 "onfields.topn3.10.1.0.bm25",
-                                 "adaponfields.topn3.exgov2.4.0.25.10.2.25.1.qld",
-                                 "adaponfields.topn3.exgov2.4.0.25.10.1.0.qld",
-                                 "adaponfields.topn3.exrobust04.2.25.1.10.4.0.25.bm25",
-                                 "adaponfields.topn3.exrobust04.2.25.1.10.4.0.25.qld",
-                                 "adaponfields.topn3.exgov2.4.0.25.10.4.0.qld",
-                                 "onfields.topn3.10.4.0.25.qld",
-                                 "onfields.topn3.10.4.0.bm25",
-                                 "adaponfields.topn3.exgov2.4.0.25.10.4.0.bm25",
-                                 "onfields.topn3.10.4.0.qld",
-                                 "adaponfields.topn3.exgov2.4.0.25.10.1.0.bm25",
-                                 "onfields.topn3.10.1.0.qld",
-                                 "bertqe.topn10.bm25",
-                                 "bertqe.topn10.qld",
-                                 ]
-        document_summaries_methods = ["docluster.topn10.3.bm25",
-                                      "docluster.topn10.3.bm25.rm3",
-                                      "docluster.topn10.3.qld",
-                                      "docluster.topn10.3.qld.rm3",
-                                      ]
-
-        result = None
-        if query_expander_method in stemming_methods:
-            result = 0 if return_index else QueryExpanderCategory.Stemming_Analysis
-        elif query_expander_method in semantic_methods:
-            result = 1 if return_index else QueryExpanderCategory.Semantic_Analysis
-        elif query_expander_method in term_clustering_methods:
-            result = 2 if return_index else QueryExpanderCategory.Term_Clustering
-        elif query_expander_method in concept_clustering_methods:
-            result = 3 if return_index else QueryExpanderCategory.Concept_Clustering
-        elif query_expander_method in anchor_text_methods:
-            result = 4 if return_index else QueryExpanderCategory.Anchor_Text
-        elif query_expander_method in wikipedia_methods:
-            result = 5 if return_index else QueryExpanderCategory.Wikipedia
-        elif query_expander_method in top_documents_methods:
-            result = 6 if return_index else QueryExpanderCategory.Top_Documents
-        elif query_expander_method in document_summaries_methods:
-            result = 7 if return_index else QueryExpanderCategory.Document_Summaries
-        return result
-        """
         for index, row in self.expanders_info.iterrows():
             if row[0] == query_expander_method:
                 index2 = -1
