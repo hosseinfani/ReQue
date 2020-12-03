@@ -14,10 +14,6 @@ import pyserini
 from expanders.relevancefeedback import RelevanceFeedback
 from cmn import utils
 
-stop_words = set(stopwords.words('english'))
-ps = PorterStemmer()
-
-
 # @article{DBLP:journals/ipm/HeO07,
 #   author    = {Ben He and
 #                Iadh Ounis},
@@ -35,10 +31,10 @@ ps = PorterStemmer()
 # }
 
 class OnFields(RelevanceFeedback):
-    def __init__(self, ranker, prels, anserini, index, w_t, w_a, corpus_size, replace=False, topn=3, top_n_terms=10,adap=False):
+    def __init__(self, ranker, prels, anserini, index, w_t, w_a, corpus_size, replace=False, topn=3, topw=10,adap=False):
         RelevanceFeedback.__init__(self, ranker, prels, anserini, index, topn=topn)
         self.index_reader = pyserini.index.IndexReader(self.index)
-        self.top_n_terms=10
+        self.topw=10
         self.adap=adap
         self.w_t = w_t # weight for title field
         self.w_a = w_a # weight for anchor field
@@ -48,13 +44,13 @@ class OnFields(RelevanceFeedback):
         q=q.translate(str.maketrans('', '', string.punctuation))
         qid=args[0]
         if self.adap == False:
-            top_3_docs = self.get_topn_relevant_docids(qid)
+            topn_docs = self.get_topn_relevant_docids(qid)
         elif self.adap == True:
-            top_3_docs=self.retrieve_and_get_topn_relevant_docids(ps.stem(q.lower()))
-        top_3_title=''
-        top_3_body=''
-        top_3_anchor=''
-        for docid in top_3_docs:
+            topn_docs=self.retrieve_and_get_topn_relevant_docids(ps.stem(q.lower()))
+        topn_title=''
+        topn_body=''
+        topn_anchor=''
+        for docid in topn_docs:
             raw_doc=self.extract_raw_documents(docid)
             raw_doc=raw_doc.lower()
             raw_doc= ''.join([i if ord(i) < 128 else ' ' for i in raw_doc])
@@ -80,14 +76,14 @@ class OnFields(RelevanceFeedback):
                 #'anchor' field do not exist
                 pass
 
-            top_3_title='{} {}'.format(top_3_title ,title)
-            top_3_anchor = '{} {}'.format(top_3_anchor,anchor)
-            top_3_body='{} {}'.format(top_3_body,body)
-        top_3_title=top_3_title.translate(str.maketrans('', '', string.punctuation))
-        top_3_anchor=top_3_anchor.translate(str.maketrans('', '', string.punctuation))
-        top_3_body=top_3_body.translate(str.maketrans('', '', string.punctuation))
-        all_top_3_docs=  '{} {} {}'.format(top_3_body, top_3_anchor ,top_3_title)
-        tfx = self.term_weighting(top_3_title,top_3_anchor,top_3_body)
+            topn_title='{} {}'.format(topn_title ,title)
+            topn_anchor = '{} {}'.format(topn_anchor,anchor)
+            topn_body='{} {}'.format(topn_body,body)
+        topn_title=topn_title.translate(str.maketrans('', '', string.punctuation))
+        topn_anchor=topn_anchor.translate(str.maketrans('', '', string.punctuation))
+        topn_body=topn_body.translate(str.maketrans('', '', string.punctuation))
+        all_topn_docs=  '{} {} {}'.format(topn_body, topn_anchor ,topn_title)
+        tfx = self.term_weighting(topn_title,topn_anchor,topn_body)
         tfx=dict(sorted(tfx.items(), key=lambda x: x[1])[::-1])
         w_t_dic={}
         c=0
@@ -121,12 +117,12 @@ class OnFields(RelevanceFeedback):
         for keys,values in sorted_term_weights.items():
             counter=counter+1
             top_n_informative_words[keys]=values
-            if counter>self.top_n_terms:
+            if counter>self.topw:
                 break
 
         expanded_term_freq= {}
         for keys,values in top_n_informative_words.items():
-            expanded_term_freq[keys]=all_top_3_docs.count(keys)
+            expanded_term_freq[keys]=all_topn_docs.count(keys)
 
         for keys,values in top_n_informative_words.items():
             part_A = expanded_term_freq[keys] /max(expanded_term_freq.values())
@@ -141,7 +137,7 @@ class OnFields(RelevanceFeedback):
 
     def get_model_name(self):
         return super().get_model_name().replace('topn{}'.format(self.topn),
-                                                'topn{}.{}.{}.{}'.format(self.topn, self.top_n_terms, self.w_t, self.w_a))
+                                                'topn{}.{}.{}.{}'.format(self.topn, self.topw, self.w_t, self.w_a))
 
     def write_expanded_queries(self, Qfilename, Q_filename,clean=False):
         return super().write_expanded_queries(Qfilename, Q_filename, clean=False)
@@ -194,17 +190,17 @@ class OnFields(RelevanceFeedback):
             return anchor_out
     
 
-    def term_weighting(self,top_3_title,top_3_anchor,top_3_body):
+    def term_weighting(self,topn_title,topn_anchor,topn_body):
         # w_t and w_a is tuned for all the copora ( should be tuned for future corpora as well)
 
         w_b = 1 
-        top_3_title=top_3_title.translate(str.maketrans('', '', string.punctuation))
-        top_3_body=top_3_body.translate(str.maketrans('', '', string.punctuation))
-        top_3_anchor=top_3_anchor.translate(str.maketrans('', '', string.punctuation))
+        topn_title=topn_title.translate(str.maketrans('', '', string.punctuation))
+        topn_body=topn_body.translate(str.maketrans('', '', string.punctuation))
+        topn_anchor=topn_anchor.translate(str.maketrans('', '', string.punctuation))
 
-        title_tokens = word_tokenize(top_3_title) 
-        body_tokens= word_tokenize(top_3_body) 
-        anchor_tokens= word_tokenize(top_3_anchor)
+        title_tokens = word_tokenize(topn_title)
+        body_tokens= word_tokenize(topn_body)
+        anchor_tokens= word_tokenize(topn_anchor)
 
         filtered_words_title = [ps.stem(word) for word in title_tokens if word not in stop_words]
         filtered_words_body = [ps.stem(word) for word in body_tokens if word not in stop_words]

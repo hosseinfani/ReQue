@@ -1,10 +1,13 @@
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer
 import re
 
 stop_words = set(stopwords.words('english'))
 l = ['.', ',', '!', '?', ';', 'a', 'an', '(', ')', "'", '_', '-', '<', '>', 'if', '/', '[', ']', '&nbsp;']
 stop_words.update(l)
+
+ps = PorterStemmer()
 
 def get_tokenized_query(q):
     word_tokens = word_tokenize(q)

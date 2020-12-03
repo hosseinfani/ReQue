@@ -8,7 +8,6 @@ import subprocess, string
 import nltk
 from bs4 import BeautifulSoup
 from nltk.tokenize import word_tokenize
-from nltk.stem import PorterStemmer
 from collections import Counter
 from nltk.corpus import stopwords
 from pygaggle.rerank.base import Query, Text
@@ -21,7 +20,6 @@ from pygaggle.rerank.base import hits_to_texts
 from expanders.relevancefeedback import RelevanceFeedback
 from cmn import utils
 
-ps = PorterStemmer()
 reranker =  MonoBERT()
 
 #@inproceedings{zheng-etal-2020-bert,
@@ -45,16 +43,16 @@ class BertQE(RelevanceFeedback):
     def get_expanded_query(self, q, args):
         q=q.translate(str.maketrans('', '', string.punctuation))
         qid=args[0]
-        top_10_docs = self.get_topn_relevant_docids(qid)
+        topn_docs = self.get_topn_relevant_docids(qid)
         print()
-        top_10_text=""
-        for docid in top_10_docs:
+        topn_text=""
+        for docid in topn_docs:
             raw_doc=self.index_reader.doc_raw(docid).lower()
             raw_doc= ''.join([i if ord(i) < 128 else ' ' for i in raw_doc])
-            top_10_text= top_10_text+ ' ' + raw_doc
+            topn_text= topn_text+ ' ' + raw_doc
 
         chunk_dic_for_bert=[]
-        chunks=self.make_chunks(top_10_text)
+        chunks=self.make_chunks(topn_text)
         for i in range(len(chunks)):
             chunk_dic_for_bert.append([i,chunks[i]])
 

@@ -15,10 +15,6 @@ from pyserini import analysis, index
 from expanders.onfields import OnFields
 from cmn import utils
 
-stop_words = set(stopwords.words('english'))
-ps = PorterStemmer()
-
-
 # @article{DBLP:journals/ipm/HeO07,
 #   author    = {Ben He and
 #                Iadh Ounis},
@@ -39,8 +35,8 @@ class AdapOnFields(OnFields):
 
     def __init__(self, ranker, prels, anserini, index, w_t, w_a,corpus_size, collection_tokens,  
                  ext_index, ext_corpus,ext_prels, ext_collection_tokens, ext_w_t, ext_w_a, ext_corpus_size,
-                 replace=False, topn=3, top_n_terms=10, adap=False):
-        OnFields.__init__(self, ranker, prels, anserini, index, w_t, w_a,corpus_size, topn=topn, replace=replace, top_n_terms=top_n_terms, adap=adap)
+                 replace=False, topn=3, topw=10, adap=False):
+        OnFields.__init__(self, ranker, prels, anserini, index, w_t, w_a,corpus_size, topn=topn, replace=replace, topw=topw, adap=adap)
 
         self.collection_tokens = collection_tokens  # number of tokens in the collection
 

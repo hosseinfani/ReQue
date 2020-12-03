@@ -91,6 +91,7 @@
 |   |       abstractqexpander.py
 |   |       adaponfields.py
 |   |       anchor.py
+|   |       bertqe.py
 |   |       conceptluster.py
 |   |       conceptnet.py
 |   |       docluster.py
