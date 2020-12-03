@@ -72,6 +72,7 @@ class ResultAnalyzer:
                 self.query_expander_contributions_best[key] = 0
 
     def collect_query_expander_names(self):
+        """
         names = ["stem.krovetz", "stem.lovins", "stem.paicehusk", "stem.porter", "stem.porter2", "stem.sstemmer",
                  "stem.trunc4", "stem.trunc5", "conceptnet.topn3", "conceptnet.topn3.replace", "glove.topn3",
                  "glove.topn3.replace", "sensedisambiguation", "sensedisambiguation.replace", "thesaurus.topn3",
@@ -99,7 +100,6 @@ class ResultAnalyzer:
         expanders_info = pd.read_csv('expanders/expanders.csv')
         for index, row in expanders_info.iterrows():
             self.add_to_query_expander_names(row[0])
-        """
 
     def add_to_query_expander_names(self, query_expander_name):
         current_value = self.query_expander_contributions.get(query_expander_name, None)
@@ -254,6 +254,7 @@ class ResultAnalyzer:
         return self.get_category(query_expander_method) == query_expander_category
 
     def get_category(self, query_expander_method, return_index=False):
+        """
         stemming_methods = ["stem.krovetz",
                             "stem.lovins",
                             "stem.paicehusk",
@@ -339,13 +340,8 @@ class ResultAnalyzer:
             result = 6 if return_index else QueryExpanderCategory.Top_Documents
         elif query_expander_method in document_summaries_methods:
             result = 7 if return_index else QueryExpanderCategory.Document_Summaries
-
-        # result2 = self.get_category2(query_expander_method, return_index)
-        # if result != result2:
-        #    print("### query_expander_method {} result {} result2 {}".format(query_expander_method, result, result2))
         return result
-
-    def get_category2(self, query_expander_method, return_index=False):
+        """
         for index, row in self.expanders_info.iterrows():
             if row[0] == query_expander_method:
                 index2 = -1
