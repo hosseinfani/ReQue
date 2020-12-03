@@ -38,8 +38,6 @@ from cmn import param
 from cmn import expander_factory as ef
 from cmn import utils
 from expanders.abstractqexpander import AbstractQExpander
-from expanders.onfields import OnFields
-from expanders.bertqe import BertQE
 
 def generate(Qfilename, expanders, output):
     df = pd.DataFrame()
@@ -393,4 +391,4 @@ if __name__ == "__main__":
         ext_corpus=args.ext_corpus,
         ext_prels=args.ext_prels,
         rf=True,
-        op=['generate', 'search', 'evaluate', 'build'])
+        op=[])#['generate', 'search', 'evaluate', 'build']
