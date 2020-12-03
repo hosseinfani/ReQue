@@ -97,8 +97,7 @@ class ResultAnalyzer:
         for name in names:
             self.add_to_query_expander_names(name)
         """
-        expanders_info = pd.read_csv('expanders/expanders.csv')
-        for index, row in expanders_info.iterrows():
+        for index, row in self.expanders_info.iterrows():
             self.add_to_query_expander_names(row[0])
 
     def add_to_query_expander_names(self, query_expander_name):
