@@ -64,7 +64,7 @@ The following source folders are to be populated by the original query dataset `
 |       |   +---bin
 ```
 
-[`ds/`](./ds/): (**d**ata**s**et) source folder for original query datasets, including [Robust04](https://trec.nist.gov/data_disks.html), [Gov2](http://ir.dcs.gla.ac.uk/test_collections/gov2-summary.htm), [ClueWeb09-B](http://lemurproject.org/clueweb09.php/), and [ClueWeb12-B13](http://lemurproject.org/clueweb12/ClueWeb12-CreateB13.php).
+[`ds/`](./ds/): (**d**ata**s**et) source folder for original query datasets, including [Robust04](https://trec.nist.gov/data_disks.html), [Gov2](http://ir.dcs.gla.ac.uk/test_collections/gov2-summary.htm), [ClueWeb09-B](http://lemurproject.org/clueweb09.php/), [ClueWeb12-B13](http://lemurproject.org/clueweb12/ClueWeb12-CreateB13.php), [Antique](https://arxiv.org/abs/1905.08957), and [DBPedia](https://dl.acm.org/doi/10.1145/3077136.3080751).
 
 ```
 +---ds
@@ -130,7 +130,9 @@ The target folders are the output repo for the expanders, gold standard datasets
 |   |   +---clueweb09b.topn5
 |   |   +---clueweb12b13.topn5
 |   |   +---gov2.topn5
-|   |   \---robust04.topn5
+|   |   +---robust04.topn5
+|   |   +---antique.topn5
+|   |   \---dbpedia.topn5
 ```
 
 ## Prerequisites
@@ -195,7 +197,7 @@ $> anserini/target/appassembler/bin/IndexCollection -collection JsonCollection -
 ## ReQue: Refining Queries: [`qe/`](./qe/)
 Refining queries is done using all [expanders](./qe/cmn/expander_factory.py) by [`qe/main.py`](./qe/main.py) that accept the following arguments:
 
-`--corpus`: The name of the original query dataset whose queries are to be expanded and paired with the refined queries, if any, which could be one of {`robust04`, `gov2`, `clueweb09b`, and `clueweb12b13`}. Required;
+`--corpus`: The name of the original query dataset whose queries are to be expanded and paired with the refined queries, if any, which could be one of {`robust04`, `gov2`, `clueweb09b`, `clueweb12b13`, `antique`, `dbpedia`}. Required;
 
 `--output`: The output path for the gold standard dataset, e.g., [`../ds/qe/robust04/`](./ds/qe/robust04/). Required; 
 
@@ -290,6 +292,8 @@ $> python -u qs/main.py 5 robust04 2>&1 | tee robust04.topn5.log &
 $> python -u qs/main.py 5 gov2 2>&1 | tee gov2.topn5.log &
 $> python -u qs/main.py 5 clueweb09b 2>&1 | tee clueweb09b.topn5.log &
 $> python -u qs/main.py 5 clueweb12b13 2>&1 | tee clueweb12b13.topn5.log &
+$> python -u qs/main.py 5 antique 2>&1 | tee antique.topn5.log &
+$> python -u qs/main.py 5 dbpedia 2>&1 | tee dbpedia.topn5.log &
 ```
 
 By passing `all` as the name of the original query dataset, it is also possible to merge all the gold standard datasets and do the benchmark:
@@ -303,20 +307,25 @@ Statistics shows that for all the rankers, at least `1.44` refined queries exist
 |            |avg \|Rqrm\||        |
 |------------|------------|--------|	
 |            |bm25        |qld     |
-|robust04    |4.25        |4.06    |
-|gov2        |2.49        |2.15    |
-|clueweb09b  |1.44        |1.67    |
-|clueweb12b13|1.81        |1.57    |
+|robust04    |xxxx        |xxxx    |
+|gov2        |xxxx        |xxxx    |
+|clueweb09b  |xxxx        |xxxx    |
+|clueweb12b13|xxxx        |xxxx    |
+|antique     |xxxx        |xxxx    |
+|dbpedia     |xxxx        |xxxx    |
 
 The average `map` improvement rate is also reported, given the best refined query for each original query.  As shown, the minimum value of `map` improvement is greater than `100%` for all the gold standard datasets which means that even in the worst case, the best refined query for an original query almost **doubled** the performance of the ranker in terms of `map` while the gold standard datasets for `clueweb09b` have improvement rate close or greater than `1000%`, meaning that, on average, the best refined query improved each original query by a factor of `10` in that datasets.
 
 |            |average `map` improvement rate (%)|   |
 |------------|----------------------------------|---|	
 |            |bm25                              |qld|
-|robust04    |411.83                            |301.26|
-|gov2        |104.31                            |101.77|
-|clueweb09b  |945.22                            |1,751.58|
-|clueweb12b13|196.77                            |159.38|
+|robust04    |xxxx                              |xxxx|
+|gov2        |xxxx                              |xxxx|
+|clueweb09b  |xxxx                              |xxxx|
+|clueweb12b13|xxxx                              |xxxx|
+|antique     |xxxx                              |xxxx|
+|dbpedia     |xxxx                              |xxxx|
+
 
 ### Benchmarks: [`ds/qs/`](./ds/qs)
 For each gold standard dataset belonging to ReQue, given the pairs `{(q, q') | q ∈ Q, q' ∈ Rqrm}`, the performance of three state-of-the-art supervised query refinement methods including [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf), [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.), [hred-qs](https://arxiv.org/abs/1507.02221) after running the models for 100 epochs has been reported in terms of rouge-l and bleu.  As shown, in all the cases, [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.) and [hred-qs](https://arxiv.org/abs/1507.02221) outperform [seq2seq](https://nlp.stanford.edu/pubs/emnlp15_attn.pdf) in terms of all the evaluation metric,  in most cases, [acg](https://arxiv.org/abs/1708.03418)(seq2seq + attn.) that uses the attention mechanism outperform [hred-qs](https://arxiv.org/abs/1507.02221). The similar observation is also reported by [Ahmad et al. Context Attentive Document Ranking and Query Suggestion](https://github.com/wasiahmad/context_attentive_ir) and [Dehghani et al. Learning to Attend, Copy, and Generate for Session-Based Query Suggestion](https://dl.acm.org/doi/pdf/10.1145/3132847.3133010). 
@@ -325,14 +334,18 @@ Given a gold standard dataset which is built for an original query dataset for a
 |				|			|seq2seq	|			|acg		|		|hred-qs	|		|
 |---------------|-----------|-----------|-----------|-----------|-------|-----------|-------|
 |				|ranker		|rouge-l	|bleu		|rouge-l	|bleu	|rouge-l	|bleu 	|
-|robust04		|bm25		|25.678		|17.842		|37.464		|23.006	|43.251		|29.509|
-|				|qld		|25.186		|16.367		|37.254		|23.519	|36.584		|25.241|
-|gov2			|bm25		|16.837		|12.007		|42.461		|28.243	|37.68		|25.595|
-|				|qld		|9.615		|6.802		|40.205		|23.002	|19.528		|11.994|
-|clueweb09b		|bm25		|20.311		|11.323		|43.945		|22.574	|38.674		|27.707|
-|				|qld		|28.04		|17.394		|43.17		|23.727	|34.543		|21.472|
-|clueweb12b13	|bm25		|17.102		|13.562		|56.734		|28.639	|30.13		|21.504|
-|				|qld		|10.439		|6.986		|59.534		|29.982	|13.057		|8.159 |
+|robust04		|bm25		|xxxxxx		|xxxxxx		|xxxxxx		|xxxxxx |xxxxxx  	|xxxxxx |
+|				|qld		|xxxxxx		|xxxxxx		|xxxxxx		|xxxxxx |xxxxxx  	|xxxxxx |
+|gov2			|bm25		|xxxxxx		|xxxxxx		|xxxxxx		|xxxxxx |xxxxxx  	|xxxxxx |
+|				|qld		|xxxxxx		|xxxxxx	    |xxxxxx		|xxxxxx |xxxxxx  	|xxxxxx |
+|clueweb09b		|bm25		|xxxxxx		|xxxxxx		|xxxxxx		|xxxxxx |xxxxxx  	|xxxxxx |
+|				|qld		|xxxxxx		|xxxxxx		|xxxxxx	    |xxxxxx |xxxxxx  	|xxxxxx |
+|clueweb12b13	|bm25		|xxxxxx		|xxxxxx		|xxxxxx		|xxxxxx |xxxxxx  	|xxxxxx |
+|				|qld		|xxxxxx		|xxxxxx	    |xxxxxx		|xxxxxx |xxxxxx  	|xxxxxx |
+|antiqu     	|bm25		|xxxxxx		|xxxxxx		|xxxxxx		|xxxxxx |xxxxxx  	|xxxxxx |
+|				|qld		|xxxxxx		|xxxxxx		|xxxxxx		|xxxxxx |xxxxxx  	|xxxxxx |
+|dbpedia    	|bm25		|xxxxxx		|xxxxxx		|xxxxxx		|xxxxxx |xxxxxx  	|xxxxxx |
+|				|qld		|xxxxxx		|xxxxxx		|xxxxxx		|xxxxxx |xxxxxx  	|xxxxxx |
 
 
 ## Authors
