@@ -108,7 +108,7 @@ def call_cair_run(data_dir, epochs):
                            ignore_index=True)
             df.to_csv('{}/results.csv'.format(data_dir, baseline), index=False)
 
-# # python -u main.py {topn=[1,2,...]} {topics=[robust04, gov2, clueweb09b, clueweb12b13, all]} 2>&1 | tee log &
+# # {CUDA_VISIBLE_DEVICES={zero-base gpu index reverse to the system}} python -u main.py {topn=[1,2,...]} {topics=[robust04, gov2, clueweb09b, clueweb12b13, all]} 2>&1 | tee log &
 
 # # python -u main.py 1 robust04 2>&1 | tee robust04.topn1.log &
 # # python -u main.py 1 gov2 2>&1 | tee gov2.topn1.log &
@@ -122,14 +122,14 @@ def call_cair_run(data_dir, epochs):
 # # python -u main.py 5 clueweb09b 2>&1 | tee clueweb09b.topn5.log &
 # # python -u main.py 5 clueweb12b13 2>&1 | tee clueweb12b13.topn5.log &
 # # python -u main.py 5 antique 2>&1 | tee antique.topn5.log &
-# # python -u main.py 5 dbpedia 2>&1 | tee dbpedia.topn1.log &
+# # python -u main.py 5 dbpedia 2>&1 | tee dbpedia.topn5.log &
 # # python -u main.py 5 all 2>&1 | tee all.topn5.log &
 # # python -u main.py 100 robust04 2>&1 | tee robust04.topn100.log &
 # # python -u main.py 100 gov2 2>&1 | tee gov2.topn100.log &
 # # python -u main.py 100 clueweb09b 2>&1 | tee clueweb09b.topn100.log &
 # # python -u main.py 100 clueweb12b13 2>&1 | tee clueweb12b13.topn100.log &
 # # python -u main.py 100 antique 2>&1 | tee antique.topn100.log &
-# # python -u main.py 100 dbpedia 2>&1 | tee dbpedia.topn1.log &
+# # python -u main.py 100 dbpedia 2>&1 | tee dbpedia.topn100.log &
 # # python -u main.py 100 all 2>&1 | tee all.topn100.log &
 
 if __name__=='__main__':
