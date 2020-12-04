@@ -6,7 +6,6 @@ import pandas as pd
 import sys
 
 sys.path.extend(['../qe'])
-from cmn import expander_factory
 
 
 class AnalysisLevel(enum.Enum):
@@ -27,12 +26,15 @@ class QueryExpanderCategory(enum.Enum):
 
 
 class ResultAnalyzer:
-    rankers = ["bm25", "bm25.rm3", "qld", "qld.rm3"]
+    # rankers = ["bm25", "bm25.rm3", "qld", "qld.rm3"]
+    rankers = ["bm25", "qld"]
     metrics = ["map"]
     dataset_names = ["robust04",
                      "gov2",
                      "clueweb12b13",
-                     "clueweb09b"
+                     "clueweb09b",
+                     "antique",
+                     "dbpedia",
                      ]
 
     pattern = "topics.{original_dataset_name}.{topic_first_index-topic_last_index}.{ranker}.{metric}.dataset.csv"
@@ -43,7 +45,7 @@ class ResultAnalyzer:
         self.query_expander_contributions = {}
         # the number of times a technique has generated the best expanded query
         self.query_expander_contributions_best = {}
-
+        self.expanders_info = pd.read_csv('expanders/expanders.csv')
         self.reset()
 
     def get_range_for_dataset(self, dataset):
@@ -51,7 +53,9 @@ class ResultAnalyzer:
             "robust04": [""],
             "gov2": [".701-850"],
             "clueweb12b13": [".201-300"],
-            "clueweb09b": [".1-200"]
+            "clueweb09b": [".1-200"],
+            "antique": [""],
+            "dbpedia": [""]
         })
         return indices.get(dataset, None)
 
@@ -70,17 +74,8 @@ class ResultAnalyzer:
                 self.query_expander_contributions_best[key] = 0
 
     def collect_query_expander_names(self):
-        #names = expander_factory.get_expanders_names(['-bm25', '-qld'])
-        names = ["thesaurus.topn3", "wordnet.topn3", "word2vec.topn3", "glove.topn3", "anchor.topn3", "wiki.topn3",
-                 "tagmee.topn3", "sensedisambiguation", "conceptnet.topn3", "thesaurus.topn3.replace",
-                 "wordnet.topn3.replace", "word2vec.topn3.replace", "glove.topn3.replace", "anchor.topn3.replace",
-                 "wiki.topn3.replace", "tagmee.topn3.replace", "sensedisambiguation.replace",
-                 "conceptnet.topn3.replace", "stem.krovetz", "stem.lovins", "stem.paicehusk", "stem.porter",
-                 "stem.porter2", "stem.sstemmer", "stem.trunc4", "stem.trunc5", "relevancefeedback.topn10.qld",
-                 "docluster.topn10.3.qld", "termluster.topn5.3.qld", "conceptluster.topn5.3.qld",
-                 "onfields.topn3.10.2.25.1.qld", "adaponfields.topn3.exgov2.4.0.25.10.2.25.1.qld"]
-        for name in names:
-            self.add_to_query_expander_names(name)
+        for index, row in self.expanders_info.iterrows():
+            self.add_to_query_expander_names(row[0])
 
     def add_to_query_expander_names(self, query_expander_name):
         current_value = self.query_expander_contributions.get(query_expander_name, None)
@@ -235,72 +230,14 @@ class ResultAnalyzer:
         return self.get_category(query_expander_method) == query_expander_category
 
     def get_category(self, query_expander_method, return_index=False):
-        stemming_methods = ["stem.krovetz",
-                            "stem.lovins",
-                            "stem.paicehusk",
-                            "stem.porter",
-                            "stem.porter2",
-                            "stem.sstemmer",
-                            "stem.trunc4",
-                            "stem.trunc5",
-                            ]
-        semantic_methods = ["conceptnet.topn3",
-                            "conceptnet.topn3.replace",
-                            "glove.topn3",
-                            "glove.topn3.replace",
-                            "sensedisambiguation",
-                            "sensedisambiguation.replace",
-                            "thesaurus.topn3",
-                            "thesaurus.topn3.replace",
-                            "word2vec.topn3",
-                            "word2vec.topn3.replace",
-                            "wordnet.topn3",
-                            "wordnet.topn3.replace"
-                            ]
-        term_clustering_methods = ["termluster.topn5.3.bm25",
-                                   "termluster.topn5.3.bm25.rm3",
-                                   "termluster.topn5.3.qld",
-                                   "termluster.topn5.3.qld.rm3",
-                                   ]
-        concept_clustering_methods = ["conceptluster.topn5.3.bm25",
-                                      "conceptluster.topn5.3.bm25.rm3",
-                                      "conceptluster.topn5.3.qld",
-                                      "conceptluster.topn5.3.qld.rm3",
-                                      ]
-        anchor_text_methods = ["anchor.topn3",
-                               "anchor.topn3.replace",
-                               ]
-        wikipedia_methods = ["wiki.topn3",
-                             "wiki.topn3.replace",
-                             "tagmee.topn3",
-                             "tagmee.topn3.replace",
-                             ]
-        top_documents_methods = ["relevancefeedback.topn10.bm25",
-                                 "relevancefeedback.topn10.bm25.rm3",
-                                 "relevancefeedback.topn10.qld",
-                                 "relevancefeedback.topn10.qld.rm3",
-                                 ]
-        document_summaries_methods = ["docluster.topn10.3.bm25",
-                                      "docluster.topn10.3.bm25.rm3",
-                                      "docluster.topn10.3.qld",
-                                      "docluster.topn10.3.qld.rm3",
-                                      ]
-        if query_expander_method in stemming_methods:
-            return 0 if return_index else QueryExpanderCategory.Stemming_Analysis
-        elif query_expander_method in semantic_methods:
-            return 1 if return_index else QueryExpanderCategory.Semantic_Analysis
-        elif query_expander_method in term_clustering_methods:
-            return 2 if return_index else QueryExpanderCategory.Term_Clustering
-        elif query_expander_method in concept_clustering_methods:
-            return 3 if return_index else QueryExpanderCategory.Concept_Clustering
-        elif query_expander_method in anchor_text_methods:
-            return 4 if return_index else QueryExpanderCategory.Anchor_Text
-        elif query_expander_method in wikipedia_methods:
-            return 5 if return_index else QueryExpanderCategory.Wikipedia
-        elif query_expander_method in top_documents_methods:
-            return 6 if return_index else QueryExpanderCategory.Top_Documents
-        elif query_expander_method in document_summaries_methods:
-            return 7 if return_index else QueryExpanderCategory.Document_Summaries
+        for index, row in self.expanders_info.iterrows():
+            if row[0] == query_expander_method:
+                index2 = -1
+                for category in QueryExpanderCategory:
+                    index2 += 1
+                    if category.name == row[1]:
+                        return index2 if return_index else QueryExpanderCategory(index2 + 1)
+        return None
 
     def analyze_file(self, csv_file):
         print("processing file {}".format(csv_file))
@@ -323,20 +260,29 @@ class ResultAnalyzer:
                         self.improvement_count += 1
                         # should this be done only for i=0, i.e for the best?
                         category_index = self.get_category(improved_method_name, True)
-                        self.category_improvement_sum[category_index] += improvement
-                        self.category_improvement_count[category_index] += 1
+                        if category_index is None:
+                            print("category_index is not defined for {}".format(improved_method_name))
+                        else:
+                            self.category_improvement_sum[category_index] += improvement
+                            self.category_improvement_count[category_index] += 1
 
                     self.update_map(improved_method_name)
                     if i == 0:
                         self.update_map2(improved_method_name)
 
     def update_map(self, name):
-        current_value = self.query_expander_contributions.get(name, None)
+        current_value = self.query_expander_contributions.get(name, 0)
+        if current_value is None:
+            current_value = 0
+            self.query_expander_contributions[name] = current_value
         current_value = int(current_value)
         self.query_expander_contributions[name] = current_value + 1
 
     def update_map2(self, name):
         current_value = self.query_expander_contributions_best.get(name, None)
+        if current_value is None:
+            current_value = 0
+            self.query_expander_contributions_best[name] = current_value
         current_value = int(current_value)
         self.query_expander_contributions_best[name] = current_value + 1
 
