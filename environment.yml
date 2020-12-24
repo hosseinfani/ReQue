@@ -20,7 +20,16 @@ dependencies:
     - community==1.0.0b1
     - bs4==0.0.1
     - python-louvain==0.13
+    - coloredlogs==14.0
+    - pydantic==1.5
+    - scikit-learn>=0.22
+    - spacy==2.2.4
+    - tensorboard>=2.1.0
+    - tensorflow>=2.2.0rc1
+    - tokenizers==0.9.4
+    - tqdm==4.45.0
+    - transformers==4.0.0
+    - sentencepiece==0.1.94
+    - torch==1.7.1
     - pyserini==0.10.0.1
-    - pygaggle==0.0.1
-
-
+    

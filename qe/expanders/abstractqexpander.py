@@ -64,7 +64,7 @@ class AbstractQExpander:
                             Q_ = Q_.append({model_name: q_}, ignore_index=True)
                             print('INFO: MAIN: {}: {}: {} -> {}'.format(self.get_model_name(), qid, q, q_))
                             Q_file.write('  <query>' + str(q_) + '</query>' + '\n')
-                    elif 'antique' in Q_filename:
+                    elif '\t' in line: #for tsv files
                         qid = int(line.split('\t')[0].rstrip())
                         q=line.split('\t')[1].rstrip()
                         try:
@@ -98,20 +98,14 @@ class AbstractQExpander:
                     qid = int(line[s:e])
                 elif line[2:9] == '<query>':  # for clueweb09b & clueweb12b13
                     q_ = line[9:-9] + ' '
-                elif 'antique' in Q_filename :
-                    qid = int(line.split('\t')[0].rstrip())
-                    q_=line.split('\t')[1].rstrip()
-                elif  'dbpedia' in Q_filename:
+                elif '\t' in line:
                     qid = line.split('\t')[0].rstrip()
                     q_=line.split('\t')[1].rstrip()
                 else:
                     continue
                 if q_:
                     Q_ = Q_.append({'qid': qid, model_name: q_}, ignore_index=True)
-        if  'dbpedia' in Q_filename:  
-            return Q_.astype({'qid': 'str'})   
-        else:
-            return Q_.astype({'qid': 'int32'})
+        return Q_.astype({'qid': 'str'})
 
 if __name__ == "__main__":
     qe = AbstractQExpander()

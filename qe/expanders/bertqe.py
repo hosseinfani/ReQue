@@ -1,5 +1,6 @@
 import sys
 sys.path.extend(['../qe'])
+sys.path.extend(['../pygaggle'])
 
 import pyserini
 from pyserini import index
