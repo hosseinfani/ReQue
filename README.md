@@ -38,13 +38,7 @@
 ```
 
 ### Source Folders [empty]
-The following source folders are to be populated by the Salaam,
-
-I thought about the idea that we discussed. 
-
-The only issue that I think we might face is that the T5 transformer, learns the queries from the documents i.e, it selects terms from the document most of the time, and it also adds some terms that are common  among the queries ( Who which what , ... basically converting the selected terms into sentences) . I was wondering when we want to teach T5 to convert queries to queries, it might not perform well, since the common terms are not many, and it should learn to add lots of words. We might try and see how good T5 can perform with those limited terms. 
-
-Another possible approach ( I think we discussed it before ) might be to generate Queries from the top-retrieved documents , use the generated queries to expand the initial query. It is not as complicated and as interesting as Ebrahim's idea, However, I have a feeling that will work well ! Also, implementation of this one does not require TPU Since we can use the trained model on GPU. It might be a good staring point.  query dataset `Q`, judment relevances `Jq`, and pre-trained models/embeddings.
+The following source folders are to be populated by the query dataset `Q`, judment relevances `Jq`, and pre-trained models/embeddings.
 
 [`pre/`](./pre/): (**pre**-trained models) source folder for pre-trained models and/or embeddings, including [FastText](https://fasttext.cc/docs/en/english-vectors.html) and [GloVe](https://nlp.stanford.edu/projects/glove/).
 
