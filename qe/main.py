@@ -3,6 +3,9 @@ import os, traceback, operator, sys, math
 from os import path
 import pandas as pd
 import argparse
+import json
+from pyserini.search import querybuilder
+from pyserini.search import SimpleSearcher
 
 #build anserini (maven) for doing A) indexing, B) information retrieval, and C) evaluation
 #A) INDEX DOCUMENTS
@@ -31,8 +34,9 @@ import argparse
 #Q: set of queries
 #q_: expanded query (q')
 #Q_: set of expanded queries(Q')
-
+from cmn import param
 from cmn import expander_factory as ef
+from cmn import utils
 from expanders.abstractqexpander import AbstractQExpander
 
 def generate(Qfilename, expanders, output):
@@ -50,6 +54,7 @@ def generate(Qfilename, expanders, output):
     for model_err, msg in model_errs.items():
         print('INFO: MAIN: GENERATE: There has been error in {}!\n{}'.format(model_err, msg))
 
+
 def search(expanders, rankers, topicreader, index, anserini, output):
     # Information Retrieval using Anserini
     rank_cmd = '{}target/appassembler/bin/SearchCollection'.format(anserini)
@@ -60,11 +65,65 @@ def search(expanders, rankers, topicreader, index, anserini, output):
         try:
             Q_filename = '{}.{}.txt'.format(output, model_name)
             for ranker in rankers:
+
                 Q_pred = '{}.{}.{}.txt'.format(output, model_name, ef.get_ranker_name(ranker))
-                cli_cmd = '\"{}\" {} -threads 44 -topicreader {} -index {} -topics {} -output {}'.format(rank_cmd, ranker, topicreader, index, Q_filename, Q_pred)
-                print('{}\n'.format(cli_cmd))
-                stream = os.popen(cli_cmd)
-                print(stream.read())
+                q_dic={}
+                searcher = SimpleSearcher(index)
+                if ranker =='-bm25':
+                    searcher.set_bm25(0.9, 0.4)
+                elif ranker =='-qld':
+                    searcher.set_qld()
+
+                if isinstance(model, OnFields) or isinstance(model, BertQE) :
+                    run_file=open(Q_pred,'w')
+                    list_of_raw_queries=utils.get_raw_query(topicreader,Q_filename)
+                    for qid,query in list_of_raw_queries.items():
+                        q_dic[qid.strip()]= eval(query)
+                    for qid in q_dic.keys():
+                        boost=[]
+                        for q_terms,q_weights in q_dic[qid].items():
+                            try:
+                                boost.append( querybuilder.get_boost_query(querybuilder.get_term_query(q_terms),q_weights))
+                            except:
+                                # term do not exist in the indexed collection () e.g., stop words
+                                pass
+
+                        should = querybuilder.JBooleanClauseOccur['should'].value
+                        boolean_query_builder = querybuilder.get_boolean_query_builder()
+                        for boost_i in boost:
+                            boolean_query_builder.add(boost_i, should)
+                        retrieved_docs=[]
+                        query = boolean_query_builder.build()
+                        hits = searcher.search(query,k=10000)
+                        for i in range(0, 1000):
+                            try:
+                                if hits[i].docid not in retrieved_docs:
+                                    retrieved_docs.append(hits[i].docid)
+                                    run_file.write(f'{qid} Q0  {hits[i].docid:15} {i+1:2}  {hits[i].score:.5f} Pyserini \n')
+                            except:
+                                pass
+                    run_file.close()
+
+                elif topicreader=='TsvString':
+                    run_file=open(Q_pred,'w')
+                    qlines=open(Q_filename,'r').readlines()
+                    
+                    for line in qlines:
+                        retrieved_docs=[]
+                        qid,qtext=line.split('\t')
+                        hits = searcher.search(qtext,k=1000)
+                        for i in range(len(hits)):
+                            if hits[i].docid not in retrieved_docs:
+                                retrieved_docs.append(hits[i].docid)
+                                run_file.write(f'{qid} Q0  {hits[i].docid:15} {i+1:2} {hits[i].score:.5f} Pyserini\n')
+                    run_file.close()
+
+                else:
+                    cli_cmd = '\"{}\" {} -threads 44 -topicreader {} -index {} -topics {} -output {}'.format(rank_cmd, ranker, topicreader, index, Q_filename, Q_pred)
+                    print('{}\n'.format(cli_cmd))
+                    stream = os.popen(cli_cmd)
+                    print(stream.read())
+                
         except:
             model_errs[model_name] = traceback.format_exc()
             continue
@@ -162,128 +221,160 @@ def build(input, expanders, rankers, metrics, output):
     ds_df.to_csv(filename, index=False)
     return filename
 
-def run(db, rankers, metrics, anserini, index, output, rf=True, op=[]):
-
-    if db == 'robust04':
-        output = '{}topics.robust04'.format(output)
-        # index = '/data/anserini/lucene-index.robust04.pos+docvectors+rawdocs'
-
+def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
+    if db == 'dbpedia':
+        topicreader = 'TsvString'
+        output_ = '{}topics.dbpedia'.format(output)
         expanders = ef.get_nrf_expanders()
         if rf:#local analysis
-            expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
+            expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
 
-        if 'generate' in op:generate(Qfilename='../ds/robust04/topics.robust04.txt', expanders=expanders, output=output)
-        if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader='Trec', index=index, anserini=anserini, output=output)
-        if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/robust04/qrels.robust04.txt', rankers=rankers, metrics=metrics, anserini=anserini, output=output)
+        if 'generate' in op:generate(Qfilename=param.database[db]['topics'], expanders=expanders, output=output_)
+        if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
+        if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.database[db]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
         if 'build' in op:
-            result = aggregate(expanders=expanders, rankers=rankers,metrics=metrics, output=output)
-            build(input=result, expanders=expanders, rankers=rankers,metrics=metrics, output=output)
+            result = aggregate(expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
+            build(input=result, expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
+    if db == 'antique':
+        topicreader = 'TsvInt'
+        output_ = '{}topics.antique'.format(output)
+        expanders = ef.get_nrf_expanders()
+        if rf:#local analysis
+            expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
+
+        if 'generate' in op:generate(Qfilename=param.database[db]['topics'], expanders=expanders, output=output_)
+        if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
+        if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.database[db]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
+        if 'build' in op:
+            result = aggregate(expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
+            build(input=result, expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
+
+    if db == 'robust04':
+        output_ = '{}topics.robust04'.format(output)
+        expanders = ef.get_nrf_expanders()
+        if rf:#local analysis
+            expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
+        if 'generate' in op:generate(Qfilename=param.database[db]['topics'], expanders=expanders, output=output_)
+        if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader='Trec', index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
+        if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.database[db]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
+        if 'build' in op:
+            result = aggregate(expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
+            build(input=result, expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
 
     if db == 'gov2':
-        # index = '/data/anserini/lucene-index.gov2.pos+docvectors+rawdocs'
         topicreader = 'Trec'
 
         results = []
         for r in ['4.701-750', '5.751-800', '6.801-850']:
-            output = '{}topics.terabyte0{}'.format(output, r)
+            output_ = '{}topics.terabyte0{}'.format(output, r)
 
             expanders = ef.get_nrf_expanders()
             if rf:
-                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
+                expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
 
-            if 'generate' in op:generate(Qfilename='../ds/gov2/{}.terabyte0{}.txt'.format('topics', r), expanders=expanders, output=output)
-            if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output)
-            if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/gov2/qrels.terabyte0{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=anserini, output=output)
+            if 'generate' in op:generate(Qfilename=param.database[db]['topics'].format('topics', r), expanders=expanders, output=output_)
+            if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
+            if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.database[db]['qrels'].format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
             if 'build' in op:
-                result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output)
-                result = build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output)
+                result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
+                result = build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
                 results.append(result)
 
         if 'build' in op:
-            output = results[0].replace(results[0].split('/')[-1].split('.')[1], 'gov2').replace(results[0].split('/')[-1].split('.')[2], '701-850')
+            output_ = results[0].replace(results[0].split('/')[-1].split('.')[1], 'gov2').replace(results[0].split('/')[-1].split('.')[2], '701-850')
             df = pd.DataFrame()
             for r in results:
                 df = pd.concat([df, pd.read_csv(r)], axis=0, ignore_index=True, sort=False)
-            df.to_csv(output, index=False)
+            df.to_csv(output_, index=False)
 
     if db == 'clueweb09b':
-        # index = '/data/anserini/lucene-index.cw09b.pos+docvectors+rawdocs'
         topicreader = 'Webxml'
 
         results = []
         for r in ['1-50', '51-100', '101-150', '151-200']:
-            output = '{}topics.web.{}'.format(output, r)
+            output_ = '{}topics.web.{}'.format(output, r)
 
             expanders = ef.get_nrf_expanders()
             if rf:
-                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
+                expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
 
-            if 'generate' in op:generate(Qfilename='../ds/clueweb09b/topics.web.{}.txt'.format(r), expanders=expanders, output=output)
-            if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output)
-            if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/clueweb09b/qrels.web.{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=anserini, output=output)
+            if 'generate' in op:generate(Qfilename=param.database[db]['topics'].format(r), expanders=expanders, output=output_)
+            if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
+            if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.database[db]['qrels'].format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
             if 'build' in op:
-                result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output)
-                result = build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output)
+                result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
+                result = build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
                 results.append(result)
 
         if 'build' in op:
-            output = results[0].replace('.'+results[0].split('/')[-1].split('.')[1]+'.', '.clueweb09b.').replace(results[0].split('/')[-1].split('.')[2], '1-200')
+            output_ = results[0].replace('.'+results[0].split('/')[-1].split('.')[1]+'.', '.clueweb09b.').replace(results[0].split('/')[-1].split('.')[2], '1-200')
             df = pd.DataFrame()
             for r in results:
                 df = pd.concat([df, pd.read_csv(r)], axis=0, ignore_index=True, sort=False)
-            df.to_csv(output, index=False)
+            df.to_csv(output_, index=False)
 
     if db == 'clueweb12b13':
-        # index = '/data/anserini/lucene-index.cw12b13.pos+docvectors+rawdocs'
         topicreader = 'Webxml'
         results = []
         for r in ['201-250', '251-300']:
-            output = '{}topics.web.{}'.format(output, r)
+            output_ = '{}topics.web.{}'.format(output, r)
 
             expanders = ef.get_nrf_expanders()
             if rf:
-                expanders += ef.get_rf_expanders(rankers=rankers, index=index, anserini=anserini, output=output)
+                expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
 
-            if 'generate' in op:generate(Qfilename='../ds/clueweb12b13/topics.web.{}.txt'.format(r), expanders=expanders, output=output)
-            if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=index, anserini=anserini, output=output)
-            if 'evaluate' in op:evaluate(expanders=expanders, Qrels='../ds/clueweb12b13/qrels.web.{}.txt'.format(r), rankers=rankers, metrics=metrics, anserini=anserini, output=output)
+            if 'generate' in op:generate(Qfilename=param.database[db]['topics'].format(r), expanders=expanders, output=output_)
+            if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
+            if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.database[db]['qrels'].format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
             if 'build' in op:
-                result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output)
-                result = build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output)
+                result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
+                result = build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
                 results.append(result)
 
         if 'build' in op:
-            output = results[0].replace('.'+results[0].split('/')[-1].split('.')[1]+'.', '.clueweb12b13.').replace(results[0].split('/')[-1].split('.')[2], '201-300')
+            output_ = results[0].replace('.'+results[0].split('/')[-1].split('.')[1]+'.', '.clueweb12b13.').replace(results[0].split('/')[-1].split('.')[2], '201-300')
             df = pd.DataFrame()
             for r in results:
                 df = pd.concat([df, pd.read_csv(r)], axis=0, ignore_index=True, sort=False)
-            df.to_csv(output, index=False)
+            df.to_csv(output_, index=False)
 
 def addargs(parser):
-    anserini = parser.add_argument_group('Anserini')
-    anserini.add_argument('--anserini', type=str, default='../anserini/', help='The path to the anserini library (default: ../anserini/)')
+    # anserini = parser.add_argument_group('Anserini')
+    # anserini.add_argument('--anserini', type=str, default='../anserini/', help='The path to the anserini library (default: ../anserini/)')
 
     corpus = parser.add_argument_group('Corpus')
-    corpus.add_argument('--corpus', type=str, choices=['robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], required=True, help='The corpus name; required; (example: robust04)')
-    corpus.add_argument('--index', type=str, required=True, help='The corpus index; required; (example: ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs)')
+    corpus.add_argument('--corpus', type=str, choices=['dbpedia','antique','robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], required=True, help='The corpus name; required; (example: robust04)')
+    # corpus.add_argument('--index', type=str, required=True, help='The corpus index; required; (example: ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs)')
 
     gold = parser.add_argument_group('Gold Standard Dataset')
     gold.add_argument('--output', type=str, required=True, help='The output path for the gold standard dataset; required; (example: ../ds/qe/robust04/')
     gold.add_argument('--ranker', type=str, choices=['bm25', 'qld'], default='bm25', help='The ranker name (default: bm25)')
     gold.add_argument('--metric', type=str, choices=['map'], default='map', help='The evaluation metric name (default: map)')
 
+    external_corpus = parser.add_argument_group('External Corpus')
+    external_corpus.add_argument('--ext_corpus', type=str, choices=['dbpedia','antique','robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], help='The external corpus name; required only for AdapOnFields and OnFields; (example: robust04)')
+    # external_corpus.add_argument('--ext_index', type=str, help='The external corpus index; required only for AdapOnFields and OnFields; (example: ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs)')
+    external_corpus.add_argument('--ext_prels',  type=str, help='Retrieval run results for external corpus; required only for AdapOnFields and OnFields; (example: ../ds/robust04/topics.robust04.txt)')
+    # external_corpus.add_argument('--ext_collection_tokens' , type=int , help = 'Total Number of tokens in the external corpus; required only for AdapOnFields and OnFields; (example: 148000000 )')
+    # external_corpus.add_argument('--ext_w_a' , type=float, help ='Weight for anchor fields in external corpus.required only for AdapOnFields and OnFields; (example: 1.0)')
+    # external_corpus.add_argument('--ext_w_t', type = float, help ='Weight for title fields in external corpus.required only for AdapOnFields and OnFields; (example: 2.25)')
+    # external_corpus.add_argument('--ext_corpus_size', type = int, help ='Total Number of documents in the external corpus; required only for AdapOnFields and OnFields; (example: 520000 )')
 
-# # python -u main.py --anserini ../anserini --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker bm25 --metric map 2>&1 | tee robust04.log &
-# # python -u main.py --anserini ../anserini --corpus robust04 --index ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.log &
 
-# # python -u main.py --anserini ../anserini --corpus gov2 --index ../ds/robust04/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker bm25 --metric map 2>&1 | tee gov2.log &
-# # python -u main.py --anserini ../anserini --corpus gov2 --index ../ds/robust04/lucene-index.gov2.pos+docvectors+rawdocs --output ../ds/qe/gov2/ --ranker qld --metric map 2>&1 | tee gov2.log &
+# # python -u main.py --corpus robust04 --output ../ds/qe/robust04/ --ranker bm25 --metric map 2>&1 | tee robust04.bm25.log &
+# # python -u main.py --corpus robust04 --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.qld.log &
 
-# # python -u main.py --anserini ../anserini --corpus clueweb09b --index ../ds/robust04/lucene-index.cw09b.pos+docvectors+rawdocs --output ../ds/qe/clueweb09b/ --ranker bm25 --metric map 2>&1 | tee clueweb09b.log &
-# # python -u main.py --anserini ../anserini --corpus clueweb09b --index ../ds/robust04/lucene-index.cw09b.pos+docvectors+rawdocs --output ../ds/qe/clueweb09b/ --ranker qld --metric map 2>&1 | tee clueweb09b.log &
+# # python -u main.py --corpus gov2 --output ../ds/qe/gov2/ --ranker bm25 --metric map 2>&1 | tee gov2.bm25.log &
+# # python -u main.py --corpus gov2 --output ../ds/qe/gov2/ --ranker qld --metric map 2>&1 | tee gov2.qld.log &
 
-# # python -u main.py --anserini ../anserini --corpus clueweb12b13 --index ../ds/robust04/lucene-index.cw12b13.pos+docvectors+rawdocs --output ../ds/qe/clueweb12b13/ --ranker bm25 --metric map 2>&1 | tee clueweb12b13.log &
-# # python -u main.py --anserini ../anserini --corpus clueweb12b13 --index ../ds/robust04/lucene-index.cw12b13.pos+docvectors+rawdocs --output ../ds/qe/clueweb12b13/ --ranker qld --metric map 2>&1 | tee clueweb12b13.log &
+# # python -u main.py --corpus clueweb09b --output ../ds/qe/clueweb09b/ --ranker bm25 --metric map 2>&1 | tee clueweb09b.bm25.log &
+# # python -u main.py --corpus clueweb09b --output ../ds/qe/clueweb09b/ --ranker qld --metric map 2>&1 | tee clueweb09b.qld.log &
+
+# # python -u main.py --corpus clueweb12b13 --output ../ds/qe/clueweb12b13/ --ranker bm25 --metric map 2>&1 | tee clueweb12b13.bm25.log &
+# # python -u main.py --corpus clueweb12b13 --output ../ds/qe/clueweb12b13/ --ranker qld --metric map 2>&1 | tee clueweb12b13.qld.log &
+
+# # python -u main.py --corpus antique --output ../ds/qe/antique/ --ranker bm25 --metric map 2>&1 | tee antique.bm25.log &
+# # python -u main.py --corpus antique --output ../ds/qe/antique/ --ranker qld --metric map 2>&1 | tee antique.qld.log &
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='ReQue (Refining Queries)')
@@ -296,8 +387,8 @@ if __name__ == "__main__":
     run(db=args.corpus.lower(),
         rankers=['-' + args.ranker.lower()],
         metrics=[args.metric.lower()],
-        anserini=args.anserini,
-        index=args.index,
         output=args.output,
+        ext_corpus=args.ext_corpus,
+        ext_prels=args.ext_prels,
         rf=True,
-        op=['generate', 'search', 'evaluate', 'build'])
+        op=[])#['generate', 'search', 'evaluate', 'build']

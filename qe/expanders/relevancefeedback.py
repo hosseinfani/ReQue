@@ -39,16 +39,23 @@ class RelevanceFeedback(AbstractQExpander):
         i = 0
         for x in self.f:
             x_splited =  x.split()
-            if int(x_splited[0]) == qid:
-                relevant_documents.append(x_splited[2])
-                i = i+1
-                if i >= self.topn:
-                    break
+            try :
+                if (int(x_splited[0]) == qid or x_splited[0] == qid):
+                    relevant_documents.append(x_splited[2])
+                    i = i+1
+                    if i >= self.topn:
+                        break
+            except:
+                if ('dbpedia' in self.prels and x_splited[0] == qid):
+                    relevant_documents.append(x_splited[2])
+                    i = i+1
+                    if i >= self.topn:
+                        break
         return relevant_documents
 
     def get_tfidf(self, docid):
         #command = "target/appassembler/bin/IndexUtils -index lucene-index.robust04.pos+docvectors+rawdocs -dumpDocVector FBIS4-40260 -docVectorWeight TF_IDF "
-        cli_cmd = '\"{}target/appassembler/bin/IndexUtils\" -index \"{}\" -dumpDocVector {} -docVectorWeight TF_IDF'.format(self.anserini, self.index, docid)
+        cli_cmd = '\"{}target/appassembler/bin/IndexUtils\" -index \"{}\" -dumpDocVector \"{}\" -docVectorWeight TF_IDF'.format(self.anserini, self.index, docid)
         stream = os.popen(cli_cmd)
         return stream.read()
 

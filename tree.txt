@@ -6,42 +6,70 @@
 |       |   +---bin
 +---ds
 |   +---robust04
+|   |       # qrels.robust04.txt
+|   |       # topics.robust04.txt
 |       \---lucene-index.robust04.pos+docvectors+rawdocs
 |   +---clueweb09b
-|   |   \---lucene-index.clueweb09b.pos+docvectors+rawdocs
+|   |       # qrels.web.1-50.txt
+|   |       # qrels.web.51-100.txt
+|   |       # qrels.web.101-150.txt
+|   |       # qrels.web.150-200.txt
+|   |       # topics.web.1-50.txt
+|   |       # topics.web.51-100.txt
+|   |       # topics.web.101-150.txt
+|   |       # topics.web.150-200.txt
+|       \---lucene-index.clueweb09b.pos+docvectors+rawdocs
 |   +---clueweb12b13
-|   |   \---lucene-index.clueweb12b13.pos+docvectors+rawdocs
+|   |       # qrels.web.201-250.txt
+|   |       # qrels.web.251-300.txt
+|   |       # topics.web.201-250.txt
+|   |       # topics.web.251-300.txt
+|       \---lucene-index.clueweb12b13.pos+docvectors+rawdocs
 |   +---gov2
-|   |   \---lucene-index.gov2.pos+docvectors+rawdocs
+|   |       # qrels.terabyte04.701-750.txt
+|   |       # qrels.terabyte05.751-800.txt
+|   |       # qrels.terabyte06.801-850.txt
+|   |       # topics.terabyte04.701-750.txt
+|   |       # topics.terabyte05.751-800.txt
+|   |       # topics.terabyte06.801-850.txt
+|       \---lucene-index.gov2.pos+docvectors+rawdocs
+|   +---antique
+|   |       # qrels.antique.txt
+|   |       # topics.antique.txt
+|       \---lucene-index.antique
+|   +---dbpedia
+|   |       # qrels.dbpedia.txt
+|   |       # topics.dbpedia.txt
+|       \---lucene-index.dbpedia
 |   +---qe
+|   |   +---robust04
+|   |   |       topics.robust04.bm25.map.dataset.csv
+|   |   |       topics.robust04.qld.map.dataset.csv
 |   |   +---clueweb09b
 |   |   |       topics.clueweb09b.1-200.bm25.map.dataset.csv
-|   |   |       topics.clueweb09b.1-200.bm25.rm3.map.dataset.csv
 |   |   |       topics.clueweb09b.1-200.qld.map.dataset.csv
-|   |   |       topics.clueweb09b.1-200.qld.rm3.map.dataset.csv
 |   |   +---clueweb12b13
 |   |   |       topics.clueweb12b13.201-300.bm25.map.dataset.csv
-|   |   |       topics.clueweb12b13.201-300.bm25.rm3.map.dataset.csv
 |   |   |       topics.clueweb12b13.201-300.qld.map.dataset.csv
-|   |   |       topics.clueweb12b13.201-300.qld.rm3.map.dataset.csv
 |   |   +---gov2
 |   |   |       topics.gov2.701-850.bm25.map.dataset.csv
-|   |   |       topics.gov2.701-850.bm25.rm3.map.dataset.csv
 |   |   |       topics.gov2.701-850.qld.map.dataset.csv
-|   |   |       topics.gov2.701-850.qld.rm3.map.dataset.csv
-|   |   |---robust04
-|   |   |       topics.robust04.bm25.map.dataset.csv
-|   |   |       topics.robust04.bm25.rm3.map.dataset.csv
-|   |   |       topics.robust04.qld.map.dataset.csv
-|   |   |       topics.robust04.qld.rm3.map.dataset.csv
+|   |   |---antique
+|   |   |       topics.antique.bm25.map.dataset.csv
+|   |   |       topics.antique.qld.map.dataset.csv
+|   |   |---dbpedia
+|   |   |       topics.dbpedia.bm25.map.dataset.csv
+|   |   |       topics.dbpedia.qld.map.dataset.csv
 |   |   \---eval
 |   |           overall.stat.csv
 |   +---qs
 |   |   +---all.topn5
+|   |   +---robust04.topn5
 |   |   +---clueweb09b.topn5
 |   |   +---clueweb12b13.topn5
 |   |   +---gov2.topn5
-|   |   \---robust04.topn5
+|   |   +---antique.topn5
+|   |   \---dbpedia.topn5
 +---pre
 |       # anchor_text_en.ttl
 |       # gitkeep
@@ -55,16 +83,20 @@
 |   |   main.py
 |   +---cmn
 |   |       expander_factory.py
+|   |       param.py
 |   |       utils.py
 |   +---eval
 |   |       stat.py
 |   +---expanders
 |   |       abstractqexpander.py
+|   |       adaponfields.py
 |   |       anchor.py
+|   |       bertqe.py
 |   |       conceptluster.py
 |   |       conceptnet.py
 |   |       docluster.py
 |   |       glove.py
+|   |       onfields.py
 |   |       relevancefeedback.py
 |   |       sensedisambiguation.py
 |   |       stem.py

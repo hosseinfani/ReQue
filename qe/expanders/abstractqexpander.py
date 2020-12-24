@@ -19,7 +19,7 @@ class AbstractQExpander:
                          '.topn{}'.format(self.topn) if self.topn else '',
                          '.replace' if self.replace else '')
 
-    def write_expanded_queries(self, Qfilename, Q_filename):
+    def write_expanded_queries(self, Qfilename, Q_filename, clean=True):
         model_name = self.get_model_name().lower()
         Q_ = pd.DataFrame()
         with open(Qfilename, 'r') as Qfile:
@@ -36,7 +36,7 @@ class AbstractQExpander:
 
                         try:
                             q_ = self.get_expanded_query(q, [qid])
-                            q_ = utils.clean(q_)
+                            q_ = utils.clean(q_) if clean else q_
                         except:
                             print('WARNING: MAIN: {}: Expanding query [{}:{}] failed!'.format(self.get_model_name(), qid, q))
                             print(traceback.format_exc())
@@ -44,7 +44,7 @@ class AbstractQExpander:
 
                         Q_ = Q_.append({model_name: q_}, ignore_index=True)
                         print('INFO: MAIN: {}: {}: {} -> {}'.format(self.get_model_name(), qid, q, q_))
-                        Q_file.write('<title> ' + q_ + '\n')
+                        Q_file.write('<title> ' + str(q_) + '\n')
 
                     elif '<topic' in line:
                         s = line.index('\"') + 1
@@ -55,7 +55,7 @@ class AbstractQExpander:
                             q = line[9:-9]
                             try:
                                 q_ = self.get_expanded_query(q, [qid])
-                                q_ = utils.clean(q_)
+                                q_ = utils.clean(q_)if clean else q_
                             except:
                                 print('WARNING: MAIN: {}: Expanding query [{}:{}] failed!'.format(self.get_model_name(), qid, q))
                                 print(traceback.format_exc())
@@ -63,7 +63,20 @@ class AbstractQExpander:
 
                             Q_ = Q_.append({model_name: q_}, ignore_index=True)
                             print('INFO: MAIN: {}: {}: {} -> {}'.format(self.get_model_name(), qid, q, q_))
-                            Q_file.write('  <query>' + q_ + '</query>' + '\n')
+                            Q_file.write('  <query>' + str(q_) + '</query>' + '\n')
+                    elif 'antique' in Q_filename:
+                        qid = int(line.split('\t')[0].rstrip())
+                        q=line.split('\t')[1].rstrip()
+                        try:
+                            q_ = self.get_expanded_query(q, [qid])
+                            q_ = utils.clean(q_) if clean else q_
+                        except:
+                            print('WARNING: MAIN: {}: Expanding query [{}:{}] failed!'.format(self.get_model_name(), qid, q))
+                            print(traceback.format_exc())
+                            q_ = q
+                        Q_ = Q_.append({model_name: q_}, ignore_index=True)
+                        print('INFO: MAIN: {}: {}: {} -> {}'.format(self.get_model_name(), qid, q, q_))
+                        Q_file.write(str(qid)+'\t'+ str(q_) + '\n')
                     else:
                         Q_file.write(line)
         return Q_
@@ -85,11 +98,20 @@ class AbstractQExpander:
                     qid = int(line[s:e])
                 elif line[2:9] == '<query>':  # for clueweb09b & clueweb12b13
                     q_ = line[9:-9] + ' '
+                elif 'antique' in Q_filename :
+                    qid = int(line.split('\t')[0].rstrip())
+                    q_=line.split('\t')[1].rstrip()
+                elif  'dbpedia' in Q_filename:
+                    qid = line.split('\t')[0].rstrip()
+                    q_=line.split('\t')[1].rstrip()
                 else:
                     continue
                 if q_:
                     Q_ = Q_.append({'qid': qid, model_name: q_}, ignore_index=True)
-        return Q_.astype({'qid': 'int32'})
+        if  'dbpedia' in Q_filename:  
+            return Q_.astype({'qid': 'str'})   
+        else:
+            return Q_.astype({'qid': 'int32'})
 
 if __name__ == "__main__":
     qe = AbstractQExpander()

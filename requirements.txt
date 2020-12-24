@@ -1,0 +1,13 @@
+anserini
+community
+gensim
+networkx
+nltk
+pandas
+pygaggle==0.0.1
+pyserini==0.10.0.1
+pywsd
+tagme
+tensorflow
+torch
+wn==0.0.23

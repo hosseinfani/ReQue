@@ -1,10 +1,13 @@
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer
 import re
 
 stop_words = set(stopwords.words('english'))
 l = ['.', ',', '!', '?', ';', 'a', 'an', '(', ')', "'", '_', '-', '<', '>', 'if', '/', '[', ']', '&nbsp;']
 stop_words.update(l)
+
+ps = PorterStemmer()
 
 def get_tokenized_query(q):
     word_tokens = word_tokenize(q)
@@ -40,3 +43,25 @@ def insert_row(df, idx, row):
     df = pd.concat([df1, df2])
     df.index = [*range(df.shape[0])]
     return df
+
+def get_raw_query(topicreader,Q_filename):
+    q_file=open(Q_filename,'r').readlines()
+    raw_queries={}
+    if topicreader=='Trec':
+        for line in q_file:
+            if '<title>' in line :
+                raw_queries[qid]=line.split('<title>')[1].rstrip().lower()
+            elif '<num>' in line:
+                qid=line.split(':')[1].rstrip()
+                
+    elif topicreader=='Webxml':
+        for line in q_file:
+            if '<query>' in line:
+                raw_queries[qid]=line.split('<query>')[1].rstrip().lower().split('</query>')[0]
+            elif '<topic number' in line:
+                qid=line.split('<topic number="')[1].split('"')[0]
+    elif topicreader=='TsvInt' or topicreader=='TsvString':
+        for line in q_file:
+            qid=line.split('\t')[0]
+            raw_queries[qid]=line.split('\t')[1].rstrip().lower()
+    return raw_queries
