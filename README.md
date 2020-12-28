@@ -377,22 +377,23 @@ Given a gold standard dataset which is built for an original query dataset for a
   }
 ```
 
-## Citation
 ```
-@inproceedings{ReQue,
+@inproceedings{ReQueDemo,
   author    = {Mahtab Tamannaee and
                Hossein Fani and
                Fattane Zarrinkalam and
                Jamil Samouh and
                Samad Paydar and
                Ebrahim Bagheri},
-  title     = {ReQue: A Configurable Workflow and Dataset Collection for Query Refinement},
-  booktitle = {{CIKM} '20: The 29th {ACM} International Conference on Information and Knowledge Management, Virtual Event, Ireland, October 19-23, 2020},
-  pages     = {3165--3172},
-  publisher = {{ACM}},
-  year      = {2020},
-  url       = {https://doi.org/10.1145/3340531.3412775},
-  doi       = {10.1145/3340531.3412775}
+  title     = {An Extensible Toolkit of Query Refinement Methods and Gold Standard Dataset Generation},
+  booktitle = {{ECIR} '21: Advances in Information Retrieval - 43rd European Conference on IR Research},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {tba},
+  year      = {2021},
+  pages     = {tba},
+  publisher = {{Springer}},
+  url       = {tba},
+  doi       = {tba}
   }
 ```
 
