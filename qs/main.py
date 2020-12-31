@@ -1,4 +1,4 @@
-import os, sys, time, random, string, json, numpy, pandas as pd
+import os, sys, time, random, string, json, numpy, glob, pandas as pd
 from collections import OrderedDict
 sys.path.extend(["./cair", "./cair/main"])
 
@@ -108,6 +108,24 @@ def call_cair_run(data_dir, epochs):
                            ignore_index=True)
             df.to_csv('{}/results.csv'.format(data_dir, baseline), index=False)
 
+def aggregate(path="../ds/qs/"):
+    fs = glob.glob(path + "/**/results.csv", recursive=True)
+    print(fs)
+    df = pd.DataFrame(columns=['topics', 'topn', 'ranker', 'model', 'epoch', 'rouge', 'bleu', 'bleu_list', 'exact_match', 'f1', 'elapsed_time'])
+    for f in fs:
+        df_f = pd.read_csv(f, header=0)
+        f = f.replace(path, '').split(os.path.sep)
+        ds = f[1].split('.')[0]
+        topn = f[1].split('.')[1]
+        ranker = '.'.join(f[2].split('.')[2:-1])
+        for idx, row in df_f.iterrows():
+            df_f.loc[idx, 'topics'] = ds
+            df_f.loc[idx, 'topn'] = topn
+            df_f.loc[idx, 'ranker'] = ranker
+        df = pd.concat([df, df_f], ignore_index=True)
+
+    df.to_csv(path + "agg_results.csv", index=False)
+
 # # {CUDA_VISIBLE_DEVICES={zero-base gpu index reverse to the system}} python -u main.py {topn=[1,2,...]} {topics=[robust04, gov2, clueweb09b, clueweb12b13, all]} 2>&1 | tee log &
 
 # # python -u main.py 1 robust04 2>&1 | tee robust04.topn1.log &
@@ -142,7 +160,6 @@ if __name__=='__main__':
 
     rankers = ['-bm25', '-qld']
     metrics = ['map']
-
     for db in dbs:
         for ranker in rankers:
             ranker = ranker.replace('-', '').replace(' ', '.')
@@ -181,3 +198,7 @@ if __name__=='__main__':
                 print('INFO: MAIN: Calling cair for {}'.format(data_dir))
                 #call_cair_run(data_dir, epochs=[e for e in range(1, 10)] + [e * 10 for e in range(1, 21)])
                 call_cair_run(data_dir, epochs=[100])
+
+    aggregate()
+
+
