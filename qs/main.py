@@ -112,7 +112,7 @@ def call_cair_run(data_dir, epochs):
                            ignore_index=True)
             df.to_csv('{}/results.csv'.format(data_dir, baseline), index=False)
 
-def aggregate(path):
+def aggregate(path): 
     fs = glob.glob(path + "/**/results.csv", recursive=True)
     print(fs)
     df = pd.DataFrame(columns=['topics', 'topn', 'ranker', 'model', 'epoch', 'rouge', 'bleu', 'bleu_list', 'exact_match', 'f1', 'elapsed_time'])
@@ -204,5 +204,3 @@ if __name__=='__main__':
                 call_cair_run(data_dir, epochs=[100])
 
     aggregate(ReQue['output'] + '/')
-
-
