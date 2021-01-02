@@ -20,13 +20,9 @@ word2vec.topn3.replace,Semantic_Analysis
 wordnet.topn3,Semantic_Analysis
 wordnet.topn3.replace,Semantic_Analysis
 termluster.topn5.3.bm25,Term_Clustering
-termluster.topn5.3.bm25.rm3,Term_Clustering
 termluster.topn5.3.qld,Term_Clustering
-termluster.topn5.3.qld.rm3,Term_Clustering
 conceptluster.topn5.3.bm25,Concept_Clustering
-conceptluster.topn5.3.bm25.rm3,Concept_Clustering
 conceptluster.topn5.3.qld,Concept_Clustering
-conceptluster.topn5.3.qld.rm3,Concept_Clustering
 anchor.topn3,Anchor_Text
 anchor.topn3.replace,Anchor_Text
 wiki.topn3,Wikipedia
@@ -34,9 +30,9 @@ wiki.topn3.replace,Wikipedia
 tagmee.topn3,Wikipedia
 tagmee.topn3.replace,Wikipedia
 relevancefeedback.topn10.bm25,Top_Documents
-relevancefeedback.topn10.bm25.rm3,Top_Documents
 relevancefeedback.topn10.qld,Top_Documents
-relevancefeedback.topn10.qld.rm3,Top_Documents
+rm3.topn10.10.0.5.bm25,Top_Documents
+rm3.topn10.10.0.5.qld,Top_Documents
 adaponfields.topn3.exgov2.4.0.25.10.2.25.1.bm25,Top_Documents
 adaponfields.topn3.exgov2.4.0.25.10.1.1.bm25,Top_Documents
 adaponfields.topn3.exgov2.4.0.25.10.1.1.qld,Top_Documents
@@ -60,6 +56,4 @@ onfields.topn3.10.1.0.qld,Top_Documents
 bertqe.topn10.bm25,Top_Documents
 bertqe.topn10.qld,Top_Documents
 docluster.topn10.3.bm25,Document_Summaries
-docluster.topn10.3.bm25.rm3,Document_Summaries
 docluster.topn10.3.qld,Document_Summaries
-docluster.topn10.3.qld.rm3,Document_Summaries
