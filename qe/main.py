@@ -223,47 +223,47 @@ def build(input, expanders, rankers, metrics, output):
     ds_df.to_csv(filename, index=False)
     return filename
 
-def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
-    if db == 'dbpedia':
+def run(corpus, rankers, metrics, output, rf=True, op=[]):
+    if corpus == 'dbpedia':
         topicreader = 'TsvString'
         output_ = '{}topics.dbpedia'.format(output)
         expanders = ef.get_nrf_expanders()
         if rf:#local analysis
-            expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
+            expanders += ef.get_rf_expanders(rankers=rankers, corpus=corpus, output=output_, ext_corpus=param.corpora[corpus]['extcorpus'])
 
-        if 'generate' in op:generate(Qfilename=param.database[db]['topics'], expanders=expanders, output=output_)
-        if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
-        if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.database[db]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
+        if 'generate' in op:generate(Qfilename=param.corpora[corpus]['topics'], expanders=expanders, output=output_)
+        if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.corpora[corpus]['index'], anserini=param.anserini['path'], output=output_)
+        if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.corpora[corpus]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
         if 'build' in op:
             result = aggregate(expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
             build(input=result, expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
-    if db == 'antique':
+    if corpus == 'antique':
         topicreader = 'TsvInt'
         output_ = '{}topics.antique'.format(output)
         expanders = ef.get_nrf_expanders()
         if rf:#local analysis
-            expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
+            expanders += ef.get_rf_expanders(rankers=rankers, corpus=corpus, output=output_, ext_corpus=param.corpora[corpus]['extcorpus'])
 
-        if 'generate' in op:generate(Qfilename=param.database[db]['topics'], expanders=expanders, output=output_)
-        if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
-        if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.database[db]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
+        if 'generate' in op:generate(Qfilename=param.corpora[corpus]['topics'], expanders=expanders, output=output_)
+        if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.corpora[corpus]['index'], anserini=param.anserini['path'], output=output_)
+        if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.corpora[corpus]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
         if 'build' in op:
             result = aggregate(expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
             build(input=result, expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
 
-    if db == 'robust04':
+    if corpus == 'robust04':
         output_ = '{}topics.robust04'.format(output)
         expanders = ef.get_nrf_expanders()
         if rf:#local analysis
-            expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
-        if 'generate' in op:generate(Qfilename=param.database[db]['topics'], expanders=expanders, output=output_)
-        if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader='Trec', index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
-        if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.database[db]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
+            expanders += ef.get_rf_expanders(rankers=rankers, corpus=corpus, output=output_, ext_corpus=param.corpora[corpus]['extcorpus'])
+        if 'generate' in op:generate(Qfilename=param.corpora[corpus]['topics'], expanders=expanders, output=output_)
+        if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader='Trec', index=param.corpora[corpus]['index'], anserini=param.anserini['path'], output=output_)
+        if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.corpora[corpus]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
         if 'build' in op:
             result = aggregate(expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
             build(input=result, expanders=expanders, rankers=rankers,metrics=metrics, output=output_)
 
-    if db == 'gov2':
+    if corpus == 'gov2':
         topicreader = 'Trec'
 
         results = []
@@ -272,11 +272,11 @@ def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
 
             expanders = ef.get_nrf_expanders()
             if rf:
-                expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
+                expanders += ef.get_rf_expanders(rankers=rankers, corpus=corpus, output=output_, ext_corpus=param.corpora[corpus]['extcorpus'])
 
-            if 'generate' in op:generate(Qfilename=param.database[db]['topics'].format('topics', r), expanders=expanders, output=output_)
-            if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
-            if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.database[db]['qrels'].format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
+            if 'generate' in op:generate(Qfilename=param.corpora[corpus]['topics'].format('topics', r), expanders=expanders, output=output_)
+            if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.corpora[corpus]['index'], anserini=param.anserini['path'], output=output_)
+            if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.corpora[corpus]['qrels'].format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
             if 'build' in op:
                 result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
                 result = build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
@@ -289,7 +289,7 @@ def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
                 df = pd.concat([df, pd.read_csv(r)], axis=0, ignore_index=True, sort=False)
             df.to_csv(output_, index=False)
 
-    if db == 'clueweb09b':
+    if corpus == 'clueweb09b':
         topicreader = 'Webxml'
 
         results = []
@@ -298,11 +298,11 @@ def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
 
             expanders = ef.get_nrf_expanders()
             if rf:
-                expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
+                expanders += ef.get_rf_expanders(rankers=rankers, corpus=corpus, output=output_, ext_corpus=ext_corpus, ext_prels=ext_prels)
 
-            if 'generate' in op:generate(Qfilename=param.database[db]['topics'].format(r), expanders=expanders, output=output_)
-            if 'search' in op:search(  expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
-            if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.database[db]['qrels'].format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
+            if 'generate' in op:generate(Qfilename=param.corpora[corpus]['topics'].format(r), expanders=expanders, output=output_)
+            if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.corpora[corpus]['index'], anserini=param.anserini['path'], output=output_)
+            if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.corpora[corpus]['qrels'].format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
             if 'build' in op:
                 result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
                 result = build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
@@ -315,7 +315,7 @@ def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
                 df = pd.concat([df, pd.read_csv(r)], axis=0, ignore_index=True, sort=False)
             df.to_csv(output_, index=False)
 
-    if db == 'clueweb12b13':
+    if corpus == 'clueweb12b13':
         topicreader = 'Webxml'
         results = []
         for r in ['201-250', '251-300']:
@@ -323,11 +323,11 @@ def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
 
             expanders = ef.get_nrf_expanders()
             if rf:
-                expanders += ef.get_rf_expanders(rankers=rankers, corpus=db, output=output_, ext_corpus=ext_corpus,ext_prels=ext_prels)
+                expanders += ef.get_rf_expanders(rankers=rankers, corpus=corpus, output=output_, ext_corpus=ext_corpus, ext_prels=ext_prels)
 
-            if 'generate' in op:generate(Qfilename=param.database[db]['topics'].format(r), expanders=expanders, output=output_)
-            if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.database[db]['index'], anserini=param.anserini['path'], output=output_)
-            if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.database[db]['qrels'].format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
+            if 'generate' in op:generate(Qfilename=param.corpora[corpus]['topics'].format(r), expanders=expanders, output=output_)
+            if 'search' in op:search(expanders=expanders, rankers=rankers, topicreader=topicreader, index=param.corpora[corpus]['index'], anserini=param.anserini['path'], output=output_)
+            if 'evaluate' in op:evaluate(expanders=expanders, Qrels=param.corpora[corpus]['qrels'].format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
             if 'build' in op:
                 result = aggregate(expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
                 result = build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
@@ -341,27 +341,13 @@ def run(db, rankers, metrics, output, ext_corpus, ext_prels, rf=True, op=[]):
             df.to_csv(output_, index=False)
 
 def addargs(parser):
-    # anserini = parser.add_argument_group('Anserini')
-    # anserini.add_argument('--anserini', type=str, default='../anserini/', help='The path to the anserini library (default: ../anserini/)')
-
     corpus = parser.add_argument_group('Corpus')
     corpus.add_argument('--corpus', type=str, choices=['dbpedia','antique','robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], required=True, help='The corpus name; required; (example: robust04)')
-    # corpus.add_argument('--index', type=str, required=True, help='The corpus index; required; (example: ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs)')
 
     gold = parser.add_argument_group('Gold Standard Dataset')
     gold.add_argument('--output', type=str, required=True, help='The output path for the gold standard dataset; required; (example: ../ds/qe/robust04/')
     gold.add_argument('--ranker', type=str, choices=['bm25', 'qld'], default='bm25', help='The ranker name (default: bm25)')
     gold.add_argument('--metric', type=str, choices=['map'], default='map', help='The evaluation metric name (default: map)')
-
-    external_corpus = parser.add_argument_group('External Corpus')
-    external_corpus.add_argument('--ext_corpus', type=str, choices=['dbpedia','antique','robust04', 'gov2', 'clueweb09b', 'clueweb12b13'], help='The external corpus name; required only for AdapOnFields and OnFields; (example: robust04)')
-    # external_corpus.add_argument('--ext_index', type=str, help='The external corpus index; required only for AdapOnFields and OnFields; (example: ../ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs)')
-    external_corpus.add_argument('--ext_prels',  type=str, help='Retrieval run results for external corpus; required only for AdapOnFields and OnFields; (example: ../ds/robust04/topics.robust04.txt)')
-    # external_corpus.add_argument('--ext_collection_tokens' , type=int , help = 'Total Number of tokens in the external corpus; required only for AdapOnFields and OnFields; (example: 148000000 )')
-    # external_corpus.add_argument('--ext_w_a' , type=float, help ='Weight for anchor fields in external corpus.required only for AdapOnFields and OnFields; (example: 1.0)')
-    # external_corpus.add_argument('--ext_w_t', type = float, help ='Weight for title fields in external corpus.required only for AdapOnFields and OnFields; (example: 2.25)')
-    # external_corpus.add_argument('--ext_corpus_size', type = int, help ='Total Number of documents in the external corpus; required only for AdapOnFields and OnFields; (example: 520000 )')
-
 
 # # python -u main.py --corpus robust04 --output ../ds/qe/robust04/ --ranker bm25 --metric map 2>&1 | tee robust04.bm25.log &
 # # python -u main.py --corpus robust04 --output ../ds/qe/robust04/ --ranker qld --metric map 2>&1 | tee robust04.qld.log &
@@ -386,11 +372,9 @@ if __name__ == "__main__":
     ## rf: whether to include relevance feedback expanders (local analysis) or not
     ## op: determines the steps in the pipeline. op=['generate', 'search', 'evaluate', 'build']
 
-    run(db=args.corpus.lower(),
+    run(corpus=args.corpus.lower(),
         rankers=['-' + args.ranker.lower()],
         metrics=[args.metric.lower()],
         output=args.output,
-        ext_corpus=args.ext_corpus,
-        ext_prels=args.ext_prels,
         rf=True,
         op=[])#['generate', 'search', 'evaluate', 'build']

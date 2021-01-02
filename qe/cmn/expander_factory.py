@@ -63,60 +63,59 @@ def get_nrf_expanders():
                  Stem(SRemovalStemmer()),
                  Stem(Trunc4Stemmer()),
                  Stem(Trunc5Stemmer()),
-                 # since RF needs index and search output which depends on ir method and topics database, we cannot add this here. Instead, we run it individually
+                 # since RF needs index and search output which depends on ir method and topics corpora, we cannot add this here. Instead, we run it individually
                  # RF assumes that there exist abstractqueryexpansion files
                  ]
 
     return expanders
 
 #local analysis
-def get_rf_expanders(rankers, corpus, output, ext_corpus=None, ext_prels=None):
+def get_rf_expanders(rankers, corpus, output, ext_corpus=None):
     expanders = []
     for ranker in rankers:
         ranker_name = get_ranker_name(ranker)
         expanders.append(RelevanceFeedback(ranker=ranker_name,
                                            prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
                                            anserini=param.anserini['path'],
-                                           index=param.database[corpus]['index']))
+                                           index=param.corpora[corpus]['index']))
         expanders.append(Docluster(ranker=ranker_name,
                                    prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
                                    anserini=param.anserini['path'],
-                                   index=param.database[corpus]['index'])),
+                                   index=param.corpora[corpus]['index'])),
         expanders.append(Termluster(ranker=ranker_name,
                                     prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
                                     anserini=param.anserini['path'],
-                                    index=param.database[corpus]['index']))
+                                    index=param.corpora[corpus]['index']))
         expanders.append(Conceptluster(ranker=ranker_name,
                                        prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
                                        anserini=param.anserini['path'],
-                                       index=param.database[corpus]['index']))
+                                       index=param.corpora[corpus]['index']))
         expanders.append(OnFields(ranker=ranker_name,
                                   prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
                                   anserini=param.anserini['path'],
-                                  index=param.database[corpus]['index'],
-                                  w_t=param.database[corpus]['w_t'],
-                                  w_a=param.database[corpus]['w_a'],
-                                  corpus_size=param.database[corpus]['size']))
+                                  index=param.corpora[corpus]['index'],
+                                  w_t=param.corpora[corpus]['w_t'],
+                                  w_a=param.corpora[corpus]['w_a'],
+                                  corpus_size=param.corpora[corpus]['size']))
         expanders.append(AdapOnFields(ranker=ranker_name,
                                       prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
                                       anserini=param.anserini['path'],
-                                      index=param.database[corpus]['index'],
-                                      w_t=param.database[corpus]['w_t'],
-                                      w_a=param.database[corpus]['w_a'],
-                                      corpus_size=param.database[corpus]['size'],
-                                      collection_tokens=param.database[corpus]['tokens'],
+                                      index=param.corpora[corpus]['index'],
+                                      w_t=param.corpora[corpus]['w_t'],
+                                      w_a=param.corpora[corpus]['w_a'],
+                                      corpus_size=param.corpora[corpus]['size'],
+                                      collection_tokens=param.corpora[corpus]['tokens'],
                                       ext_corpus=ext_corpus,
-                                      ext_index=param.database[ext_corpus]['index'],
-                                      ext_prels=ext_prels,
-                                      ext_collection_tokens=param.database[ext_corpus]['tokens'],
-                                      ext_w_t=param.database[ext_corpus]['w_t'],
-                                      ext_w_a=param.database[ext_corpus]['w_a'],
-                                      ext_corpus_size=param.database[ext_corpus]['size'],
+                                      ext_index=param.corpora[ext_corpus]['index'],
+                                      ext_collection_tokens=param.corpora[ext_corpus]['tokens'],
+                                      ext_w_t=param.corpora[ext_corpus]['w_t'],
+                                      ext_w_a=param.corpora[ext_corpus]['w_a'],
+                                      ext_corpus_size=param.corpora[ext_corpus]['size'],
                                       adap=True))
         expanders.append(BertQE(ranker=ranker_name,
-                          prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
-                          index=param.database[corpus]['index'],
-                           anserini=param.anserini['path']))
+                                prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
+                                index=param.corpora[corpus]['index'],
+                                anserini=param.anserini['path']))
 
     return expanders
 

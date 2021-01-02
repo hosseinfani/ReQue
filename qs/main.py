@@ -1,10 +1,14 @@
 import os, sys, time, random, string, json, numpy, glob, pandas as pd
 from collections import OrderedDict
 sys.path.extend(["./cair", "./cair/main"])
+numpy.random.seed(7881)
 
 from cair.main.recommender import run
 
-numpy.random.seed(7881)
+ReQue = {
+    'input': '../ds/qe',
+    'output': '../ds/qs'
+}
 
 def generate_random_string(n=12):
     return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(n))
@@ -108,7 +112,7 @@ def call_cair_run(data_dir, epochs):
                            ignore_index=True)
             df.to_csv('{}/results.csv'.format(data_dir, baseline), index=False)
 
-def aggregate(path="../ds/qs/"):
+def aggregate(path):
     fs = glob.glob(path + "/**/results.csv", recursive=True)
     print(fs)
     df = pd.DataFrame(columns=['topics', 'topn', 'ranker', 'model', 'epoch', 'rouge', 'bleu', 'bleu_list', 'exact_match', 'f1', 'elapsed_time'])
@@ -152,53 +156,53 @@ def aggregate(path="../ds/qs/"):
 
 if __name__=='__main__':
     topn = int(sys.argv[1])
-    dbs = sys.argv[2:]
-    if not dbs:
-        dbs = ['robust04', 'gov2', 'clueweb09b', 'clueweb12b13', 'antique', 'all']
+    corpora = sys.argv[2:]
+    if not corpora:
+        corpora = ['robust04', 'gov2', 'clueweb09b', 'clueweb12b13', 'antique', 'all']
     if not topn:
         topn = 1
 
     rankers = ['-bm25', '-qld']
     metrics = ['map']
-    for db in dbs:
+    for corpus in corpora:
         for ranker in rankers:
             ranker = ranker.replace('-', '').replace(' ', '.')
             for metric in metrics:
                 # create the test, develop, and train splits
-                if db == 'robust04':
-                    df = pd.read_csv('../ds/qe/{}/topics.{}.{}.{}.dataset.csv'.format(db, db, ranker, metric), header=0)
-                    csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
-                if db == 'gov2':
-                    df = pd.read_csv('../ds/qe/{}/topics.{}.701-850.{}.{}.dataset.csv'.format(db, db, ranker, metric), header=0)
-                    csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
-                if db == 'clueweb09b':
-                    df = pd.read_csv('../ds/qe/{}/topics.{}.1-200.{}.{}.dataset.csv'.format(db, db, ranker, metric), header=0)
-                    csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
-                if db == 'clueweb12b13':
-                    df = pd.read_csv('../ds/qe/{}/topics.{}.201-300.{}.{}.dataset.csv'.format(db, db, ranker, metric), header=0)
-                    csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
-                if db == 'antique':
-                    df = pd.read_csv('../ds/qe/{}/topics.{}.{}.{}.dataset.csv'.format(db, db, ranker, metric), header=0)
-                    csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
-                if db == 'dbpedia':
-                    df = pd.read_csv('../ds/qe/{}/topics.{}.{}.{}.dataset.csv'.format(db, db, ranker, metric), header=0)
-                    csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
+                if corpus == 'robust04':
+                    df = pd.read_csv('{}/{}/topics.{}.{}.{}.dataset.csv'.format(ReQue['input'], corpus, corpus, ranker, metric), header=0)
+                    csv2json(df, '{}/{}.topn{}/topics.{}.{}.{}/'.format(ReQue['output'], corpus, topn, corpus, ranker, metric), topn)
+                if corpus == 'gov2':
+                    df = pd.read_csv('{}/{}/topics.{}.701-850.{}.{}.dataset.csv'.format(ReQue['input'], corpus, corpus, ranker, metric), header=0)
+                    csv2json(df, '{}/{}.topn{}/topics.{}.{}.{}/'.format(ReQue['output'], corpus, topn, corpus, ranker, metric), topn)
+                if corpus == 'clueweb09b':
+                    df = pd.read_csv('{}/{}/topics.{}.1-200.{}.{}.dataset.csv'.format(ReQue['input'], corpus, corpus, ranker, metric), header=0)
+                    csv2json(df, '{}/{}.topn{}/topics.{}.{}.{}/'.format(ReQue['output'], corpus, topn, corpus, ranker, metric), topn)
+                if corpus == 'clueweb12b13':
+                    df = pd.read_csv('{}/{}/topics.{}.201-300.{}.{}.dataset.csv'.format(ReQue['input'], corpus, corpus, ranker, metric), header=0)
+                    csv2json(df, '{}/{}.topn{}/topics.{}.{}.{}/'.format(ReQue['output'], corpus, topn, corpus, ranker, metric), topn)
+                if corpus == 'antique':
+                    df = pd.read_csv('{}/{}/topics.{}.{}.{}.dataset.csv'.format(ReQue['input'], corpus, corpus, ranker, metric), header=0)
+                    csv2json(df, '{}/{}.topn{}/topics.{}.{}.{}/'.format(ReQue['output'], corpus, topn, corpus, ranker, metric), topn)
+                if corpus == 'dbpedia':
+                    df = pd.read_csv('{}/{}/topics.{}.{}.{}.dataset.csv'.format(ReQue['input'], corpus, corpus, ranker, metric), header=0)
+                    csv2json(df, '{}/{}.topn{}/topics.{}.{}.{}/'.format(ReQue['output'], corpus, topn, corpus, ranker, metric), topn)
 
-                if db == 'all':
-                    df1 = pd.read_csv('../ds/qe/robust04/topics.robust04.{}.{}.dataset.csv'.format(ranker, metric), header=0)
-                    df2 = pd.read_csv('../ds/qe/gov2/topics.gov2.701-850.{}.{}.dataset.csv'.format(ranker, metric), header=0)
-                    df3 = pd.read_csv('../ds/qe/clueweb09b/topics.clueweb09b.1-200.{}.{}.dataset.csv'.format(ranker, metric), header=0)
-                    df4 = pd.read_csv('../ds/qe/clueweb12b13/topics.clueweb12b13.201-300.{}.{}.dataset.csv'.format(ranker, metric), header=0)
-                    df5 = pd.read_csv('../ds/qe/antique/topics.antique.{}.{}.dataset.csv'.format(ranker, metric), header=0)
-                    df6 = pd.read_csv('../ds/qe/dbpedia/topics.dbpedia.{}.{}.dataset.csv'.format(ranker, metric), header=0)
+                if corpus == 'all':
+                    df1 = pd.read_csv('{}/robust04/topics.robust04.{}.{}.dataset.csv'.format(ReQue['input'], ranker, metric), header=0)
+                    df2 = pd.read_csv('{}/gov2/topics.gov2.701-850.{}.{}.dataset.csv'.format(ReQue['input'], ranker, metric), header=0)
+                    df3 = pd.read_csv('{}/clueweb09b/topics.clueweb09b.1-200.{}.{}.dataset.csv'.format(ReQue['input'], ranker, metric), header=0)
+                    df4 = pd.read_csv('{}/clueweb12b13/topics.clueweb12b13.201-300.{}.{}.dataset.csv'.format(ReQue['input'], ranker, metric), header=0)
+                    df5 = pd.read_csv('{}/antique/topics.antique.{}.{}.dataset.csv'.format(ReQue['input'], ranker, metric), header=0)
+                    df6 = pd.read_csv('{}/dbpedia/topics.dbpedia.{}.{}.dataset.csv'.format(ReQue['input'], ranker, metric), header=0)
                     df = pd.concat([df1, df2, df3, df4, df5, df6], ignore_index=True)
-                    csv2json(df, '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric), topn)
+                    csv2json(df, '.{}/{}.topn{}/topics.{}.{}.{}/'.format(ReQue['output'], corpus, topn, corpus, ranker, metric), topn)
 
-                data_dir = '../ds/qs/{}.topn{}/topics.{}.{}.{}/'.format(db, topn, db, ranker, metric)
+                data_dir = '{}/{}.topn{}/topics.{}.{}.{}/'.format(ReQue['output'], corpus, topn, corpus, ranker, metric)
                 print('INFO: MAIN: Calling cair for {}'.format(data_dir))
                 #call_cair_run(data_dir, epochs=[e for e in range(1, 10)] + [e * 10 for e in range(1, 21)])
                 call_cair_run(data_dir, epochs=[100])
 
-    aggregate()
+    aggregate(ReQue['output'] + '/')
 
 
