@@ -119,9 +119,9 @@ def aggregate(path):
     for f in fs:
         df_f = pd.read_csv(f, header=0)
         f = f.replace(path, '').split(os.path.sep)
-        ds = f[1].split('.')[0]
-        topn = f[1].split('.')[1]
-        ranker = '.'.join(f[2].split('.')[2:-1])
+        ds = f[-3].split('.')[0]
+        topn = f[-3].split('.')[1]
+        ranker = '.'.join(f[-2].split('.')[2:-1])
         for idx, row in df_f.iterrows():
             df_f.loc[idx, 'topics'] = ds
             df_f.loc[idx, 'topn'] = topn
