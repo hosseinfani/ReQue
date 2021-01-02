@@ -20,6 +20,7 @@ from expanders.wiki import Wiki
 from expanders.onfields import OnFields
 from expanders.adaponfields import AdapOnFields
 from expanders.bertqe import BertQE
+from expanders.rm3 import RM3
 
 #TODO: ServiceFactory: dynamically load the class files in stemmers folder and create an instance object
 from stemmers.krovetz import KrovetzStemmer
