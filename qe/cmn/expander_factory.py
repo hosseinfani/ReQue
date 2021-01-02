@@ -74,6 +74,7 @@ def get_rf_expanders(rankers, corpus, output, ext_corpus=None):
     expanders = []
     for ranker in rankers:
         ranker_name = get_ranker_name(ranker)
+        expanders.append(RM3(index=param.database[corpus]['index'],ranker=ranker_name))
         expanders.append(RelevanceFeedback(ranker=ranker_name,
                                            prels='{}.abstractqueryexpansion.{}.txt'.format(output, ranker_name),
                                            anserini=param.anserini['path'],
