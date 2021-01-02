@@ -196,7 +196,7 @@ if __name__=='__main__':
                     df5 = pd.read_csv('{}/antique/topics.antique.{}.{}.dataset.csv'.format(ReQue['input'], ranker, metric), header=0)
                     df6 = pd.read_csv('{}/dbpedia/topics.dbpedia.{}.{}.dataset.csv'.format(ReQue['input'], ranker, metric), header=0)
                     df = pd.concat([df1, df2, df3, df4, df5, df6], ignore_index=True)
-                    csv2json(df, '.{}/{}.topn{}/topics.{}.{}.{}/'.format(ReQue['output'], corpus, topn, corpus, ranker, metric), topn)
+                    csv2json(df, '{}/{}.topn{}/topics.{}.{}.{}/'.format(ReQue['output'], corpus, topn, corpus, ranker, metric), topn)
 
                 data_dir = '{}/{}.topn{}/topics.{}.{}.{}/'.format(ReQue['output'], corpus, topn, corpus, ranker, metric)
                 print('INFO: MAIN: Calling cair for {}'.format(data_dir))

@@ -117,6 +117,9 @@ def get_rf_expanders(rankers, corpus, output, ext_corpus=None):
                                 index=param.corpora[corpus]['index'],
                                 anserini=param.anserini['path']))
 
+        expanders.append(RM3(ranker=ranker_name,
+                             index=param.corpora[corpus]['index']))
+
     return expanders
 
 def get_expanders_names(rankers):
