@@ -1,21 +1,43 @@
 import sys
 sys.path.extend(['../qe'])
 
-from stemmers.krovetz import KrovetzStemmer
-from stemmers.lovins import LovinsStemmer
-from stemmers.paicehusk import PaiceHuskStemmer
-from stemmers.porter import PorterStemmer
-from stemmers.porter2 import Porter2Stemmer
-from stemmers.sstemmer import SRemovalStemmer
-from stemmers.trunc4 import Trunc4Stemmer
-from stemmers.trunc5 import Trunc5Stemmer
-
 ReQue = {
+    'parallel': 0,
+    'op': ['generate', 'search', 'evaluate', 'build'],
+    'expanders': {
+        'SenseDisambiguation'   : 0,
+        'Thesaurus'             : 0,
+        'Wordnet'               : 0,
+        'Conceptnet'            : 0,
+        'Tagmee'                : 0,
 
+        'Word2Vec'              : 0,
+        'Glove'                 : 0,
+        'Anchor'                : 0,
+        'Wiki'                  : 0,
+
+        'KrovetzStemmer'        : 0,
+        'LovinsStemmer'         : 0,
+        'PaiceHuskStemmer'      : 0,
+        'PorterStemmer'         : 0,
+        'Porter2Stemmer'        : 0,
+        'SRemovalStemmer'       : 0,
+        'Trunc4Stemmer'         : 0,
+        'Trunc5Stemmer'         : 0,
+
+        'RelevanceFeedback'     : 0,
+        'Docluster'             : 0,
+        'Termluster'            : 0,
+        'Conceptluster'         : 0,
+        'OnFields'              : 0,
+        'AdapOnFields'          : 0,
+        'BertQE'                : 0,
+        'RM3'                   : 1,
+    }
 }
 
 anserini = {
-    'path': '../anserini'
+    'path': '../anserini/'
 }
 
 corpora = {
@@ -86,135 +108,7 @@ corpora = {
         'extcorpus': 'gov2',#AdaptOnFields
     }
 }
-#TODO: try to load expanders from here including their initial parameters
-# print(corpora['robust04']['index'])
-# #TypeError: unhashable type: 'dict'
-# thesaurus = {
-#     {},
-#     {
-#         'replace': True,
-#     }
-# }
-# wordnet = {
-#     {},
-#     {
-#         'replace': True,
-#     }
-# }
-# word2vec = {
-#     {
-#         'vectorfile' : '../pre/wiki-news-300d-1M.vec'
-#     },
-#     {
-#         'replace': True,
-#         'vectorfile' : '../pre/wiki-news-300d-1M.vec'
-#     }
-# }
-# glove = {
-#     {
-#         'vectorfile': '../pre/glove.6B.300d'
-#     },
-#     {
-#         'replace': True,
-#         'vectorfile': '../pre/glove.6B.300d'
-#     }
-# }
-# anchor = {
-#     {
-#         'anchorfile': '../pre/anchor_text_en.ttl',
-#         'vectorfile': '../pre/wiki-anchor-text-en-ttl-300d.vec'
-#     },
-#     {
-#         'replace': True,
-#         'anchorfile': '../pre/anchor_text_en.ttl',
-#         'vectorfile': '../pre/wiki-anchor-text-en-ttl-300d.vec'
-#     }
-# }
-# wiki = {
-#     {
-#         'vectorfile': '../pre/temp_model_Wiki'
-#     },
-#     {
-#         'replace': True,
-#         'vectorfile': '../pre/temp_model_Wiki'
-#     }
-# }
-# tagmee = {
-#     {},
-#     {
-#         'replace': True,
-#     }
-# }
-# sensedisambiguation = {
-#     {},
-#     {
-#         'replace': True,
-#     }
-# }
-# conceptnet = {
-#     {},
-#     {
-#         'replace': True,
-#     }
-# }
-# stem = {
-#     {
-#         'stemmer': KrovetzStemmer(jarfile='stemmers/kstem-3.4.jar')
-#     },
-#     {
-#         'stemmer': LovinsStemmer()
-#     },
-#     {
-#         'stemmer': PaiceHuskStemmer()
-#     },
-#     {
-#         'stemmer': PorterStemmer()
-#     },
-#     {
-#         'stemmer': Porter2Stemmer()
-#     },
-#     {
-#         'stemmer': SRemovalStemmer()
-#     },
-#     {
-#         'stemmer': Trunc4Stemmer()
-#     },
-#     {
-#         'stemmer': Trunc5Stemmer()
-#     }
-# }
-# relevancefeedback = {
-#     {
-#         'ranker': '',
-#     }
-# }
-# docluster = {
-#     {
-#         'ranker': '',
-#     }
-# }
-# termluster = {
-#     {
-#         'ranker': '',
-#     }
-# }
-# conceptluster = {
-#     {
-#         'ranker': '',
-#     }
-# }
-# onfields = {
-#     {
-#         'ranker': '',
-#     }
-# }
-# adaponfields = {
-#     {
-#         'ranker': '',
-#         'ext': '',
-#         'adap': True,
-#     }
-# }
+#
 #
 # model2params = {
 #     'thesaurus': thesaurus,

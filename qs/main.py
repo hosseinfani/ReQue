@@ -6,8 +6,8 @@ numpy.random.seed(7881)
 from cair.main.recommender import run
 
 ReQue = {
-    'input': '../ds/qe',
-    'output': '../ds/qs'
+    'input': '../qe/output',
+    'output': './output'
 }
 
 def generate_random_string(n=12):

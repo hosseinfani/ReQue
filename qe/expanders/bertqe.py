@@ -98,7 +98,7 @@ class BertQE(RelevanceFeedback):
 if __name__ == "__main__":
 
     qe = BertQE(ranker='bm25',
-                prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',
+                prels='./output/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',
                 anserini='../anserini/',
                 index='../anserini/lucene-index.robust04.pos+docvectors+rawdocs')
     print(qe.get_model_name())

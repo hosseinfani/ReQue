@@ -19,6 +19,7 @@ dependencies:
     - tagme==0.1.3
     - community==1.0.0b1
     - bs4==0.0.1
+    - lxml
     - python-louvain==0.13
     - coloredlogs==14.0
     - pydantic==1.5

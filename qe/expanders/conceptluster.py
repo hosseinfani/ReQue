@@ -39,7 +39,7 @@ class Conceptluster(Termluster):
 
 if __name__ == "__main__":
     qe = Conceptluster(ranker='bm25',
-                   prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',
+                   prels='./output/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',
                    anserini='../anserini/',
                    index='../ds/robust04/index-robust04-20191213')
 

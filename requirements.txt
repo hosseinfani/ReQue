@@ -6,6 +6,8 @@ nltk
 pandas
 pywsd
 tagme
+bs4
+lxml
 wn==0.0.23
 coloredlogs==14.0
 pydantic==1.5

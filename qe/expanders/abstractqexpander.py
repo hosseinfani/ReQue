@@ -20,7 +20,12 @@ class AbstractQExpander:
                          '.replace' if self.replace else '')
 
     def write_expanded_queries(self, Qfilename, Q_filename, clean=True):
+        # prevent to clean the original query
+        if self.__class__.__name__ == 'AbstractQExpander':
+            clean = False
+
         model_name = self.get_model_name().lower()
+
         Q_ = pd.DataFrame()
         with open(Qfilename, 'r') as Qfile:
             with open(Q_filename, 'w') as Q_file:
@@ -55,7 +60,7 @@ class AbstractQExpander:
                             q = line[9:-9]
                             try:
                                 q_ = self.get_expanded_query(q, [qid])
-                                q_ = utils.clean(q_)if clean else q_
+                                q_ = utils.clean(q_) if clean else q_
                             except:
                                 print('WARNING: MAIN: {}: Expanding query [{}:{}] failed!'.format(self.get_model_name(), qid, q))
                                 print(traceback.format_exc())
@@ -156,10 +161,10 @@ if __name__ == "__main__":
     #              Stem(SRemovalStemmer()),
     #              Stem(Trunc4Stemmer()),
     #              Stem(Trunc5Stemmer()),
-    #              RelevanceFeedback(ranker='bm25', prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',anserini='../anserini/',index='../ds/robust04/index-robust04-20191213'),
-    #              Docluster(ranker='bm25', prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',anserini='../anserini/', index='../ds/robust04/index-robust04-20191213'),
-    #              Termluster(ranker='bm25', prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',anserini='../anserini/', index='../ds/robust04/index-robust04-20191213'),
-    #              Conceptluster(ranker='bm25', prels='../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt', anserini='../anserini/', index='../ds/robust04/index-robust04-20191213'),
+    #              RelevanceFeedback(ranker='bm25', prels='./output/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',anserini='../anserini/',index='../ds/robust04/index-robust04-20191213'),
+    #              Docluster(ranker='bm25', prels='./output/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',anserini='../anserini/', index='../ds/robust04/index-robust04-20191213'),
+    #              Termluster(ranker='bm25', prels='./output/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',anserini='../anserini/', index='../ds/robust04/index-robust04-20191213'),
+    #              Conceptluster(ranker='bm25', prels='./output/robust04/topics.robust04.abstractqueryexpansion.bm25.txt', anserini='../anserini/', index='../ds/robust04/index-robust04-20191213'),
                 #Anchor(anchorfile='../pre/anchor_text_en_sample.ttl', vectorfile='../pre/wiki-anchor-text-en-ttl-300d-sample.vec', topn=3),
                  #Anchor(anchorfile='../pre/anchor_text_en_sample.ttl', vectorfile='../pre/wiki-anchor-text-en-ttl-300d-sample.vec', topn=3, replace=True)
                  ]

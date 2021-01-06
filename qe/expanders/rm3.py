@@ -1,4 +1,4 @@
-import os, sys, re
+import os, sys, re, io
 sys.path.extend(['../qe'])
 
 from pyserini.search import SimpleSearcher
@@ -23,16 +23,19 @@ class RM3(RelevanceFeedback):
 
         self.searcher.set_rm3(fb_terms=self.topw, fb_docs=self.topn, original_query_weight=self.original_q_w, rm3_output_query=True)
         
-        #TODO: redirect to memory-stream instead of file
-        with stdout_redirected(to='rm3.log'):
+        f = io.BytesIO()
+        with utils.stdout_redirector_2_stream(f):
             self.searcher.search(q)
+        print('RM3 Log: {0}"'.format(f.getvalue().decode('utf-8')))
+        q_= self.parse_rm3_log(f.getvalue().decode('utf-8'))
 
-        rm3_log=open('rm3.log', 'r').read()
-        
-        q= self.parse_rm3_log(rm3_log)
-        os.remove("rm3.log")
+        # with stdout_redirected(to='rm3.log'):
+        #     self.searcher.search(q)
+        # rm3_log = open('rm3.log', 'r').read()
+        # q_ = self.parse_rm3_log(rm3_log)
+        # os.remove("rm3.log")
 
-        return q
+        return q_
 
     def get_model_name(self):
         return super().get_model_name().replace('topn{}'.format(self.topn), 'topn{}.{}.{}'.format(self.topn, self.topw, self.original_q_w))

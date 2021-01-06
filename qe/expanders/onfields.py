@@ -257,9 +257,9 @@ if __name__ == "__main__":
 
 
     qe = OnFields(ranker='bm25',
-                                prels='../../ds/qe/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',
+                                prels='./output/robust04/topics.robust04.abstractqueryexpansion.bm25.txt',
                                 anserini='../anserini/',
-                                index='/data/anserini/lucene-index.robust04.pos+docvectors+rawdocs',
+                                index='./ds/robust04/lucene-index.robust04.pos+docvectors+rawdocs',
                                 corpus='robust04',
                                 w_t=tuned_weights['robust04']['w_t'],
                                 w_a=tuned_weights['robust04']['w_a'],

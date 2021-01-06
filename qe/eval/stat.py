@@ -288,8 +288,8 @@ class ResultAnalyzer:
 
 
 def main():
-    input_path = "../ds/qe"
-    output_path = "../ds/qe/eval"
+    input_path = "./output"
+    output_path = "./output/eval"
     analyzer = ResultAnalyzer(input_path, output_path)
     analyzer.collect_query_expander_names()
     for level in AnalysisLevel:
