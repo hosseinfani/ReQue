@@ -4,6 +4,7 @@
 |   \---target
 |       +---appassembler
 |       |   +---bin
++---pygaggle 
 +---ds
 |   +---robust04
 |   |       # qrels.robust04.txt
@@ -41,35 +42,6 @@
 |   |       # qrels.dbpedia.txt
 |   |       # topics.dbpedia.txt
 |       \---lucene-index.dbpedia
-|   +---qe
-|   |   +---robust04
-|   |   |       topics.robust04.bm25.map.dataset.csv
-|   |   |       topics.robust04.qld.map.dataset.csv
-|   |   +---clueweb09b
-|   |   |       topics.clueweb09b.1-200.bm25.map.dataset.csv
-|   |   |       topics.clueweb09b.1-200.qld.map.dataset.csv
-|   |   +---clueweb12b13
-|   |   |       topics.clueweb12b13.201-300.bm25.map.dataset.csv
-|   |   |       topics.clueweb12b13.201-300.qld.map.dataset.csv
-|   |   +---gov2
-|   |   |       topics.gov2.701-850.bm25.map.dataset.csv
-|   |   |       topics.gov2.701-850.qld.map.dataset.csv
-|   |   |---antique
-|   |   |       topics.antique.bm25.map.dataset.csv
-|   |   |       topics.antique.qld.map.dataset.csv
-|   |   |---dbpedia
-|   |   |       topics.dbpedia.bm25.map.dataset.csv
-|   |   |       topics.dbpedia.qld.map.dataset.csv
-|   |   \---eval
-|   |           overall.stat.csv
-|   +---qs
-|   |   +---all.topn5
-|   |   +---robust04.topn5
-|   |   +---clueweb09b.topn5
-|   |   +---clueweb12b13.topn5
-|   |   +---gov2.topn5
-|   |   +---antique.topn5
-|   |   \---dbpedia.topn5
 +---pre
 |       # anchor_text_en.ttl
 |       # gitkeep
@@ -98,6 +70,7 @@
 |   |       glove.py
 |   |       onfields.py
 |   |       relevancefeedback.py
+|   |       rm3.py
 |   |       sensedisambiguation.py
 |   |       stem.py
 |   |       tagmee.py
@@ -107,21 +80,50 @@
 |   |       word2vec.py
 |   |       wordnet.py
 |   \---stemmers
-|           abstractstemmer.py
-|           krovetz.py
-|           kstem-3.4.jar
-|           lovins.py
-|           lovinsstemmer.py
-|           nostemmer.py
-|           paicehusk.py
-|           paicehuskstemmer.py
-|           porter.py
-|           porter2.py
-|           porter2stemmer.py
-|           porterstemmer.py
-|           sstemmer.py
-|           trunc4.py
-|           trunc5.py
+|   |       abstractstemmer.py
+|   |       krovetz.py
+|   |       kstem-3.4.jar
+|   |       lovins.py
+|   |       lovinsstemmer.py
+|   |       nostemmer.py
+|   |       paicehusk.py
+|   |       paicehuskstemmer.py
+|   |       porter.py
+|   |       porter2.py
+|   |       porter2stemmer.py
+|   |       porterstemmer.py
+|   |       sstemmer.py
+|   |       trunc4.py
+|   |       trunc5.py
+|   \---output
+|       +---robust04
+|       |       topics.robust04.bm25.map.dataset.csv
+|       |       topics.robust04.qld.map.dataset.csv
+|       +---clueweb09b
+|       |       topics.clueweb09b.1-200.bm25.map.dataset.csv
+|       |       topics.clueweb09b.1-200.qld.map.dataset.csv
+|       +---clueweb12b13
+|       |       topics.clueweb12b13.201-300.bm25.map.dataset.csv
+|       |       topics.clueweb12b13.201-300.qld.map.dataset.csv
+|       +---gov2
+|       |       topics.gov2.701-850.bm25.map.dataset.csv
+|       |       topics.gov2.701-850.qld.map.dataset.csv
+|       |---antique
+|       |       topics.antique.bm25.map.dataset.csv
+|       |       topics.antique.qld.map.dataset.csv
+|       |---dbpedia
+|       |       topics.dbpedia.bm25.map.dataset.csv
+|       |       topics.dbpedia.qld.map.dataset.csv
+|       \---eval
+|               overall.stat.csv
 \---qs
     |   main.py
-    \---cair
+    +---cair
+    \---ouput
+            all.topn5
+            robust04.topn5
+            clueweb09b.topn5
+            clueweb12b13.topn5
+            gov2.topn5
+            antique.topn5
+            dbpedia.topn5
