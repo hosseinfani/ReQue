@@ -208,6 +208,25 @@ def build(input, expanders, rankers, metrics, output):
     ds_df.to_csv(filename, index=False)
     return filename
 
+def worker(corpus, rankers, metrics, op, output_, topicreader, expanders):
+    exceptions = {}
+    def worker_thread(expander):
+        try:
+            if 'generate' in op: generate(Qfilename=param.corpora[corpus]['topics'], expander=expander, output=output_)
+            if 'search' in op: search(expander=expander, rankers=rankers, topicreader=topicreader, index=param.corpora[corpus]['index'], anserini=param.anserini['path'], output=output_)
+            if 'evaluate' in op: evaluate(expander=expander, Qrels=param.corpora[corpus]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
+        except:
+            print(f'INFO: MAIN: THREAD: {threading.currentThread().getName()}: There has been error in {expander}!\n{traceback.format_exc()}')
+            exceptions[expander.get_model_name()] = traceback.format_exc()
+
+    threads = []
+    for expander in expanders:
+        if param.ReQue['parallel']: threads.append(threading.Thread(daemon=True, target=worker_thread, name=expander.get_model_name(), args=(expander,)))
+        else: worker_thread(expander)
+    if param.ReQue['parallel']: print(f'Starting threads per expanders for {[e for e in param.ReQue["op"] if e != "build"]} ...')
+    for thread in threads: thread.start()
+    return threads
+
 def run(corpus, rankers, metrics, output, rf=True, op=[]):
     if corpus == 'dbpedia':
         topicreader = 'TsvString'
@@ -216,23 +235,7 @@ def run(corpus, rankers, metrics, output, rf=True, op=[]):
         if rf:#local analysis
             expanders += ef.get_rf_expanders(rankers=rankers, corpus=corpus, output=output_, ext_corpus=param.corpora[corpus]['extcorpus'])
 
-        exceptions = {}
-        def dbpedia_worker(expander):
-            try:
-                if 'generate' in op:generate(Qfilename=param.corpora[corpus]['topics'], expander=expander, output=output_)
-                if 'search'   in op:search(expander=expander, rankers=rankers, topicreader=topicreader, index=param.corpora[corpus]['index'], anserini=param.anserini['path'], output=output_)
-                if 'evaluate' in op:evaluate(expander=expander, Qrels=param.corpora[corpus]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
-
-            except:
-                print(f'INFO: MAIN: THREAD: {threading.currentThread().getName()}: There has been error in {expander}!\n{traceback.format_exc()}')
-                exceptions[expander.get_model_name()] = traceback.format_exc()
-
-        threads = []
-        for expander in expanders:
-            if param.ReQue['parallel']: threads.append(threading.Thread(daemon=True, target=dbpedia_worker, name=expander.get_model_name(), args=(expander,)))
-            else: dbpedia_worker(expander)
-        if param.ReQue['parallel']: print(f'Starting threads per expanders for {[e for e in param.ReQue["op"] if e != "build"]} ...')
-        for thread in threads: thread.start()
+        threads, exceptions = worker(corpus, rankers, metrics, op, output_, topicreader, expanders)
         for thread in threads: thread.join()
         expanders = [e for e in expanders if e.get_model_name() not in exceptions.keys()]
 
@@ -247,22 +250,7 @@ def run(corpus, rankers, metrics, output, rf=True, op=[]):
         if rf:#local analysis
             expanders += ef.get_rf_expanders(rankers=rankers, corpus=corpus, output=output_, ext_corpus=param.corpora[corpus]['extcorpus'])
 
-        exceptions = {}
-        def antique_worker(expander):
-            try:
-                if 'generate' in op:generate(Qfilename=param.corpora[corpus]['topics'], expander=expander, output=output_)
-                if 'search'   in op:search(expander=expander, rankers=rankers, topicreader=topicreader, index=param.corpora[corpus]['index'], anserini=param.anserini['path'], output=output_)
-                if 'evaluate' in op:evaluate(expander=expander, Qrels=param.corpora[corpus]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
-            except:
-                print(f'INFO: MAIN: THREAD: {threading.currentThread().getName()}: There has been error in {expander}!\n{traceback.format_exc()}')
-                exceptions[expander.get_model_name()] = traceback.format_exc()
-
-        threads = []
-        for expander in expanders:
-            if param.ReQue['parallel']: threads.append(threading.Thread(daemon=True, target=antique_worker, name=expander.get_model_name(), args=(expander,)))
-            else: antique_worker(expander)
-        if param.ReQue['parallel']: print(f'Starting threads per expanders for {[e for e in param.ReQue["op"] if e != "build"]} ...')
-        for thread in threads: thread.start()
+        threads, exceptions = worker(corpus, rankers, metrics, op, output_, topicreader, expanders)
         for thread in threads: thread.join()
         expanders = [e for e in expanders if e.get_model_name() not in exceptions.keys()]
 
@@ -271,28 +259,13 @@ def run(corpus, rankers, metrics, output, rf=True, op=[]):
             build(input=result, expanders=expanders, rankers=rankers, metrics=metrics, output=output_)
 
     if corpus == 'robust04':
+        topicreader= 'Trec'
         output_ = '{}topics.robust04'.format(output)
         expanders = ef.get_nrf_expanders()
         if rf:#local analysis
             expanders += ef.get_rf_expanders(rankers=rankers, corpus=corpus, output=output_, ext_corpus=param.corpora[corpus]['extcorpus'])
 
-        exceptions = {}
-        def robust04_worker(expander):
-            try:
-                for expander in expanders:
-                    if 'generate' in op:generate(Qfilename=param.corpora[corpus]['topics'], expander=expander, output=output_)
-                    if 'search'   in op:search(expander=expander, rankers=rankers, topicreader='Trec', index=param.corpora[corpus]['index'], anserini=param.anserini['path'], output=output_)
-                    if 'evaluate' in op:evaluate(expander=expander, Qrels=param.corpora[corpus]['qrels'], rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
-            except:
-                print(f'INFO: MAIN: THREAD: {threading.currentThread().getName()}: There has been error in {expander}!\n{traceback.format_exc()}')
-                exceptions[expander.get_model_name()] = traceback.format_exc()
-
-        threads = []
-        for expander in expanders:
-            if param.ReQue['parallel']: threads.append(threading.Thread(daemon=True, target=robust04_worker, name=expander.get_model_name(), args=(expander,)))
-            else: robust04_worker(expander)
-        if param.ReQue['parallel']: print(f'Starting threads per expanders for {[e for e in param.ReQue["op"] if e != "build"]} ...')
-        for thread in threads: thread.start()
+        threads, exceptions = worker(corpus, rankers, metrics, op, output_, topicreader, expanders)
         for thread in threads: thread.join()
         expanders = [e for e in expanders if e.get_model_name() not in exceptions.keys()]
 
@@ -311,23 +284,7 @@ def run(corpus, rankers, metrics, output, rf=True, op=[]):
             if rf:
                 expanders += ef.get_rf_expanders(rankers=rankers, corpus=corpus, output=output_, ext_corpus=param.corpora[corpus]['extcorpus'])
 
-            exceptions = {}
-            def gov2_worker(expander):
-                try:
-                    for expander in expanders:
-                        if 'generate' in op:generate(Qfilename=param.corpora[corpus]['topics'].format('topics', r), expander=expander, output=output_)
-                        if 'search'   in op:search(expander=expander, rankers=rankers, topicreader=topicreader, index=param.corpora[corpus]['index'], anserini=param.anserini['path'], output=output_)
-                        if 'evaluate' in op:evaluate(expander=expander, Qrels=param.corpora[corpus]['qrels'].format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
-                except:
-                    print(f'INFO: MAIN: THREAD: {threading.currentThread().getName()}: There has been error in {expander}!\n{traceback.format_exc()}')
-                    exceptions[expander.get_model_name()] = traceback.format_exc()
-
-            threads = []
-            for expander in expanders:
-                if param.ReQue['parallel']: threads.append(threading.Thread(daemon=True, target=gov2_worker, name=expander.get_model_name(), args=(expander,)))
-                else: gov2_worker(expander)
-            if param.ReQue['parallel']: print(f'Starting threads per expanders for {[e for e in param.ReQue["op"] if e != "build"]} ...')
-            for thread in threads: thread.start()
+            threads, exceptions = worker(corpus, rankers, metrics, op, output_, topicreader, expanders)
             for thread in threads: thread.join()
             expanders = [e for e in expanders if e.get_model_name() not in exceptions.keys()]
 
@@ -354,23 +311,7 @@ def run(corpus, rankers, metrics, output, rf=True, op=[]):
             if rf:
                 expanders += ef.get_rf_expanders(rankers=rankers, corpus=corpus, output=output_, ext_corpus=param.corpora[corpus]['extcorpus'])
 
-            exceptions = {}
-            def clueweb09b_worker(expander):
-                try:
-                    for expander in expanders:
-                        if 'generate' in op:generate(Qfilename=param.corpora[corpus]['topics'].format(r), expander=expander, output=output_)
-                        if 'search'   in op:search(expander=expander, rankers=rankers, topicreader=topicreader, index=param.corpora[corpus]['index'], anserini=param.anserini['path'], output=output_)
-                        if 'evaluate' in op:evaluate(expander=expander, Qrels=param.corpora[corpus]['qrels'].format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
-                except:
-                    print(f'INFO: MAIN: THREAD: {threading.currentThread().getName()}: There has been error in {expander}!\n{traceback.format_exc()}')
-                    exceptions[expander.get_model_name()] = traceback.format_exc()
-
-            threads = []
-            for expander in expanders:
-                if param.ReQue['parallel']: threads.append(threading.Thread(daemon=True, target=clueweb09b_worker, name=expander.get_model_name(), args=(expander,)))
-                else: clueweb09b_worker(expander)
-            if param.ReQue['parallel']: print(f'Starting threads per expanders for {[e for e in param.ReQue["op"] if e != "build"]} ...')
-            for thread in threads: thread.start()
+            threads, exceptions = worker(corpus, rankers, metrics, op, output_, topicreader, expanders)
             for thread in threads: thread.join()
             expanders = [e for e in expanders if e.get_model_name() not in exceptions.keys()]
 
@@ -396,23 +337,7 @@ def run(corpus, rankers, metrics, output, rf=True, op=[]):
             if rf:
                 expanders += ef.get_rf_expanders(rankers=rankers, corpus=corpus, output=output_, ext_corpus=param.corpora[corpus]['extcorpus'])
 
-            exceptions = {}
-            def clueweb12b13_worker(expander):
-                try:
-                    for expander in expanders:
-                        if 'generate' in op:generate(Qfilename=param.corpora[corpus]['topics'].format(r), expander=expander, output=output_)
-                        if 'search'   in op:search(expander=expander, rankers=rankers, topicreader=topicreader, index=param.corpora[corpus]['index'], anserini=param.anserini['path'], output=output_)
-                        if 'evaluate' in op:evaluate(expander=expander, Qrels=param.corpora[corpus]['qrels'].format(r), rankers=rankers, metrics=metrics, anserini=param.anserini['path'], output=output_)
-                except:
-                    print(f'INFO: MAIN: THREAD: {threading.currentThread().getName()}: There has been error in {expander}!\n{traceback.format_exc()}')
-                    exceptions[expander.get_model_name()] = traceback.format_exc()
-
-            threads = []
-            for expander in expanders:
-                if param.ReQue['parallel']: threads.append(threading.Thread(daemon=True, target=clueweb12b13_worker, name=expander.get_model_name(), args=(expander,)))
-                else: clueweb12b13_worker(expander)
-            if param.ReQue['parallel']: print(f'Starting threads per expanders for {[e for e in param.ReQue["op"] if e != "build"]} ...')
-            for thread in threads: thread.start()
+            threads, exceptions = worker(corpus, rankers, metrics, op, output_, topicreader, expanders)
             for thread in threads: thread.join()
             expanders = [e for e in expanders if e.get_model_name() not in exceptions.keys()]
 
